@@ -15,6 +15,9 @@ export class BgProvider {
   configurate() {
     this.platform.ready().then(() => {
       this.bg = (<any>window).BackgroundGeolocation;
+      if (!this.bg) {
+        return
+      }
       this.bg.on('location', this.onLocation, this.onLocationFailure);
       this.bg.on('motionchange', console.info);
       this.bg.on('providerchange', console.info);
@@ -27,8 +30,6 @@ export class BgProvider {
   }
 
   startTrack() {
-
-
     this.bg.configure({
       desiredAccuracy: 0,
       distanceFilter: 50,
@@ -37,7 +38,6 @@ export class BgProvider {
       startOnBoot: true,
       forceReloadOnBoot: true,
       foregroundService: true,
-      notificationPriority: this.bg.NOTIFICATION_PRIORITY_HIGH,
       notificationTitle: "Newton Tracker",
       notificationText: "Sevicio de Rastreo Activado",
       notificationColor: "#552533FF"
@@ -54,6 +54,16 @@ export class BgProvider {
       this.bg.stop();
       this.state = false;
     }
+  }
+
+  locate() {
+    return new Promise((resolve, reject) => {
+      this.bg.getCurrentPosition((pos) => {
+        resolve(pos)
+      }, (err) => {
+        reject(err)
+      })
+    })
   }
 
 

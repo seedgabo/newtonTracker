@@ -1,19 +1,37 @@
 <ion-header>
-  <ion-navbar color="primary">
+  <ion-navbar color="light">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>
-      Newton Tracker
+      <span ion-text color="primary">
+        Newton Tracker
+      </span>
     </ion-title>
+    <ion-buttons end>
+      <button icon-left ion-button color="danger" *ngIf="bg.state" (click)="stop()">
+        <ion-icon name="square"></ion-icon>
+        <span>Stop</span>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content>
-  <button ion-button color="secondary" block large *ngIf="!bg.state" (click)="start()">
-    <span>Start</span>
-  </button>
-  <button ion-button color="danger" block large *ngIf="bg.state" (click)="stop()">
-    <span>Stop</span>
-  </button>
+<ion-content no-padding>
+  <div padding *ngIf="!bg.state" style="background-image:url(https://png.pngtree.com/thumb_back/fw800/back_pic/00/01/88/58560cef472662e.jpg)">
+    <button class="track-button" ion-button color="secondary" full large (click)="start()">
+      <span>Start</span>
+    </button>
+  </div>
+
+  <ion-fab bottom right>
+    <button ion-fab color="primary">
+      <ion-icon name="add"></ion-icon>
+    </button>
+    <ion-fab-list side="top">
+      <button ion-fab color="secondary" (click)="locate()">
+        <ion-icon name="locate"></ion-icon>
+      </button>
+    </ion-fab-list>
+  </ion-fab>
 </ion-content>

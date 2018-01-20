@@ -21,11 +21,13 @@ import { Device } from "@ionic-native/device";
 import { Vibration } from "@ionic-native/vibration";
 import { HttpModule } from '@angular/http';
 import { BgProvider } from '../providers/bg/bg';
+import { LoginPage } from '../pages/login/login';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
+    LoginPage,
     ListPage
   ],
   imports: [
@@ -38,6 +40,7 @@ import { BgProvider } from '../providers/bg/bg';
   entryComponents: [
     MyApp,
     HomePage,
+    LoginPage,
     ListPage
   ],
   providers: [

@@ -1,0 +1,28 @@
+page-login {
+  .padding {
+    margin-top: 10%;
+  }
+  .logo {
+    max-width: 150px;
+    max-height: 150px;
+    margin: 0 auto;
+  }
+}
+
+.auth {
+  // background-image: url("assets/imgs/background.jpg");
+  .login-form {
+    animation: 1s linear;
+    animation-name: fade;
+    opacity: 1;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
