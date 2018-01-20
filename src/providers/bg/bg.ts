@@ -37,7 +37,10 @@ export class BgProvider {
       startOnBoot: true,
       forceReloadOnBoot: true,
       foregroundService: true,
+      notificationPriority: this.bg.NOTIFICATION_PRIORITY_HIGH,
       notificationTitle: "Newton Tracker",
+      notificationText: "Sevicio de Rastreo Activado",
+      notificationColor: "#552533FF"
     }, (state) => {
       this.zone.run(() => {
         this.state = true;

@@ -1,14 +1,15 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>Home</ion-title>
+    <ion-title>
+      Newton Tracker
+    </ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  {{bg.state | json }}
+<ion-content>
   <button ion-button color="secondary" block large *ngIf="!bg.state" (click)="start()">
     <span>Start</span>
   </button>

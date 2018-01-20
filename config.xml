@@ -106,4 +106,5 @@
     </plugin>
     <allow-navigation href="http://192.168.0.16:8101" />
     <plugin name="cordova-plugin-statusbar" spec="^2.4.1" />
+    <preference name="SplashScreenDelay" value="3000" />
 </widget>
