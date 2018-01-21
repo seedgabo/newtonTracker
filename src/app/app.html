@@ -1,9 +1,10 @@
 <ion-menu [content]="content" [enabled]="api?.user">
-  <ion-header>
-    <ion-toolbar color="dark">
-      <ion-title>Menu</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <ion-header>
+      <div class="user-info" padding>
+        <img *ngIf="api.user" [src]="api.user.imagen" class="avatar-user"  menuClose>
+        <h5 text-center *ngIf="api.user">{{api.user.full_name}}</h5>
+      </div>
+    </ion-header>
 
   <ion-content>
     <ion-list>

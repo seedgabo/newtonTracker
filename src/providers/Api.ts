@@ -1,4 +1,4 @@
-import { Events } from 'ionic-angular';
+import { Events, AlertController, ToastController } from 'ionic-angular';
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 // import { Observable } from "rxjs/Observable";
@@ -26,7 +26,7 @@ export class Api {
   resolve;
   Echo;
   objects: any = {};
-  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone) {
+  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController, public toast: ToastController) {
     this.initVar();
     window.$api = this;
   }
@@ -122,6 +122,18 @@ export class Api {
     });
   }
 
+  put(uri, data) {
+    return new Promise((resolve, reject) => {
+      this.http.put(this.url + "api/" + uri, data, { headers: this.setHeaders() })
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          return reject(this.handleData(error));
+        });
+    });
+  }
+
   delete(uri) {
     return new Promise((resolve, reject) => {
       this.http.delete(this.url + "api/" + uri, { headers: this.setHeaders() })
@@ -134,8 +146,78 @@ export class Api {
     });
   }
 
-  Error(err) {
-    console.error(err);
+  panic() {
+    var data = {
+      user: this.user,
+      location: null,
+    }
+    var promise = this.post('panic', data)
+    promise
+      .then((data) => {
+        console.log("panic sent:", data)
+        this.toast.create({
+          message: ("panico enviado"),
+          duration: 5000,
+          position: 'top',
+        }).present();
+
+        this.getLocationForPanic(data);
+      })
+      .catch((err) => {
+        console.error(err)
+        this.toast.create({
+          message: "Error enviado el panico",
+          duration: 5000,
+          position: 'top',
+        }).present();
+
+      })
+    return promise;
+  }
+
+  getLocationForPanic(data) {
+    navigator.geolocation.getCurrentPosition((resp) => {
+      var locs = {
+        accuracy: resp.coords.accuracy,
+        altitude: resp.coords.altitude,
+        latitude: resp.coords.latitude,
+        longitude: resp.coords.longitude,
+        speed: resp.coords.speed,
+        heading: resp.coords.heading,
+        altitudeAccuracy: resp.coords.altitudeAccuracy,
+        timestamp: resp.timestamp,
+      }
+      this.put("panics/" + data.id, { location: locs })
+        .then((dataL) => {
+          console.log("panic with locs", dataL)
+        })
+        .catch((err) => {
+          console.error("error sending panic with location", err);
+        })
+
+    }, console.error, {
+        enableHighAccuracy: true,
+      })
+  }
+
+  Error(error) {
+    var message = "";
+    if (error.status == 500) {
+      message = "Internal Server Error"
+    }
+    if (error.status == 404) {
+      message = ".Not Encontrado"
+    }
+    if (error.status == 401) {
+      message = "No Autorizado"
+    }
+    this.alert.create({
+      title: "Error en la Red",
+      subTitle: error.error,
+      message: message + ":" + error.statusText,
+      buttons: ["OK"],
+
+    }).present();
   }
 
   startEcho() {
@@ -171,6 +253,14 @@ export class Api {
               this.objects.users.collection[data.user.id].updated_at = new Date();
             }
             this.events.publish('LocationCreated', data)
+          })
+        })
+
+
+        .listen('Panic', (data) => {
+          console.log("Panic ", data);
+          this.zone.run(() => {
+            this.events.publish('Panic', data)
           })
         })
 

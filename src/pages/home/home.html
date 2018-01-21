@@ -93,9 +93,13 @@
 
 <ion-footer no-padding>
   <ion-toolbar>
-    <button (click)="sos()" *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger" block round large (click)="sos()">
-      <ion-icon name="help-buoy"></ion-icon>
-      S.O.S.
+    <button [disabled]="disabled_panic" (click)="sos()" *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger" block round large (click)="sos()">
+
+      <ion-icon *ngIf="!disabled_panic" name="help-buoy"></ion-icon>
+      <span *ngIf="!disabled_panic">
+        S.O.S.
+      </span>
+      <ion-spinner *ngIf="disabled_panic" large color="primary" name="dots"></ion-spinner>
     </button>
   </ion-toolbar>
 </ion-footer>

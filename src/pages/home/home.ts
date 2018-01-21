@@ -8,7 +8,7 @@ import { Events } from 'ionic-angular';
   templateUrl: 'home.html'
 })
 export class HomePage {
-
+  disabled_panic = false;
   constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events) {
   }
 
@@ -25,8 +25,16 @@ export class HomePage {
   }
 
   sos() {
-
+    this.disabled_panic = true;
+    this.api.panic()
+      .then(() => {
+        this.disabled_panic = false;
+      })
+      .catch(() => {
+        this.disabled_panic = false;
+      });
   }
+
   locate() {
     this.bg.locate()
   }
