@@ -1,12 +1,13 @@
   page-home {
     .track-button {
-      height: 150px;
-      width: 150px;
+      height: 120px;
+      width: 120px;
       margin: 0 auto;
       border-radius: 50%;
     }
+    .sos-button {}
     ion-content {
-      background: url("/assets/map-wallpaper.jpg");
+      background: url("../assets/map-wallpaper.jpg");
     }
   }
 

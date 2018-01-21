@@ -37,6 +37,9 @@ export class BgProvider {
   }
 
   startTrack() {
+    if (!this.bg) {
+      return this.state = true
+    }
     this.bg.configure({
       desiredAccuracy: 0,
       distanceFilter: 50,
@@ -57,6 +60,10 @@ export class BgProvider {
   }
 
   stopTrack() {
+    if (!this.bg) {
+      return this.state = false
+    }
+
     if (this.state) {
       this.bg.stop();
       this.state = false;

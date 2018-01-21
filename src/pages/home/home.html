@@ -15,9 +15,87 @@
 </ion-header>
 
 <ion-content no-padding>
-  <div padding *ngIf="!bg.state">
-    <button class="track-button" ion-button color="secondary" full large (click)="start()">
+  <div padding>
+    <button *ngIf="!bg.state" class="track-button" ion-button color="secondary" block large (click)="start()">
+
       <span>Start</span>
     </button>
+    <button *ngIf="bg.state" class="track-button" ion-button color="dark" block large (click)="stop()">
+
+      <span>Stop</span>
+    </button>
   </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col col-12 col-md>
+        <ion-card>
+          <ion-fab right style="margin-top:-25px; right: 25px;">
+            <button ion-fab mini>
+              <ion-icon name="locate"></ion-icon>
+            </button>
+          </ion-fab>
+          <ion-list>
+            <ion-list-header>
+              Rastreo
+            </ion-list-header>
+            <ion-item>
+              <ion-icon color="primary" name="locate" item-left></ion-icon>
+              <b>GPS</b>
+              <span></span>
+            </ion-item>
+            <ion-item>
+              <ion-icon color="primary" name="speedometer" item-left></ion-icon>
+              <b>Velocidad</b>
+              <span></span>
+            </ion-item>
+            <ion-item>
+              <ion-icon color="primary" name="ios-analytics" item-left></ion-icon>
+              <b>Altitud</b>
+              <span></span>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+      <ion-col col-12 col-md>
+        <ion-card>
+          <ion-list>
+            <ion-list-header>
+              Usuario
+              <button ion-button small clear icon-only item-right>
+                <ion-icon name="create"></ion-icon>
+              </button>
+            </ion-list-header>
+            <ion-item>
+              <ion-icon item-left name="person"></ion-icon>
+              <b>Nombre</b>
+              <span item-right>{{api.user?.full_name}}</span>
+            </ion-item>
+            <ion-item>
+              <ion-icon item-left name="mail"></ion-icon>
+              <b>Email</b>
+              <span item-right>{{api.user?.email}}</span>
+            </ion-item>
+            <ion-item>
+              <ion-icon item-left name="grid"></ion-icon>
+              <b>Documento</b>
+              <span item-right>{{api.user?.documento | json}}</span>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+
 </ion-content>
+
+
+<ion-footer no-padding>
+  <ion-toolbar>
+    <button *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger" block round large (click)="sos()">
+      <ion-icon name="help-buoy"></ion-icon>
+      S.O.S.
+    </button>
+  </ion-toolbar>
+</ion-footer>
