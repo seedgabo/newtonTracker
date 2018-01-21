@@ -10,7 +10,7 @@
   <ion-content>
     <ion-list>
       <ion-searchbar [(ngModel)]="query" (ionInput)="filter()"></ion-searchbar>
-      <button menuClose ion-item *ngFor="let u of users" (click)="centerInUser(u)">
+      <button menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
         <ion-avatar item-left>
           <img [src]="u.imagen" *ngIf="u.imagen" alt="">
         </ion-avatar>
@@ -20,9 +20,9 @@
         <h3>
           {{u.updated_at | amLocale:'es' | amTimeAgo}}
         </h3>
-        <p>
+        <p *ngIf="u.location?.speed === -1">
           <b>Velocidad:</b>
-          {{u.location?.speed }} Km/h
+          {{u.location?.speed | number:'1:0-0' }} Km/h
         </p>
       </button>
     </ion-list>
