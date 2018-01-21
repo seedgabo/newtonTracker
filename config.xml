@@ -76,12 +76,17 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
         <splash height="2732" src="resources/ios/splash/Default@2x~universal~anyany.png" width="2732" />
     </platform>
-    <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
-    <plugin name="cordova-plugin-whitelist" spec="1.3.1" />
-    <plugin name="cordova-plugin-splashscreen" spec="~4.0.1" />
-    <plugin name="cordova-plugin-ionic-webview" spec="^1.1.11" />
+    <allow-navigation href="http://192.168.0.16:8100" />
+    <platform name="android">
+        <preference name="CodePushDeploymentKey" value="DG4EGnG_GcTtIB2wDj_a8zU3jNnxc0e4a0a6-2be5-4604-bcc1-c0b2c1387dd2" />
+    </platform>
+    <platform name="ios">
+        <preference name="CodePushDeploymentKey" value="Zq8olwNCElAUrkbv8kKo87ovOtq5c0e4a0a6-2be5-4604-bcc1-c0b2c1387dd2" />
+    </platform>
+    <engine name="android" spec="~6.3.0" />
     <plugin name="cordova-plugin-background-mode" spec="^0.7.2" />
     <plugin name="cordova-plugin-camera" spec="^2.4.1" />
+    <plugin name="cordova-plugin-code-push" spec="^1.9.8-beta" />
     <plugin name="ionic-plugin-deeplinks" spec="^1.0.15">
         <variable name="URL_SCHEME" value="myapp" />
         <variable name="DEEPLINK_SCHEME" value="https" />
@@ -92,6 +97,10 @@
     <plugin name="cordova-plugin-vibration" spec="^2.1.5" />
     <plugin name="cordova-plugin-battery-status" spec="^1.2.4" />
     <plugin name="cordova-plugin-autostart" spec="^2.0.1" />
+    <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.1" />
+    <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
+    <plugin name="cordova-plugin-ionic-webview" spec="^1.1.16" />
     <plugin name="cordova-background-geolocation-lt">
         <variable name="LICENSE" value="YOUR_LICENSE_KEY" />
         <variable name="GOOGLE_API_VERSION" value="11.6.0" />
@@ -101,13 +110,5 @@
         <variable name="LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION" value="Background location-tracking is required" />
         <variable name="MOTION_USAGE_DESCRIPTION" value="Using the accelerometer increases battery-efficiency by intelligently toggling location-tracking only when the device is detected to be moving" />
     </plugin>
-    <engine name="android" spec="~6.3.0" />
-    <allow-navigation href="http://192.168.0.16:8100" />
-    <plugin name="cordova-plugin-code-push" spec="^1.9.8-beta" />
-    <platform name="android">
-        <preference name="CodePushDeploymentKey" value="DG4EGnG_GcTtIB2wDj_a8zU3jNnxc0e4a0a6-2be5-4604-bcc1-c0b2c1387dd2" />
-    </platform>
-    <platform name="ios">
-        <preference name="CodePushDeploymentKey" value="Zq8olwNCElAUrkbv8kKo87ovOtq5c0e4a0a6-2be5-4604-bcc1-c0b2c1387dd2" />
-    </platform>
+    <plugin name="cordova-plugin-statusbar" spec="^2.4.1" />
 </widget>
