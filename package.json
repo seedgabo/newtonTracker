@@ -1,6 +1,6 @@
 {
-  "name": "newtonTrack",
-  "version": "0.0.1",
+  "name": "newton-tracker",
+  "version": "1.0.1",
   "author": "Ionic Framework",
   "homepage": "http://ionicframework.com/",
   "private": true,
@@ -9,7 +9,8 @@
     "build": "ionic-app-scripts build",
     "lint": "ionic-app-scripts lint",
     "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve"
+    "ionic:serve": "ionic-app-scripts serve",
+    "release-android": "ionic cordova run android --prod && code-push release-cordova newtonTracker android -d Android --mandatory"
   },
   "dependencies": {
     "@angular/common": "4.4.4",

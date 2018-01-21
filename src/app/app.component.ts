@@ -52,6 +52,13 @@ export class MyApp {
       });
       this.backgroundmode.enable()
       this.backgroundmode.disableWebViewOptimizations()
+      this.platform.registerBackButtonAction(() => {
+        if (this.nav.canGoBack())
+          return this.nav.pop();
+        else {
+          this.backgroundmode.moveToBackground();
+        }
+      });
       this.codePush.sync().subscribe((syncStatus) => console.log(syncStatus));
 
     });
