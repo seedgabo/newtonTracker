@@ -10,7 +10,10 @@
       <button menuClose ion-item *ngFor="let p of pages" (click)="openPage(p)">
         {{p.title}}
       </button>
-      <ion-item-divider color="light"></ion-item-divider>
+      <ion-item-divider color="light">
+        <ion-icon item-left name="setting"></ion-icon>
+        Configuración
+      </ion-item-divider>
       <button ion-item menuClose (click)="logout()">
         Cerrar Sesión
       </button>

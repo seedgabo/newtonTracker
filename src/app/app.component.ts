@@ -46,12 +46,12 @@ export class MyApp {
       // this.statusBar.styleDefault()
       this.statusBar.styleLightContent()
       this.splashScreen.hide();
+      this.backgroundmode.enable()
+      this.backgroundmode.disableWebViewOptimizations()
       this.backgroundmode.configure({
         silent: true,
         hidden: true,
       });
-      this.backgroundmode.enable()
-      this.backgroundmode.disableWebViewOptimizations()
       this.platform.registerBackButtonAction(() => {
         if (this.nav.canGoBack())
           return this.nav.pop();

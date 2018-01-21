@@ -91,22 +91,24 @@ export class HomePage {
       if (pan)
         this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
       this.cluster.addLayer(this.markers[user.id])
+      this.cluster.refreshClusters(this.markers[user.id])
     }
     else {
       var icon = L.divIcon({
         className: 'user-icon',
         iconSize: [50, 50],
         html: `
-          <img src="${user.imagen}"  class="user-img-icon pulse"/>
+        <img src="${user.imagen}"  class="user-img-icon pulse"/>
           <div class="label-map""><div>
           ${user.full_name}
           </div></div>
-        `
+          `
       });
       if (pan)
         this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
       this.markers[user.id] = L.marker([loc.latitude, loc.longitude], { icon: icon });
       this.cluster.addLayer(this.markers[user.id])
+      this.cluster.refreshClusters(this.markers[user.id])
       this.markers[user.id].on('click', (ev) => {
         var latlng = this.markers[user.id].getLatLng();
         var popup = L.popup()
