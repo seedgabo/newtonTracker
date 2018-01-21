@@ -39,12 +39,6 @@
         Newton Tracker
       </span>
     </ion-title>
-    <ion-buttons end>
-      <button icon-left ion-button color="danger" *ngIf="bg.state" (click)="stop()">
-        <ion-icon name="square"></ion-icon>
-        <span>Stop</span>
-      </button>
-    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -57,7 +51,7 @@
 
   <div id="mapid"></div>
   <ion-fab top right>
-    <button ion-fab color="favorite" menuToggle="right" mini>
+    <button ion-fab color="favorite" menuToggle="right">
       <ion-icon name="people"></ion-icon>
     </button>
   </ion-fab>
@@ -69,6 +63,10 @@
     <ion-fab-list side="top">
       <button ion-fab color="secondary" (click)="locate()">
         <ion-icon name="locate"></ion-icon>
+      </button>
+      <button ion-button color="danger" *ngIf="bg.state" (click)="stop()">
+        <ion-icon name="square"></ion-icon>
+        <span>Stop</span>
       </button>
     </ion-fab-list>
   </ion-fab>
