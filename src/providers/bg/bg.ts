@@ -60,7 +60,15 @@ export class BgProvider {
       foregroundService: true,
       notificationTitle: "Newton Tracker",
       notificationText: "Sevicio de Rastreo Activado",
-      notificationColor: "#552533FF"
+      notificationColor: "#DDDDDD",
+
+      url: this.api.url + "/api/locations/tracker",
+      params: { user_id: this.api.user.id },
+      headers: { "Authorization": "Basic " + btoa(this.api.username + ":" + this.api.password) },
+      method: 'POST',
+      autoSync: true,
+      maxDaysToPersist: 3,
+
     }, (state) => {
       this.zone.run(() => {
         this.state = true;
