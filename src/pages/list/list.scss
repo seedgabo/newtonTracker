@@ -1,3 +1,81 @@
-page-list {
+page-list {}
 
+// FAB STUFFS
+.fab-label-button {
+  .label {
+    position: absolute;
+    background: #222;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    right: 65px;
+    white-space: nowrap;
+    animation: backwards .7s fadeIn;
+  }
+}
+
+.fab-label-button:nth-child(1) {
+  .label {
+    bottom: 15px !important;
+    animation-delay: .0s;
+  }
+}
+
+.fab-label-button:nth-child(2) {
+  .label {
+    bottom: 70px !important;
+    animation-delay: .1s;
+  }
+}
+
+.fab-label-button:nth-child(3) {
+  .label {
+    bottom: 125px !important;
+    animation-delay: .2s;
+  }
+}
+
+.fab-label-button:nth-child(4) {
+  .label {
+    bottom: 180px !important;
+    animation-delay: .3s;
+  }
+}
+
+.fadeIn {
+  opacity: 0;
+  animation: fadeIn;
+  animation-delay: .2s;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.scale {
+  opacity: 0;
+  animation: scale;
+  animation-delay: .2s;
+  animation-duration: .2s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes scale {
+  from {
+    opacity: 0;
+    transform: rotate(-180);
+    transform: scale(.2);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0);
+    transform: scale(1);
+  }
 }

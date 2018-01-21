@@ -7,7 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
-// import { ListPage } from '../pages/list/list';
+import { ListPage } from '../pages/list/list';
 import { LoginPage } from '../pages/login/login';
 
 @Component({
@@ -17,8 +17,7 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   rootPage: any;
-
-  pages: Array<{ title: string, component: any }>;
+  pages: Array<{ title: string, component: any, icon: string }>;
 
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public backgroundmode: BackgroundMode, public codePush: CodePush, public api: Api) {
     this.initializeApp();
@@ -33,17 +32,14 @@ export class MyApp {
 
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Home', component: HomePage },
-      // { title: 'List', component: ListPage }
+      { title: 'Home', component: HomePage, icon: 'home' },
+      { title: 'Seguimiento', component: ListPage, icon: 'locate' }
     ];
 
   }
 
   initializeApp() {
     this.platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-      // this.statusBar.styleDefault()
       this.statusBar.styleLightContent()
       this.splashScreen.hide();
       this.backgroundmode.enable()
@@ -59,14 +55,13 @@ export class MyApp {
           this.backgroundmode.moveToBackground();
         }
       });
-      this.codePush.sync().subscribe((syncStatus) => console.log(syncStatus));
+
+      this.codePush.sync().subscribe((syncStatus) => console.log(syncStatus), console.warn);
 
     });
   }
 
   openPage(page) {
-    // Reset the content nav to have just this page
-    // we wouldn't want the back button to show in this scenario
     this.nav.setRoot(page.component);
   }
 

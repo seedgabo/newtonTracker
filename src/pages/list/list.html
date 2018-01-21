@@ -1,23 +1,73 @@
+<ion-menu [content]="app" side="right">
+  <ion-header>
+    <ion-toolbar color="dark">
+      <ion-title>
+        <ion-icon name="people"></ion-icon>
+        Usuarios
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <ion-searchbar [(ngModel)]="query" (ionInput)="filter()"></ion-searchbar>
+      <button menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
+        <ion-avatar item-left>
+          <img [src]="u.imagen" *ngIf="u.imagen" alt="">
+        </ion-avatar>
+        <h2>
+          {{u.full_name}}
+        </h2>
+        <h3>
+          {{u.updated_at | amLocale:'es' | amTimeAgo}}
+        </h3>
+        <p *ngIf="u.location?.speed === -1">
+          <b>Velocidad:</b>
+          {{u.location?.speed | number }} Km/h
+        </p>
+      </button>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>List</ion-title>
+    <ion-title>
+      <span ion-text>
+        Seguimiento
+      </span>
+    </ion-title>
   </ion-navbar>
-</ion-header>
-
-<ion-content>
-  <ion-list>
-    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
-      <ion-icon [name]="item.icon" item-start></ion-icon>
-      {{item.title}}
-      <div class="item-note" item-end>
-        {{item.note}}
-      </div>
+  <ion-fab bottom right edge>
+    <button ion-fab color="favorite" mini menuToggle="right">
+      <ion-icon name="people"></ion-icon>
     </button>
-  </ion-list>
-  <div *ngIf="selectedItem" padding>
-    You navigated here from <b>{{selectedItem.title}}</b>
-  </div>
+  </ion-fab>
+</ion-header>
+<ion-content #app no-padding>
+  <div id="mapid"></div>
+
+  <ion-fab #fab bottom right>
+    <button ion-fab color="primary">
+      <ion-icon name="add"></ion-icon>
+    </button>
+    <ion-fab-list side="top">
+      <div class="fab-label-button">
+        <button ion-fab color="secondary" (click)="locate(); fab.close()">
+          <ion-icon name="locate"></ion-icon>
+        </button>
+        <div class="label">Localizar</div>
+      </div>
+
+      <div class="fab-label-button">
+        <button ion-fab color="danger" (click)="locate();fab.close()">
+          <ion-icon name="help-buoy"></ion-icon>
+        </button>
+        <div class="label">S.O.S</div>
+      </div>
+
+    </ion-fab-list>
+  </ion-fab>
 </ion-content>

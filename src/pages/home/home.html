@@ -1,72 +1,23 @@
-<ion-menu [content]="app" side="right">
-  <ion-header>
-    <ion-toolbar color="dark">
-      <ion-title>
-        <ion-icon name="people"></ion-icon>
-        Usuarios
-      </ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content>
-    <ion-list>
-      <ion-searchbar [(ngModel)]="query" (ionInput)="filter()"></ion-searchbar>
-      <button menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
-        <ion-avatar item-left>
-          <img [src]="u.imagen" *ngIf="u.imagen" alt="">
-        </ion-avatar>
-        <h2>
-          {{u.full_name}}
-        </h2>
-        <h3>
-          {{u.updated_at | amLocale:'es' | amTimeAgo}}
-        </h3>
-        <p *ngIf="u.location?.speed === -1">
-          <b>Velocidad:</b>
-          {{u.location?.speed | number }} Km/h
-        </p>
-      </button>
-    </ion-list>
-  </ion-content>
-</ion-menu>
-
 <ion-header>
-  <ion-navbar color="light">
+  <ion-navbar color="primary">
     <button ion-button menuToggle>
       <ion-icon name="menu"></ion-icon>
     </button>
     <ion-title>
-      <span ion-text color="favorite">
-        Newton Tracker
-      </span>
+      Newton Tracker
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only clear color="danger" *ngIf="bg.state" (click)="stop()">
+        <ion-icon name="square"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
-<ion-content #app no-padding>
-  <div padding *ngIf="!bg.state" style="background-image:url(https://png.pngtree.com/thumb_back/fw800/back_pic/00/01/88/58560cef472662e.jpg)">
+<ion-content no-padding>
+  <div padding *ngIf="!bg.state">
     <button class="track-button" ion-button color="secondary" full large (click)="start()">
       <span>Start</span>
     </button>
   </div>
-
-  <div id="mapid"></div>
-  <ion-fab top right>
-    <button ion-fab color="favorite" menuToggle="right">
-      <ion-icon name="people"></ion-icon>
-    </button>
-  </ion-fab>
-
-  <ion-fab bottom right>
-    <button ion-fab color="primary">
-      <ion-icon name="add"></ion-icon>
-    </button>
-    <ion-fab-list side="top">
-      <button ion-fab color="secondary" (click)="locate()">
-        <ion-icon name="locate"></ion-icon>
-      </button>
-      <button ion-fab color="danger" *ngIf="bg.state" (click)="stop()">
-        <ion-icon name="square"></ion-icon>
-      </button>
-    </ion-fab-list>
-  </ion-fab>
 </ion-content>
