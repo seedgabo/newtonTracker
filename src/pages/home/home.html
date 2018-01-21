@@ -49,7 +49,7 @@
 </ion-header>
 
 <ion-content #app no-padding>
-  <div padding *ngIf="bg.state" style="background-image:url(https://png.pngtree.com/thumb_back/fw800/back_pic/00/01/88/58560cef472662e.jpg)">
+  <div padding *ngIf="!bg.state" style="background-image:url(https://png.pngtree.com/thumb_back/fw800/back_pic/00/01/88/58560cef472662e.jpg)">
     <button class="track-button" ion-button color="secondary" full large (click)="start()">
       <span>Start</span>
     </button>
