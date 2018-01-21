@@ -19,7 +19,13 @@ export class BgProvider {
       if (!this.bg) {
         return
       }
-      this.bg.on('location', this.onLocation, this.onLocationFailure);
+      var onlocation = (ev) => {
+        console.log(ev)
+        this.postLocation(ev);
+
+      }
+
+      this.bg.on('location', onlocation, this.onLocationFailure);
       this.bg.on('motionchange', console.info);
       this.bg.on('providerchange', console.info);
       this.bg.getState((state) => {
@@ -84,13 +90,6 @@ export class BgProvider {
       .catch((err) => {
         console.error(err)
       })
-  }
-
-  // Callbacks
-
-  onLocation(ev) {
-    console.log(ev)
-    this.postLocation(ev);
   }
 
   onLocationFailure(err) {

@@ -1,3 +1,4 @@
+import { CodePush } from '@ionic-native/code-push';
 import { Api } from './../providers/Api';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { Component, ViewChild } from '@angular/core';
@@ -19,7 +20,7 @@ export class MyApp {
 
   pages: Array<{ title: string, component: any }>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public backgroundmode: BackgroundMode, public api: Api) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public backgroundmode: BackgroundMode, public codePush: CodePush, public api: Api) {
     this.initializeApp();
 
     this.api.ready.then((user) => {
@@ -51,6 +52,8 @@ export class MyApp {
       });
       this.backgroundmode.enable()
       this.backgroundmode.disableWebViewOptimizations()
+      this.codePush.sync().subscribe((syncStatus) => console.log(syncStatus));
+
     });
   }
 
