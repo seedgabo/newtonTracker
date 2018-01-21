@@ -16,6 +16,7 @@ export class HomePage {
   markers = {}
   users = [];
   query = "";
+  cluster = L.markerClusterGroup();
   constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public alert: AlertController, public events: Events) {
     events.subscribe('LocationCreated', (data) => {
       this.markerUser(data.user, data.location.location);
@@ -43,7 +44,7 @@ export class HomePage {
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(this.map);
-
+    this.map.addLayer(this.cluster);
     this.getDefaultLocation()
   }
 
@@ -86,10 +87,10 @@ export class HomePage {
 
   markerUser(user, loc, pan = true) {
     if (this.markers[user.id]) {
-      this.map.removeLayer(this.markers[user.id]);
+      this.cluster.removeLayer(this.markers[user.id]);
       if (pan)
         this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
-      this.markers[user.id].addTo(this.map);
+      this.cluster.addLayer(this.markers[user.id])
     }
     else {
       var icon = L.divIcon({
@@ -104,8 +105,8 @@ export class HomePage {
       });
       if (pan)
         this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
-      this.markers[user.id] = L.marker([loc.latitude, loc.longitude], { icon: icon }).addTo(this.map);
-
+      this.markers[user.id] = L.marker([loc.latitude, loc.longitude], { icon: icon });
+      this.cluster.addLayer(this.markers[user.id])
       this.markers[user.id].on('click', (ev) => {
         var latlng = this.markers[user.id].getLatLng();
         var popup = L.popup()
