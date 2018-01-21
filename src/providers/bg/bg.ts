@@ -70,7 +70,7 @@ export class BgProvider {
   postLocation(loc) {
     this.api.post("locations", {
       location: loc.coords,
-      user_id: 1,
+      user_id: this.api.user.id,
       timestamp: loc.timestamp,
       extra: {
         is_moving: loc.is_moving,
