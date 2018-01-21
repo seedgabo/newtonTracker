@@ -1,3 +1,4 @@
+import { Api } from './../Api';
 import { Platform } from 'ionic-angular';
 import { Injectable, NgZone } from '@angular/core';
 import { Http } from '@angular/http';
@@ -8,7 +9,7 @@ export class BgProvider {
   bg;
   config;
   state = false;
-  constructor(public http: Http, public platform: Platform, public zone: NgZone) {
+  constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
     this.configurate()
   }
 
@@ -66,12 +67,30 @@ export class BgProvider {
     })
   }
 
-
+  postLocation(loc) {
+    this.api.post("locations", {
+      location: loc.coords,
+      user_id: 1,
+      timestamp: loc.timestamp,
+      extra: {
+        is_moving: loc.is_moving,
+        battery: loc.battery,
+        activity: loc.activity
+      }
+    })
+      .then((resp) => {
+        console.log(resp)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+  }
 
   // Callbacks
 
   onLocation(ev) {
     console.log(ev)
+    this.postLocation(ev);
   }
 
   onLocationFailure(err) {

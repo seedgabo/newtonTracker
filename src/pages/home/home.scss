@@ -1,8 +1,56 @@
-page-home {
-  .track-button {
-    height: 150px;
-    width: 150px;
-    margin: 0 auto;
-    border-radius: 50%;
+  page-home {
+    .track-button {
+      height: 150px;
+      width: 150px;
+      margin: 0 auto;
+      border-radius: 50%;
+    }
   }
-}
+
+  #mapid {
+    height: 480px;
+  }
+
+  .user-icon {
+    opacity: 0;
+    animation-name: fadein;
+    animation-fill-mode: forwards;
+    animation-duration: 1s;
+    &:hover {
+      .label-map {
+        opacity: 1;
+      }
+    }
+  }
+
+  .user-img-icon {
+    margin: auto;
+    height: 45px;
+    width: 45px;
+    border-radius: 50px;
+    border: 2px color($colors, 'primary') solid;
+  }
+
+  .label-map {
+    opacity: 0;
+    transition: opacity .4s;
+    white-space: nowrap;
+    margin-left: -55%;
+    width: fit-content;
+    max-width: 500%;
+    background: rgba(11, 33, 11, .7);
+    color: white;
+    font-weight: 900;
+    div {
+      padding: 5px;
+    }
+  }
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }

@@ -23,6 +23,9 @@ import { HttpModule } from '@angular/http';
 import { BgProvider } from '../providers/bg/bg';
 import { LoginPage } from '../pages/login/login';
 
+
+import { MomentModule } from 'angular2-moment';
+
 @NgModule({
   declarations: [
     MyApp,
@@ -35,6 +38,7 @@ import { LoginPage } from '../pages/login/login';
     HttpModule,
     IonicStorageModule.forRoot(),
     IonicModule.forRoot(MyApp),
+    MomentModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

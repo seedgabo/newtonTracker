@@ -1,3 +1,4 @@
+import { Events } from 'ionic-angular';
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 // import { Observable } from "rxjs/Observable";
@@ -5,6 +6,7 @@ import 'rxjs/add/operator/map';
 import { Storage } from '@ionic/storage';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { NgZone } from '@angular/core';
 
 declare var window: any;
 window.Pusher = Pusher;
@@ -23,8 +25,10 @@ export class Api {
   })
   resolve;
   Echo;
-  constructor(public http: Http, public storage: Storage) {
+  objects: any = {};
+  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone) {
     this.initVar();
+    window.$api = this;
   }
 
   initVar() {
@@ -56,6 +60,42 @@ export class Api {
           return reject(this.handleData(error));
         });
     });
+  }
+
+  load(resource, query = "") {
+    console.time("load " + resource)
+    return new Promise((resolve, reject) => {
+      if (this.objects[resource]) {
+        this.objects[resource].promise
+          .then((resp) => {
+            resolve(resp);
+            console.timeEnd("load " + resource)
+          })
+          .catch(reject)
+        return
+      }
+      this.storage.get(resource + "_resource")
+        .then((data) => {
+          this.objects[resource] = []
+          if (data) {
+            this.objects[resource] = data;
+          }
+          var promise;
+          this.objects[resource].promise = promise = this.get(resource + query)
+          this.objects[resource].promise.then((resp) => {
+            this.objects[resource] = resp;
+            this.objects[resource].promise = promise;
+            this.objects[resource].collection = this.mapToCollection(resp);
+            this.storage.set(resource + "_resource", resp);
+            console.timeEnd("load " + resource)
+            return resolve(this.objects[resource]);
+          })
+            .catch((err) => {
+              reject(err);
+              this.Error(err)
+            })
+        })
+    })
   }
 
   get(uri) {
@@ -94,6 +134,10 @@ export class Api {
     });
   }
 
+  Error(err) {
+    console.error(err);
+  }
+
   startEcho() {
     this.ready.then(() => {
       if (this.Echo) {
@@ -121,6 +165,13 @@ export class Api {
       this.Echo.private('Application')
         .listen('LocationCreated', (data) => {
           console.log("created location:", data);
+          this.zone.run(() => {
+            if (this.objects.users) {
+              this.objects.users.collection[data.user.id].location = data.location.location;
+              this.objects.users.collection[data.user.id].updated_at = new Date();
+            }
+            this.events.publish('LocationCreated', data)
+          })
         })
 
     })
@@ -155,5 +206,15 @@ export class Api {
       return res;
     }
   }
+
+  private mapToCollection(array, key = "id") {
+    var collection = {}
+    array.forEach(element => {
+      collection[element[key]] = element
+    });
+    return collection;
+  }
+
+
 
 }
