@@ -79,7 +79,7 @@ export class HomePage {
     if (loc)
       this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
 
-    var popup = L.popup()
+    L.popup()
       .setLatLng([loc.latitude, loc.longitude])
       .setContent(this.htmlPopup(user))
       .openOn(this.map);
@@ -128,7 +128,7 @@ export class HomePage {
   }
 
   getDefaultLocation() {
-    var icon = L.divIcon({
+    L.divIcon({
       className: 'user-icon',
       iconSize: [50, 50],
       html: `
