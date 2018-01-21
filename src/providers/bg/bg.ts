@@ -4,12 +4,19 @@ import { Injectable, NgZone } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 
+declare var window: any;
 @Injectable()
 export class BgProvider {
   bg;
+  provider = {
+    network: true,
+    gps: true,
+    enabled: false,
+  };
   config;
   state = false;
   constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
+    window.$bg = this;
     this.configurate()
   }
 
@@ -24,10 +31,13 @@ export class BgProvider {
         this.postLocation(ev);
 
       }
+      var onProvider = (ev) => {
+        this.provider = ev
+      }
 
       this.bg.on('location', onlocation, this.onLocationFailure);
+      this.bg.on('providerchange', onProvider, console.warn);
       this.bg.on('motionchange', console.info);
-      this.bg.on('providerchange', console.info);
       this.bg.getState((state) => {
         this.config = state;
         this.state = state.enabled;

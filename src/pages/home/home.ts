@@ -24,6 +24,13 @@ export class HomePage {
     this.bg.stopTrack();
   }
 
+  sos() {
+
+  }
+  locate() {
+    this.bg.locate()
+  }
+
 
 
 }

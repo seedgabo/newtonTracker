@@ -6,11 +6,11 @@
     <ion-title>
       Newton Tracker
     </ion-title>
-    <ion-buttons end>
+    <!-- <ion-buttons end>
       <button ion-button icon-only clear color="danger" *ngIf="bg.state" (click)="stop()">
         <ion-icon name="square"></ion-icon>
       </button>
-    </ion-buttons>
+    </ion-buttons> -->
   </ion-navbar>
 </ion-header>
 
@@ -31,7 +31,7 @@
       <ion-col col-12 col-md>
         <ion-card>
           <ion-fab right style="margin-top:-25px; right: 25px;">
-            <button ion-fab mini>
+            <button ion-fab mini (click)="locate()">
               <ion-icon name="locate"></ion-icon>
             </button>
           </ion-fab>
@@ -42,17 +42,17 @@
             <ion-item>
               <ion-icon color="primary" name="locate" item-left></ion-icon>
               <b>GPS</b>
-              <span></span>
+              <ion-icon item-right [name]="bg.provider.gps? 'checkmark' : 'close'" [color]="bg.provider.gps ? 'secondary' : 'danger'"></ion-icon>
             </ion-item>
             <ion-item>
               <ion-icon color="primary" name="speedometer" item-left></ion-icon>
-              <b>Velocidad</b>
-              <span></span>
+              <b>Red</b>
+              <ion-icon item-right [name]="bg.provider.network ? 'checkmark' : 'close'" [color]="bg.provider.network ? 'secondary' : 'danger'"></ion-icon>
             </ion-item>
             <ion-item>
               <ion-icon color="primary" name="ios-analytics" item-left></ion-icon>
-              <b>Altitud</b>
-              <span></span>
+              <b>Status</b>
+              <ion-icon item-right [name]="bg.state ? 'checkmark' : 'close'" [color]="bg.state ? 'secondary' : 'danger'"></ion-icon>
             </ion-item>
           </ion-list>
         </ion-card>
@@ -67,17 +67,17 @@
               </button>
             </ion-list-header>
             <ion-item>
-              <ion-icon item-left name="person"></ion-icon>
+              <ion-icon color="primary" item-left name="person"></ion-icon>
               <b>Nombre</b>
               <span item-right>{{api.user?.full_name}}</span>
             </ion-item>
             <ion-item>
-              <ion-icon item-left name="mail"></ion-icon>
+              <ion-icon color="primary" item-left name="mail"></ion-icon>
               <b>Email</b>
               <span item-right>{{api.user?.email}}</span>
             </ion-item>
             <ion-item>
-              <ion-icon item-left name="grid"></ion-icon>
+              <ion-icon color="primary" item-left name="grid"></ion-icon>
               <b>Documento</b>
               <span item-right>{{api.user?.documento | json}}</span>
             </ion-item>
@@ -93,7 +93,7 @@
 
 <ion-footer no-padding>
   <ion-toolbar>
-    <button *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger" block round large (click)="sos()">
+    <button (click)="sos()" *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger" block round large (click)="sos()">
       <ion-icon name="help-buoy"></ion-icon>
       S.O.S.
     </button>
