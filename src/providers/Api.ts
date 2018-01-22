@@ -68,6 +68,7 @@ export class Api {
       if (this.objects[resource]) {
         this.objects[resource].promise
           .then((resp) => {
+
             resolve(resp);
             console.timeEnd("load " + resource)
           })
@@ -201,6 +202,7 @@ export class Api {
   }
 
   Error(error) {
+    console.error(error)
     var message = "";
     if (error.status == 500) {
       message = "Internal Server Error"

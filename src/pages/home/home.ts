@@ -1,6 +1,6 @@
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { NavController, AlertController, ToastController } from 'ionic-angular';
 import { BgProvider } from '../../providers/bg/bg';
 import { Events } from 'ionic-angular';
 @Component({
@@ -9,7 +9,8 @@ import { Events } from 'ionic-angular';
 })
 export class HomePage {
   disabled_panic = false;
-  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events) {
+  edition = false;
+  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast:ToastController) {
   }
 
   ionViewDidLoad() {
@@ -37,6 +38,25 @@ export class HomePage {
 
   locate() {
     this.bg.locate()
+  }
+
+  saveUser(){
+    this.api.put('users/'+this.api.user.id,{
+      nombre: this.api.user.nombre,
+      email: this.api.user.email,
+      documento: this.api.user.documento,
+    })
+    .then((resp)=>{
+        this.edition =false;
+        this.api.saveUser(this.api.user)
+        this.toast.create({
+          message: "Usuario Actualizado",
+          duration: 2000
+        }).present();
+    })
+    .catch((err)=>{
+      this.api.Error(err)
+    })
   }
 
 

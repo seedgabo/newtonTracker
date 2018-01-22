@@ -62,26 +62,49 @@
           <ion-list>
             <ion-list-header>
               Usuario
-              <button ion-button small clear icon-only item-right>
+              <button ion-button small clear icon-only item-right (click)="edition=!edition">
                 <ion-icon name="create"></ion-icon>
               </button>
             </ion-list-header>
-            <ion-item>
-              <ion-icon color="primary" item-left name="person"></ion-icon>
-              <b>Nombre</b>
-              <span item-right>{{api.user?.full_name}}</span>
-            </ion-item>
-            <ion-item>
-              <ion-icon color="primary" item-left name="mail"></ion-icon>
-              <b>Email</b>
-              <span item-right>{{api.user?.email}}</span>
-            </ion-item>
-            <ion-item>
-              <ion-icon color="primary" item-left name="grid"></ion-icon>
-              <b>Documento</b>
-              <span item-right>{{api.user?.documento | json}}</span>
-            </ion-item>
+            <div *ngIf="!edition">
+              <ion-item>
+                <ion-icon color="primary" item-left name="person"></ion-icon>
+                <b>Nombre</b>
+                <span item-right>{{api.user?.full_name}}</span>
+              </ion-item>
+              <ion-item>
+                <ion-icon color="primary" item-left name="mail"></ion-icon>
+                <b>Email</b>
+                <span item-right>{{api.user?.email}}</span>
+              </ion-item>
+              <ion-item>
+                <ion-icon color="primary" item-left name="grid"></ion-icon>
+                <b>Documento</b>
+                <span item-right>{{api.user?.documento}}</span>
+              </ion-item>
+            </div>
+            <div *ngIf="edition">
+              <ion-item>
+                <ion-icon color="primary" item-left name="person"></ion-icon>
+                <ion-label floating>Nombre</ion-label>
+                <ion-input [(ngModel)]="api.user.nombre"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-icon color="primary" item-left name="mail"></ion-icon>
+                <ion-label floating>Email</ion-label>
+                <ion-input [(ngModel)]="api.user.email"></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-icon color="primary" item-left name="grid"></ion-icon>
+                <ion-label floating>Documento</ion-label>
+                <ion-input [(ngModel)]="api.user.documento"></ion-input>
+              </ion-item>
+              <div text-right>
+                <button ion-button clear (click)="saveUser()">Guardar</button>
+              </div>
+            </div>
           </ion-list>
+
         </ion-card>
       </ion-col>
     </ion-row>

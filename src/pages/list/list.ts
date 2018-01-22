@@ -17,36 +17,44 @@ export class ListPage {
   users = []
   query = ""
   cluster = L.markerClusterGroup()
+  locationCreatedHandler = (data) => {
+    this.markerUser(data.user, data.location.location);
+  }
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public api: Api, public bg: BgProvider) {
-    events.subscribe('LocationCreated', (data) => {
-      this.markerUser(data.user, data.location.location);
-    })
+    events.subscribe('LocationCreated', this.locationCreatedHandler)
   }
 
   ionViewDidLoad() {
     setTimeout(() => {
       this.initMap();
+      this.getUsers();
     }, 100)
-    this.getUsers();
   }
 
   ionViewWillUnload(){
     this.map.remove()
     this.cluster.remove()
+    this.events.unsubscribe('LocationCreated', this.locationCreatedHandler)
   }
 
   filter() {
+    var result
     if (this.query == "") {
-      return this.users = this.api.objects.users
+      result = this.api.objects.users
     }
-    var finder = this.query.toLowerCase();
-    this.users = this.api.objects.users.filter((u) => {
-      return u.full_name.toLowerCase().indexOf(finder) > -1;
+    else{
+      var finder = this.query.toLowerCase();
+      result = this.api.objects.users.filter((u) => {
+        return u.full_name.toLowerCase().indexOf(finder) > -1;
+      })
+    }
+    this.users = result.sort((a,b)=>{
+       return a.updated_at - b.updated_at
     })
   }
 
   initMap() {
-    this.map = L.map('mapid', { zoomControl: false }).setView([47.7121724, -122.3246066], 13);
+    this.map = L.map('mapid', { zoomControl: false }).setView([4.669988, -74.0673856], 13);
     L.tileLayer('https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}', {
       attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(this.map);
@@ -70,14 +78,11 @@ export class ListPage {
     // });
 
     this.map.addLayer(this.cluster);
-    navigator.geolocation.getCurrentPosition((data) => {
-      this.map.panTo(new L.LatLng(data.coords.latitude, data.coords.longitude));
-    })
   }
 
 
   getUsers() {
-    this.api.load('users')
+    this.api.load('users?order[updated_at]=desc')
       .then((users: any) => {
         this.users = users;
         users.forEach(u => {
@@ -85,6 +90,7 @@ export class ListPage {
           if (u.location)
             this.markerUser(u, u.location);
         });
+        this.map.fitBounds(this.cluster.getBounds());
       })
       .catch(this.api.Error);
   }
