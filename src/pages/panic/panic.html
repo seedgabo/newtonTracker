@@ -10,15 +10,15 @@
 </ion-header>
 
 <ion-content padding>
-  <h2>{Hay una emergencia</h2>
+  <h2>Hay una emergencia</h2>
   <ion-list>
 
     <div *ngIf="user && user.imagen" text-center>
-      <img [src]="user.imagen" [alt]="user.name" class="avatar-panic pulse">
+      <img [src]="user.imagen" [alt]="user.nombre" class="avatar-panic pulse">
     </div>
     <ion-item>
       <span>Usuario</span>
-      <h1 item-right>user.ful_name</h1>
+      <h1 item-right>{{user.full_name}}</h1>
     </ion-item>
     <ion-item>
       <b>Localización</b>
@@ -33,7 +33,7 @@
     {{ datetime.format('llll') }}
   </p>
   <h1 text-center>
-    <b>{{ entidad.name }}</b>
+    <b>{{ entidad?.name }}</b>
   </h1>
 </ion-content>
 <ion-footer>

@@ -136,7 +136,7 @@ export class ListPage {
       this.cluster.refreshClusters(this.markers[user.id])
       this.markers[user.id].on('click', (ev) => {
         var latlng = this.markers[user.id].getLatLng();
-        var popup = L.popup()
+        L.popup()
           .setLatLng(latlng)
           .setContent(this.htmlPopup(user)).openOn(this.map);
       })

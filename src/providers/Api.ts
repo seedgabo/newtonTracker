@@ -293,6 +293,7 @@ export class Api {
   }
 
   private handlePanic(data, open = true) {
+    this.events.publish("panic", data);
     data.sound = this.playSoundSOS();
     if (open == true) {
       var modal = this.modal.create("PanicPage", data);
@@ -304,7 +305,6 @@ export class Api {
     } catch (error) {
       navigator.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
     }
-    this.events.publish("panic", data);
   }
 
   private setHeaders() {

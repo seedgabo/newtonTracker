@@ -29,7 +29,8 @@ export class PanicPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events) {
     this.user = this.navParams.get('user')
 
-    this.entidad = this.navParams.get('entidad')
+    if (this.navParams.get('entidad'))
+      this.entidad = this.navParams.get('entidad')
 
     if (this.navParams.get('location'))
       this.location = this.navParams.get('location');
