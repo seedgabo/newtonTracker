@@ -163,9 +163,9 @@ export class ListPage {
       <h6> ${user.full_name}</h6>
       <span> ${moment(user.updated_at).format('LLLL')}</span>
       <br>
-      <span><b>Departamento:</b>  ${user.departamento}</span>
+      <span><b>Cargo:</b> ${user.cargo}</>
       <br>
-      <span><b>Cargo:</b> ${user.departamento}</>
+      <span><b>Departamento:</b>  ${user.departamento}</span>
     `
   }
 
