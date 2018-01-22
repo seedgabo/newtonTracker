@@ -59,23 +59,20 @@ export class ListPage {
       attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(this.map);
 
+    // L.tileLayer('https://api.tiles.mapbox.com/v4/MapID/997/256/{z}/{x}/{y}.png?access_token={accessToken}', {
+    //   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    //   maxZoom: 18
+    // }).addTo(this.map);
+
+    // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    //   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    // }).addTo(this.map);
+
+
     //  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     //   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    // });
+    // }).addTo(this.map);
 
-    // L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/hybrid.day/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}', {
-    //   attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
-    //   subdomains: '1234',
-    //   mapID: 'newest',
-    //   app_id: '<your app_id>',
-    //   app_code: '<your app_code>',
-    //   base: 'aerial',
-    //   maxZoom: 20,
-    //   type: 'maptile',
-    //   language: 'eng',
-    //   format: 'png8',
-    //   size: '256'
-    // });
 
     this.map.addLayer(this.cluster);
   }
@@ -90,7 +87,7 @@ export class ListPage {
           if (u.location)
             this.markerUser(u, u.location);
         });
-        this.map.fitBounds(this.cluster.getBounds());
+        this.map.fitBounds(this.cluster.getBounds(), { padding: [20,20] })
       })
       .catch(this.api.Error);
   }
@@ -113,7 +110,7 @@ export class ListPage {
       .openOn(this.map);
   }
 
-  markerUser(user, loc, pan = true) {
+  markerUser(user, loc, pan = true, panic=false) {
     if (this.markers[user.id]) {
       this.cluster.removeLayer(this.markers[user.id]);
       if (pan)
@@ -126,7 +123,7 @@ export class ListPage {
         className: 'user-icon',
         iconSize: [50, 50],
         html: `
-        <img src="${user.imagen}"  class="user-img-icon pulse"/>
+        <img src="${user.imagen}"  class="user-img-icon ${panic?'pulse':'online'}"/>
           <div class="label-map""><div>
           ${user.full_name}
           </div></div>

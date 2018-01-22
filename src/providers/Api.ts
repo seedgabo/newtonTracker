@@ -1,4 +1,5 @@
-import { Events, AlertController, ToastController } from 'ionic-angular';
+import { Vibration } from '@ionic-native/vibration';
+import { Events, AlertController, ToastController, ModalController } from 'ionic-angular';
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 // import { Observable } from "rxjs/Observable";
@@ -19,14 +20,15 @@ export class Api {
   password: string;
   token: string;
   url: string = 'http://newton.eycproveedores.com/newton/public/';
+  Echo;
   user: any = null;
+  objects: any = {};
   ready = new Promise((resolve, reject) => {
     this.resolve = resolve;
   })
   resolve;
-  Echo;
-  objects: any = {};
-  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController, public toast: ToastController) {
+  sound
+  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController,public modal:ModalController, public toast: ToastController, public vibration:Vibration) {
     this.initVar();
     window.$api = this;
   }
@@ -257,13 +259,14 @@ export class Api {
             this.events.publish('LocationCreated', data)
           })
         })
-
-
+        
         .listen('Panic', (data) => {
           console.log("Panic ", data);
-          this.zone.run(() => {
-            this.events.publish('Panic', data)
-          })
+          this.handlePanic(data)
+        })
+        .listen('PanicUpdate', (data) => {
+          console.log("PanicUpdate", data);
+          this.handlePanic(data,true)
         })
 
     })
@@ -275,6 +278,33 @@ export class Api {
     this.Echo.leave('App.Residence.' + this.user.residence_id);
     this.Echo.leave('App.Mobile');
     this.Echo = undefined;
+  }
+
+  playSoundSOS() {
+    this.sound = new Audio('assets/sounds/sos.mp3');
+    this.sound.play();
+    try {
+      this.vibration.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
+
+    } catch (error) {
+      navigator.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
+    }
+    return this.sound;
+  }
+
+  private handlePanic(data, open = true) {
+    data.sound = this.playSoundSOS();
+    if (open == true) {
+      var modal = this.modal.create("PanicPage", data);
+      modal.present();
+    }
+    try {
+      this.vibration.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
+
+    } catch (error) {
+      navigator.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
+    }
+    this.events.publish("panic", data);
   }
 
   private setHeaders() {

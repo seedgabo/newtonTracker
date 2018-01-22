@@ -87,14 +87,7 @@
     <plugin name="cordova-plugin-background-mode" spec="^0.7.2" />
     <plugin name="cordova-plugin-camera" spec="^2.4.1" />
     <plugin name="cordova-plugin-code-push" spec="^1.9.8-beta" />
-    <plugin name="ionic-plugin-deeplinks" spec="^1.0.15">
-        <variable name="URL_SCHEME" value="myapp" />
-        <variable name="DEEPLINK_SCHEME" value="https" />
-        <variable name="DEEPLINK_HOST" value="newton.eycproveedores.com" />
-        <variable name="ANDROID_PATH_PREFIX" value="newtonChat/" />
-    </plugin>
     <plugin name="cordova-plugin-device" spec="^1.1.4" />
-    <plugin name="cordova-plugin-vibration" spec="^2.1.5" />
     <plugin name="cordova-plugin-battery-status" spec="^1.2.4" />
     <plugin name="cordova-plugin-autostart" spec="^2.0.1" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
@@ -111,4 +104,11 @@
         <variable name="MOTION_USAGE_DESCRIPTION" value="Using the accelerometer increases battery-efficiency by intelligently toggling location-tracking only when the device is detected to be moving" />
     </plugin>
     <plugin name="cordova-plugin-statusbar" spec="^2.4.1" />
+    <plugin name="cordova-plugin-vibration" spec="^2.1.6" />
+    <plugin name="ionic-plugin-deeplinks" spec="^1.0.15">
+        <variable name="URL_SCHEME" value="newtonTracker" />
+        <variable name="DEEPLINK_SCHEME" value="http" />
+        <variable name="DEEPLINK_HOST" value="newton.eycproveedores.com" />
+        <variable name="ANDROID_PATH_PREFIX" value="/" />
+    </plugin>
 </widget>
