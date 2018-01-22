@@ -1,4 +1,5 @@
 import { BgProvider } from './../../providers/bg/bg';
+
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
 import { NavController, NavParams, Events, AlertController } from 'ionic-angular';
@@ -27,6 +28,11 @@ export class ListPage {
       this.initMap();
     }, 100)
     this.getUsers();
+  }
+
+  ionViewWillUnload(){
+    this.map.remove()
+    this.cluster.remove()
   }
 
   filter() {
