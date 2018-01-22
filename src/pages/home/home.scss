@@ -5,10 +5,13 @@
       margin: 0 auto;
       border-radius: 50%;
     }
-    .sos-button {}
+    .avatar{
+      font-size: 30px
+    }
+
     ion-content {
       background: url("../assets/map-wallpaper.jpg");
-    }
+    }     
   }
 
   .marker-cluster {

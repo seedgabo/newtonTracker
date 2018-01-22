@@ -28,6 +28,7 @@ export class Api {
   })
   resolve;
   sound
+  last_panic
   constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController,public modal:ModalController, public toast: ToastController, public vibration:Vibration) {
     this.initVar();
     window.$api = this;
@@ -266,7 +267,10 @@ export class Api {
         })
         .listen('PanicUpdate', (data) => {
           console.log("PanicUpdate", data);
-          this.handlePanic(data,true)
+          if(this.sound){
+            this.sound.pause();
+          }
+          this.handlePanic(data,false)
         })
 
     })

@@ -13,6 +13,7 @@ declare var LatLng: any;
 })
 export class ListPage {
   map
+  disabled_panic= false;
   markers = {}
   users = []
   query = ""
@@ -105,6 +106,17 @@ export class ListPage {
     this.getDefaultLocation();
 
     this.bg.locate().then((pos) => { })
+  }
+
+  sos() {
+    this.disabled_panic = true;
+    this.api.panic()
+      .then(() => {
+        this.disabled_panic = false;
+      })
+      .catch(() => {
+        this.disabled_panic = false;
+      });
   }
 
   centerInUser(user) {

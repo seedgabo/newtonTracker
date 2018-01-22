@@ -15,6 +15,7 @@
 </ion-header>
 
 <ion-content no-padding>
+  <input type="file" name="filer" #filer style="display:none">
   <div padding>
     <button *ngIf="!bg.state" class="track-button" ion-button color="secondary" block large (click)="start()">
 
@@ -84,6 +85,9 @@
               </ion-item>
             </div>
             <div *ngIf="edition">
+              <div text-center>
+                  <ion-icon name="camera" class="avatar"></ion-icon>
+              </div>
               <ion-item>
                 <ion-icon color="primary" item-left name="person"></ion-icon>
                 <ion-label floating>Nombre</ion-label>
@@ -100,7 +104,9 @@
                 <ion-input [(ngModel)]="api.user.documento"></ion-input>
               </ion-item>
               <div text-right>
-                <button ion-button clear (click)="saveUser()">Guardar</button>
+                <button ion-button clear (click)="saveUser()">
+                  Guardar
+                </button>
               </div>
             </div>
           </ion-list>
@@ -116,7 +122,7 @@
 
 <ion-footer no-padding>
   <ion-toolbar>
-    <button [disabled]="disabled_panic" (click)="sos()" *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger" block round large (click)="sos()">
+    <button [disabled]="disabled_panic" (click)="sos()" *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger" block round large>
 
       <ion-icon *ngIf="!disabled_panic" name="help-buoy"></ion-icon>
       <span *ngIf="!disabled_panic">

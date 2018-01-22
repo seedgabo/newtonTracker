@@ -62,7 +62,7 @@
       </div>
 
       <div class="fab-label-button">
-        <button ion-fab color="danger" (click)="locate();fab.close()">
+        <button ion-fab color="danger" [disabled]="disabled_panic" (click)="sos();fab.close()">
           <ion-icon name="help-buoy"></ion-icon>
         </button>
         <div class="label">S.O.S</div>
