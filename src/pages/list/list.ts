@@ -20,8 +20,15 @@ export class ListPage {
   locationCreatedHandler = (data) => {
     this.markerUser(data.user, data.location.location);
   }
+  panicHandler = (data)=>{
+    if(!data.location){
+        data.location =data.user.location
+    }
+    this.markerUser(data.user, data.location,true, true);
+  }
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public api: Api, public bg: BgProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
+    events.subscribe('panic', this.panicHandler)
   }
 
   ionViewDidLoad() {
@@ -35,6 +42,7 @@ export class ListPage {
     this.map.remove()
     this.cluster.remove()
     this.events.unsubscribe('LocationCreated', this.locationCreatedHandler)
+    this.events.unsubscribe('panic', this.panicHandler)
   }
 
   filter() {
@@ -113,34 +121,29 @@ export class ListPage {
   markerUser(user, loc, pan = true, panic=false) {
     if (this.markers[user.id]) {
       this.cluster.removeLayer(this.markers[user.id]);
-      if (pan)
-        this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
-      this.cluster.addLayer(this.markers[user.id])
-      this.cluster.refreshClusters(this.markers[user.id])
+      delete(this.markers[user.id])
     }
-    else {
-      var icon = L.divIcon({
-        className: 'user-icon',
-        iconSize: [50, 50],
-        html: `
-        <img src="${user.imagen}"  class="user-img-icon ${panic?'pulse':'online'}"/>
-          <div class="label-map""><div>
-          ${user.full_name}
-          </div></div>
-          `
-      });
-      if (pan)
-        this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
-      this.markers[user.id] = L.marker([loc.latitude, loc.longitude], { icon: icon });
-      this.cluster.addLayer(this.markers[user.id])
-      this.cluster.refreshClusters(this.markers[user.id])
-      this.markers[user.id].on('click', (ev) => {
-        var latlng = this.markers[user.id].getLatLng();
-        L.popup()
-          .setLatLng(latlng)
-          .setContent(this.htmlPopup(user)).openOn(this.map);
-      })
-    }
+    var icon = L.divIcon({
+      className: 'user-icon',
+      iconSize: [50, 50],
+      html: `
+      <img src="${user.imagen}"  class="user-img-icon ${panic?'pulse':'online'}"/>
+        <div class="label-map""><div>
+        ${user.full_name}
+        </div></div>
+        `
+    });
+    if (pan)
+      this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
+    this.markers[user.id] = L.marker([loc.latitude, loc.longitude], { icon: icon });
+    this.cluster.addLayer(this.markers[user.id])
+    this.cluster.refreshClusters(this.markers[user.id])
+    this.markers[user.id].on('click', (ev) => {
+      var latlng = this.markers[user.id].getLatLng();
+      L.popup()
+        .setLatLng(latlng)
+        .setContent(this.htmlPopup(user)).openOn(this.map);
+    })
   }
 
   htmlPopup(user) {
