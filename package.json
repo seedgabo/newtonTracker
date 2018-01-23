@@ -39,6 +39,7 @@
     "code-push": "^2.0.4",
     "cordova-android": "6.3.0",
     "cordova-background-geolocation-lt": "^2.9.1",
+    "cordova-browser": "5.0.3",
     "cordova-plugin-autostart": "^2.0.1",
     "cordova-plugin-background-fetch": "^5.1.1",
     "cordova-plugin-background-mode": "^0.7.2",
@@ -104,7 +105,8 @@
       "cordova-plugin-zip": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "browser"
     ]
   }
 }
