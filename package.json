@@ -10,7 +10,8 @@
     "lint": "ionic-app-scripts lint",
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve",
-    "release-android": "ionic cordova build android --prod && code-push release-cordova newtonTracker android -d Android --mandatory"
+    "release-android": "ionic cordova build android --prod && code-push release-cordova newtonTracker android -d Android --mandatory",
+    "release-web": "ionic cordova build browser --prod"
   },
   "dependencies": {
     "@angular/common": "4.4.4",
