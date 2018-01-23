@@ -41,7 +41,7 @@ export class BgProvider {
 
 
       this.bg.on('location', onlocation, this.onLocationFailure);
-      this.bg.on('http', onHttp, console.error);
+      this.bg.on('http', onHttp, this.onLocationFailure);
       this.bg.on('providerchange', onProvider, console.warn);
       this.bg.on('motionchange', console.info);
       this.bg.getState((state) => {
@@ -106,13 +106,11 @@ export class BgProvider {
 
   postLocation(loc) {
     loc.user_id = this.api.user.id
-    this.api.post("locations/tracker",loc)
-      .then((resp) => {
-        console.log(resp)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+    var promise = this.api.post("locations/tracker",loc)
+    promise .then((resp) => { console.log(resp) })
+      .catch((err) => { console.error(err) })
+
+    return promise
   }
 
   onLocationFailure(err) {
