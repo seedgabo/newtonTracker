@@ -40,17 +40,9 @@ export class MyApp {
       this.splashScreen.hide();
       this.backgroundmode.enable()
       this.backgroundmode.disableWebViewOptimizations()
-      this.backgroundmode.configure({
-        silent: true,
-        hidden: true,
-      });
-
+      this.backgroundmode.setDefaults({ silent: true, });
       this.platform.registerBackButtonAction(() => {
-        if (this.nav.canGoBack())
-          return this.nav.pop();
-        else {
-          this.backgroundmode.moveToBackground();
-        }
+        this.nav.canGoBack() ? this.nav.pop() : this.backgroundmode.moveToBackground()
       });
 
       var sync = () => {
@@ -61,6 +53,7 @@ export class MyApp {
           }, (err) => { console.warn(err) });
       }
       setInterval(sync, 1000 * 60 * 60 * 8);
+      sync();
 
       var subsription = () => {
         this.deeplinks.route({
@@ -74,15 +67,11 @@ export class MyApp {
           if (nomatch && nomatch.$link) {
             if (nomatch.$link.url && nomatch.$link.url.indexOf("sos") > -1) {
               setTimeout(() => {
-                this.api.panic()
-                .then(()=>{
-                  
-                })
-                .catch(this.api.Error)
+                this.api.panic() .then(()=>{ }) .catch(this.api.Error)
               }, 1200);
             }
-            subsription();
           }
+          subsription();
         });
       }
       subsription()
