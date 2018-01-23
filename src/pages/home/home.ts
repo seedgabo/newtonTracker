@@ -1,3 +1,4 @@
+import { CodePush } from '@ionic-native/code-push';
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
 import { NavController, ToastController } from 'ionic-angular';
@@ -10,11 +11,19 @@ import { Events } from 'ionic-angular';
 export class HomePage {
   disabled_panic = false;
   edition = false;
-  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast:ToastController) {
+  version_data
+  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast:ToastController, public codepush:CodePush) {
   }
 
   ionViewDidLoad() {
     this.api.startEcho();
+    this.codepush.getCurrentPackage()
+      .then((data) => {
+        this.version_data = data
+      })
+      .catch((err) => {
+        console.warn(err)
+      });
   }
 
   start() {

@@ -113,6 +113,30 @@
 
         </ion-card>
       </ion-col>
+      <ion-col col-12 col-md *ngIf="version_data">
+        <ion-card>
+          <ion-list>
+              <ion-list-header>
+                App
+              </ion-list-header>
+              <ion-item *ngIf="version_data.appVersion">
+                <ion-icon color="primary" item-left name="appstore"></ion-icon>
+                <b>Version de App</b>
+                <span item-right> {{version_data.appVersion}}</span>
+              </ion-item>
+              <ion-item *ngIf="version_data.label">
+                <ion-icon color="primary" item-left name="cloud-download"></ion-icon>
+                <b>Version Live</b>
+                <span item-right> {{version_data.label}}</span>
+              </ion-item>
+              <ion-item *ngIf="version_data.description">
+                <ion-icon color="primary" item-left name="text"></ion-icon>
+                <b>Descripción</b>
+                {{version_data.description}}
+              </ion-item>
+            </ion-list>
+        </ion-card>
+      </ion-col>
     </ion-row>
 
   </ion-grid>
