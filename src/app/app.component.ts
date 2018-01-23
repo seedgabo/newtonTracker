@@ -63,6 +63,7 @@ export class MyApp {
           // match.$link - the full link data
           console.log('Successfully matched route', match);
         }, (nomatch) => {
+          console.log('no matched route', nomatch);
           // nomatch.$link - the full link data
           if (nomatch && nomatch.$link) {
             if (nomatch.$link.url && nomatch.$link.url.indexOf("sos") > -1) {
