@@ -26,7 +26,11 @@ export class MyApp {
       if (!user) {
         this.nav.setRoot(LoginPage)
       } else {
-        this.nav.setRoot(HomePage);
+        if (this.platform.is('mobile')) {
+          this.nav.setRoot(HomePage);
+        } else {
+          this.nav.setRoot(ListPage);
+        }
         this.api.doLogin().then((response: any) => {
           this.api.saveUser(response);
           this.api.saveData()
@@ -35,13 +39,14 @@ export class MyApp {
       }
     })
 
-    // used for an example of ngFor and navigation
-    this.pages = [
-      { title: 'My Tracker', component: HomePage, icon: 'home' },
-      { title: 'Seguimiento', component: ListPage, icon: 'locate' },
-      { title: 'Reportes de Emergencia', component: "PanicLogsPage", icon: 'help-buoy' }
-    ];
-
+    this.platform.ready().then(() => {
+      this.pages = [];
+      if (this.platform.is('mobile')) {
+        this.pages.push({ title: 'My Tracker', component: HomePage, icon: 'home' })
+      }
+      this.pages.push({ title: 'Seguimiento', component: ListPage, icon: 'locate' })
+      this.pages.push({ title: 'Reportes de Emergencia', component: "PanicLogsPage", icon: 'help-buoy' })
+    })
   }
 
   initializeApp() {
