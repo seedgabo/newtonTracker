@@ -83,7 +83,6 @@
     <platform name="ios">
         <preference name="CodePushDeploymentKey" value="Zq8olwNCElAUrkbv8kKo87ovOtq5c0e4a0a6-2be5-4604-bcc1-c0b2c1387dd2" />
     </platform>
-    <engine name="android" spec="6.3.0" />
     <plugin name="cordova-plugin-background-mode" spec="^0.7.2" />
     <plugin name="cordova-plugin-camera" spec="^2.4.1" />
     <plugin name="cordova-plugin-code-push" spec="^1.11.2" />
@@ -113,4 +112,5 @@
     <plugin name="cordova-plugin-statusbar" spec="^2.4.1" />
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.0" />
     <plugin name="cordova-plugin-zip" spec="^3.1.0" />
+    <engine name="android" spec="6.3.0" />
 </widget>

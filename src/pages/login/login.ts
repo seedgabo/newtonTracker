@@ -3,14 +3,18 @@ import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
-
+declare var window:any
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
 })
 export class LoginPage {
   backimg;
+  preconfigured = false
   constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, public alert: AlertController, public sanitizer: DomSanitizer, public api: Api) {
+    if (window.url) {
+      this.preconfigured = true;
+    }
   }
 
   ionViewDidLoad() {
