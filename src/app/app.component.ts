@@ -1,3 +1,4 @@
+import { HomePage } from './../pages/home/home';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { CodePush } from '@ionic-native/code-push';
 import { Api } from './../providers/Api';
@@ -52,11 +53,15 @@ export class MyApp {
               this.splashScreen.show();
           }, (err) => { console.warn(err) });
       }
-      setInterval(sync, 1000 * 60 * 60 * 8);
       sync();
+      setInterval(sync, 1000 * 60 * 60 * 8);
 
       var subsription = () => {
-        this.deeplinks.route({
+        this.deeplinks.routeWithNavController(this.nav,{
+          '/': HomePage,
+          '/tracking': ListPage,
+          'panic-logs': 'PanicLogsPage',
+
         }).subscribe((match) => {
           // match.$route - the route we matched, which is the matched entry from the arguments to route()
           // match.$args - the args passed in the link
@@ -67,9 +72,11 @@ export class MyApp {
           // nomatch.$link - the full link data
           if (nomatch && nomatch.$link) {
             if (nomatch.$link.url && nomatch.$link.url.indexOf("sos") > -1) {
-              setTimeout(() => {
-                this.api.panic() .then(()=>{ }) .catch(this.api.Error)
-              }, 1200);
+              this.api.ready.then(()=>{
+                setTimeout(() => {
+                  this.api.panic() .then(()=>{ }) .catch(this.api.Error)
+                }, 1200);
+              })
             }
           }
           subsription();
