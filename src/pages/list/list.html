@@ -5,6 +5,11 @@
         <ion-icon name="people"></ion-icon>
         Usuarios
       </ion-title>
+      <ion-buttons end>
+        <button ion-button clear icon-only>
+          <ion-icon name="checkmark"></ion-icon>
+        </button>
+      </ion-buttons>
     </ion-toolbar>
   </ion-header>
   <ion-content>
@@ -71,6 +76,14 @@
           <ion-icon name="help-buoy"></ion-icon>
         </button>
         <div class="label">S.O.S</div>
+      </div>
+
+
+      <div class="fab-label-button">
+        <button ion-fab color="primary" (click)="fitToAll();fab.close()">
+          <ion-icon name="md-expand"></ion-icon>
+        </button>
+        <div class="label">Ajustar</div>
       </div>
 
     </ion-fab-list>

@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-navbar color="danger">
+    <button ion-button menuToggle icon-only>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Reportes de Emergencia</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <div text-center>
+    <ion-spinner *ngIf="loading" color="primary"></ion-spinner>
+  </div>
+  <ion-list inset [virtualScroll]="panics.data">
+    <ion-item *virtualItem="let panic">
+      <h2 *ngIf="panic.user">
+        {{panic.user.full_name}}
+      </h2>
+      <h3 *ngIf="panic.entidad">
+        {{panic.entidad?.name}}
+      </h3>
+      <p>
+        {{panic.created_at | amDateFormat:'LLLL' }}
+      </p>
+      <button icon-only clear color="dark" ion-button item-right *ngIf="panic.location" (click)="openMap(panic)">
+        <ion-icon name="locate"></ion-icon>
+      </button>
+    </ion-item>
+  </ion-list>
+</ion-content>

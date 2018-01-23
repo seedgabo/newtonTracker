@@ -96,24 +96,19 @@ export class ListPage {
           if (u.location)
             this.markerUser(u, u.location);
         });
-        this.map.fitBounds(this.cluster.getBounds(), { padding: [20, 20] })
+        this.fitToAll()
+
       })
       .catch(this.api.Error);
   }
 
-  pluck(array, key) {
-    var resp = []
-    array.forEach(element => {
-      resp[resp.length] = element[key]
-    });
-    return resp
-  }
+
 
 
   locate() {
     this.getDefaultLocation();
-
-    this.bg.locate().then((pos) => { })
+    if (this.bg.bg)
+      this.bg.locate().then((pos) => { })
   }
 
   sos() {
@@ -125,6 +120,11 @@ export class ListPage {
       .catch(() => {
         this.disabled_panic = false;
       });
+  }
+
+
+  fitToAll() {
+    this.map.fitBounds(this.cluster.getBounds(), { padding: [20, 20] })
   }
 
   centerInUser(user) {
@@ -181,5 +181,14 @@ export class ListPage {
     navigator.geolocation.getCurrentPosition((data) => {
       this.map.panTo(new L.LatLng(data.coords.latitude, data.coords.longitude));
     })
+  }
+
+
+  private pluck(array, key) {
+    var resp = []
+    array.forEach(element => {
+      resp[resp.length] = element[key]
+    });
+    return resp
   }
 }
