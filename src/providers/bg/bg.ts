@@ -31,11 +31,17 @@ export class BgProvider {
         this.postLocation(ev);
 
       }
+      var onHttp = (ev)=>{
+          console.log("location posted",ev)
+      }
+
       var onProvider = (ev) => {
         this.provider = ev
       }
 
+
       this.bg.on('location', onlocation, this.onLocationFailure);
+      this.bg.on('http', onHttp, console.error);
       this.bg.on('providerchange', onProvider, console.warn);
       this.bg.on('motionchange', console.info);
       this.bg.getState((state) => {
@@ -62,7 +68,7 @@ export class BgProvider {
       notificationText: "Sevicio de Rastreo Activado",
       notificationColor: "#DDDDDD",
 
-      url: this.api.url + "/api/locations/tracker",
+      url: this.api.url + "api/locations/tracker",
       params: { user_id: this.api.user.id },
       headers: { "Authorization": "Basic " + btoa(this.api.username + ":" + this.api.password) },
       method: 'POST',
@@ -99,16 +105,8 @@ export class BgProvider {
   }
 
   postLocation(loc) {
-    this.api.post("locations", {
-      location: loc.coords,
-      user_id: this.api.user.id,
-      timestamp: loc.timestamp,
-      extra: {
-        is_moving: loc.is_moving,
-        battery: loc.battery,
-        activity: loc.activity
-      }
-    })
+    loc.user_id = this.api.user.id
+    this.api.post("locations/tracker",loc)
       .then((resp) => {
         console.log(resp)
       })

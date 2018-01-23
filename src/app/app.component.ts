@@ -1,4 +1,3 @@
-import { HomePage } from './../pages/home/home';
 import { Deeplinks } from '@ionic-native/deeplinks';
 import { CodePush } from '@ionic-native/code-push';
 import { Api } from './../providers/Api';
