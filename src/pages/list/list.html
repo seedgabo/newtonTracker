@@ -18,8 +18,11 @@
           {{u.full_name}}
         </h2>
         <h3>
-          {{u.updated_at | amLocale:'es' | amTimeAgo}}
+          {{u.entidad?.name }}
         </h3>
+        <ion-note>
+          {{u.updated_at | amLocale:'es' | amTimeAgo}}
+        </ion-note>
         <p *ngIf="u.location?.speed != -1">
           <b>Velocidad:</b>
           {{u.location?.speed | number }} Km/h
@@ -46,6 +49,8 @@
     </button>
   </ion-fab>
 </ion-header>
+
+
 <ion-content #app no-padding>
   <div id="mapid"></div>
 

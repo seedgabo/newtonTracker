@@ -13,7 +13,7 @@ declare var LatLng: any;
 })
 export class ListPage {
   map
-  disabled_panic= false;
+  disabled_panic = false;
   markers = {}
   users = []
   query = ""
@@ -21,11 +21,11 @@ export class ListPage {
   locationCreatedHandler = (data) => {
     this.markerUser(data.user, data.location.location);
   }
-  panicHandler = (data)=>{
-    if(!data.location){
-        data.location =data.user.location
+  panicHandler = (data) => {
+    if (!data.location) {
+      data.location = data.user.location
     }
-    this.markerUser(data.user, data.location,true, true);
+    this.markerUser(data.user, data.location, true, true);
   }
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public api: Api, public bg: BgProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
@@ -39,7 +39,7 @@ export class ListPage {
     }, 100)
   }
 
-  ionViewWillUnload(){
+  ionViewWillUnload() {
     this.map.remove()
     this.cluster.remove()
     this.events.unsubscribe('LocationCreated', this.locationCreatedHandler)
@@ -49,17 +49,16 @@ export class ListPage {
   filter() {
     var result
     if (this.query == "") {
-      result = this.api.objects.users
+      result = this.api.objects.users_tracks
     }
-    else{
-      var finder = this.query.toLowerCase();
-      result = this.api.objects.users.filter((u) => {
-        return u.full_name.toLowerCase().indexOf(finder) > -1;
+    else {
+      var finder = this.query.toLowerCase().trim();
+      result = this.api.objects.users_tracks.filter((u) => {
+        return u.full_name.toLowerCase().indexOf(finder) > -1
+          || (u.entidad && u.entidad.name.toLowerCase().indexOf(finder) > -1)
       })
     }
-    this.users = result.sort((a,b)=>{
-       return a.updated_at - b.updated_at
-    })
+    this.users = result;
   }
 
   initMap() {
@@ -88,17 +87,26 @@ export class ListPage {
 
 
   getUsers() {
-    this.api.load('users?order[updated_at]=desc')
+    var entidades_ids = this.pluck(this.api.user.entidades, 'id')
+    this.api.load(`users?whereIn[entidad_id]=${entidades_ids.join()}&with[]=entidad&order[updated_at]=desc`, 'users_tracks')
       .then((users: any) => {
         this.users = users;
         users.forEach(u => {
-          console.log(u)
+          // console.log(u)
           if (u.location)
             this.markerUser(u, u.location);
         });
-        this.map.fitBounds(this.cluster.getBounds(), { padding: [20,20] })
+        this.map.fitBounds(this.cluster.getBounds(), { padding: [20, 20] })
       })
       .catch(this.api.Error);
+  }
+
+  pluck(array, key) {
+    var resp = []
+    array.forEach(element => {
+      resp[resp.length] = element[key]
+    });
+    return resp
   }
 
 
@@ -130,16 +138,16 @@ export class ListPage {
       .openOn(this.map);
   }
 
-  markerUser(user, loc, pan = true, panic=false) {
+  markerUser(user, loc, pan = true, panic = false) {
     if (this.markers[user.id]) {
       this.cluster.removeLayer(this.markers[user.id]);
-      delete(this.markers[user.id])
+      delete (this.markers[user.id])
     }
     var icon = L.divIcon({
       className: 'user-icon',
       iconSize: [50, 50],
       html: `
-      <img src="${user.imagen}"  class="user-img-icon ${panic?'pulse':'online'}"/>
+      <img src="${user.imagen}"  class="user-img-icon ${panic ? 'pulse' : 'online'}"/>
         <div class="label-map""><div>
         ${user.full_name}
         </div></div>

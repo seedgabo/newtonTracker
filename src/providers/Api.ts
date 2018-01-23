@@ -29,7 +29,7 @@ export class Api {
   resolve;
   sound
   last_panic
-  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController,public modal:ModalController, public toast: ToastController, public vibration:Vibration) {
+  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController, public modal: ModalController, public toast: ToastController, public vibration: Vibration) {
     this.initVar();
     window.$api = this;
   }
@@ -65,34 +65,37 @@ export class Api {
     });
   }
 
-  load(resource, query = "") {
-    console.time("load " + resource)
+  load(resource, saveAs = null) {
+    if (!saveAs) {
+      saveAs = resource
+    }
+    console.time("load " + saveAs)
     return new Promise((resolve, reject) => {
-      if (this.objects[resource]) {
-        this.objects[resource].promise
+      if (this.objects[saveAs]) {
+        this.objects[saveAs].promise
           .then((resp) => {
 
             resolve(resp);
-            console.timeEnd("load " + resource)
+            console.timeEnd("load " + saveAs)
           })
           .catch(reject)
         return
       }
-      this.storage.get(resource + "_resource")
+      this.storage.get(saveAs + "_resource")
         .then((data) => {
-          this.objects[resource] = []
+          this.objects[saveAs] = []
           if (data) {
-            this.objects[resource] = data;
+            this.objects[saveAs] = data;
           }
           var promise;
-          this.objects[resource].promise = promise = this.get(resource + query)
-          this.objects[resource].promise.then((resp) => {
-            this.objects[resource] = resp;
-            this.objects[resource].promise = promise;
-            this.objects[resource].collection = this.mapToCollection(resp);
-            this.storage.set(resource + "_resource", resp);
-            console.timeEnd("load " + resource)
-            return resolve(this.objects[resource]);
+          this.objects[saveAs].promise = promise = this.get(resource)
+          this.objects[saveAs].promise.then((resp) => {
+            this.objects[saveAs] = resp;
+            this.objects[saveAs].promise = promise;
+            this.objects[saveAs].collection = this.mapToCollection(resp);
+            this.storage.set(saveAs + "_resource", resp);
+            console.timeEnd("load " + saveAs)
+            return resolve(this.objects[saveAs]);
           })
             .catch((err) => {
               reject(err);
@@ -260,17 +263,17 @@ export class Api {
             this.events.publish('LocationCreated', data)
           })
         })
-        
+
         .listen('Panic', (data) => {
           console.log("Panic ", data);
           this.handlePanic(data)
         })
         .listen('PanicUpdate', (data) => {
           console.log("PanicUpdate", data);
-          if(this.sound){
+          if (this.sound) {
             this.sound.pause();
           }
-          this.handlePanic(data,false)
+          this.handlePanic(data, false)
         })
 
     })

@@ -86,7 +86,7 @@
             </div>
             <div *ngIf="edition">
               <div text-center>
-                  <ion-icon name="camera" class="avatar"></ion-icon>
+                <ion-icon name="camera" class="avatar"></ion-icon>
               </div>
               <ion-item>
                 <ion-icon color="primary" item-left name="person"></ion-icon>
@@ -122,7 +122,8 @@
 
 <ion-footer no-padding>
   <ion-toolbar>
-    <button [disabled]="disabled_panic" (click)="sos()" *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger" block round large>
+    <button [disabled]="disabled_panic" (click)="sos()" *ngIf="bg.state" icon-left class="sos-button" ion-button color="danger"
+      block round large>
 
       <ion-icon *ngIf="!disabled_panic" name="help-buoy"></ion-icon>
       <span *ngIf="!disabled_panic">

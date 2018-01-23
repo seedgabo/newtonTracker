@@ -27,6 +27,11 @@ export class MyApp {
         this.nav.setRoot(LoginPage)
       } else {
         this.nav.setRoot(HomePage);
+        this.api.doLogin().then((response: any) => {
+          this.api.saveUser(response);
+          this.api.saveData()
+          this.api.user = response;
+        }).catch(this.api.Error);
       }
     })
 
