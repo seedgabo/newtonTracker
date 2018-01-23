@@ -27,12 +27,11 @@ export class BgProvider {
         return
       }
       var onlocation = (ev) => {
-        console.log(ev)
-        this.postLocation(ev);
-
+        console.log("on Location",ev)
+        // this.postLocation(ev);
       }
       var onHttp = (ev)=>{
-          console.log("location posted",ev)
+          console.log("location posted", ev)
       }
 
       var onProvider = (ev) => {
@@ -108,7 +107,7 @@ export class BgProvider {
 
   postLocation(loc) {
     loc.user_id = this.api.user.id
-    var promise = this.api.post("locations/tracker",loc)
+    var promise = this.api.post("locations/tracker", loc)
     promise .then((resp) => { console.log(resp) })
       .catch((err) => { console.error(err) })
 
