@@ -70,7 +70,7 @@ export class BgProvider {
       url: this.api.url + "api/locations/tracker",
       params: { user_id: this.api.user.id },
       httpRootProperty: '.',
-      locationTemplate: `{ user_id: ${this.api.user.id} ,timestamp: <%= timestamp %>, coords: { latitude: <%= latitude %>, longitude: <%= longitude %>, accuracy: <%= accuracy %>, speed: <%= speed %>, heading: <%= heading %>, altitude: <%= altitude %> }, "activity": { "type": <%= activity.type	%>, "confidence": <%= activity.confidence	%> }, "battery": { "level": <%= battery.level	%>, "is_charging": <%= battery.is_charging %> } }`,
+      locationTemplate: `{ user_id: ${this.api.user.id} ,timestamp: <%= timestamp %>, coords: { latitude: <%= latitude %>, longitude: <%= longitude %>, accuracy: <%= accuracy %>, speed: <%= speed %>, heading: <%= heading %>, altitude: <%= altitude %> }}`,
       headers: { "Authorization": "Basic " + btoa(this.api.username + ":" + this.api.password) },
       method: 'POST',
       autoSync: true,
