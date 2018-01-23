@@ -1,3 +1,4 @@
+import { Deeplinks } from '@ionic-native/deeplinks';
 import { CodePush } from '@ionic-native/code-push';
 import { Api } from './../providers/Api';
 import { BackgroundMode } from '@ionic-native/background-mode';
@@ -17,27 +18,11 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   rootPage: any;
-  pages: Array<{ title: string, component: any, icon: string }>;
+  pages: Array<{ title: string, component: any, icon: string, if?:any }>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public backgroundmode: BackgroundMode, public codePush: CodePush, public api: Api) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public backgroundmode: BackgroundMode, public codePush: CodePush, public deeplinks:Deeplinks ,public api: Api) {
     this.initializeApp();
-
-    this.api.ready.then((user) => {
-      if (!user) {
-        this.nav.setRoot(LoginPage)
-      } else {
-        if (this.platform.is('mobile')) {
-          this.nav.setRoot(HomePage);
-        } else {
-          this.nav.setRoot(ListPage);
-        }
-        this.api.doLogin().then((response: any) => {
-          this.api.saveUser(response);
-          this.api.saveData()
-          this.api.user = response;
-        }).catch(this.api.Error);
-      }
-    })
+    this.initializeUser();
 
     this.platform.ready().then(() => {
       this.pages = [];
@@ -59,6 +44,7 @@ export class MyApp {
         silent: true,
         hidden: true,
       });
+
       this.platform.registerBackButtonAction(() => {
         if (this.nav.canGoBack())
           return this.nav.pop();
@@ -67,9 +53,59 @@ export class MyApp {
         }
       });
 
-      this.codePush.sync().subscribe((syncStatus) => console.log(syncStatus), console.warn);
+      var sync = () => {
+        this.codePush.sync({ updateDialog: false })
+          .subscribe((status) => {
+            if (status == 8)
+              this.splashScreen.show();
+          }, (err) => { console.warn(err) });
+      }
+      setInterval(sync, 1000 * 60 * 60 * 8);
 
+      var subsription = () => {
+        this.deeplinks.route({
+        }).subscribe((match) => {
+          // match.$route - the route we matched, which is the matched entry from the arguments to route()
+          // match.$args - the args passed in the link
+          // match.$link - the full link data
+          console.log('Successfully matched route', match);
+        }, (nomatch) => {
+          // nomatch.$link - the full link data
+          if (nomatch && nomatch.$link) {
+            if (nomatch.$link.url && nomatch.$link.url.indexOf("sos") > -1) {
+              setTimeout(() => {
+                this.api.panic()
+                .then(()=>{
+                  
+                })
+                .catch(this.api.Error)
+              }, 1200);
+            }
+            subsription();
+          }
+        });
+      }
+      subsription()
     });
+  }
+
+  initializeUser(){
+    this.api.ready.then((user) => {
+      if (!user) {
+        this.nav.setRoot(LoginPage)
+      } else {
+        if (this.platform.is('mobile')) {
+          this.nav.setRoot(HomePage);
+        } else {
+          this.nav.setRoot(ListPage);
+        }
+        this.api.doLogin().then((response: any) => {
+          this.api.saveUser(response);
+          this.api.saveData()
+          this.api.user = response;
+        }).catch(this.api.Error);
+      }
+    })
   }
 
   openPage(page) {

@@ -1,6 +1,6 @@
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
-import { NavController, AlertController, ToastController } from 'ionic-angular';
+import { NavController, ToastController } from 'ionic-angular';
 import { BgProvider } from '../../providers/bg/bg';
 import { Events } from 'ionic-angular';
 @Component({

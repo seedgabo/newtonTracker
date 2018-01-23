@@ -6,7 +6,6 @@ import { NavController, NavParams, Events, AlertController } from 'ionic-angular
 import * as moment from 'moment';
 moment.locale('es');
 declare var L: any;
-declare var LatLng: any;
 @Component({
   selector: 'page-list',
   templateUrl: 'list.html'
@@ -130,7 +129,7 @@ export class ListPage {
   centerInUser(user) {
     var loc = user.location
     if (loc)
-      this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
+      this.map.panTo([loc.latitude, loc.longitude]);
 
     L.popup()
       .setLatLng([loc.latitude, loc.longitude])
