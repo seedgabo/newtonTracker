@@ -1,7 +1,8 @@
+import { ListPage } from './../list/list';
 import { HomePage } from './../home/home';
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
-import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, AlertController, Platform } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
 declare var window:any
 @Component({
@@ -11,7 +12,7 @@ declare var window:any
 export class LoginPage {
   backimg;
   preconfigured = false
-  constructor(public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, public alert: AlertController, public sanitizer: DomSanitizer, public api: Api) {
+  constructor(public platform:Platform, public navCtrl: NavController, public navParams: NavParams, public loading: LoadingController, public alert: AlertController, public sanitizer: DomSanitizer, public api: Api) {
     if (window.url) {
       this.preconfigured = true;
     }
@@ -32,7 +33,11 @@ export class LoginPage {
       this.api.saveUser(response);
       this.api.saveData()
       this.api.user = response;
-      this.navCtrl.setRoot(HomePage);
+      if (this.platform.is('mobile')) {
+        this.navCtrl.setRoot(HomePage);
+      } else {
+        this.navCtrl.setRoot(ListPage);
+      }
 
     })
       .catch(() => {
