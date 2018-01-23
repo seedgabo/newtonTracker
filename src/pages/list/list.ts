@@ -168,7 +168,7 @@ export class ListPage {
   htmlPopup(user) {
     return `
       <h6> ${user.full_name}</h6>
-      <span> ${moment(user.updated_at).format('LLLL')}</span>
+      <span> ${moment(user.location.timestamp).format('LLLL')}</span>
       <br>
       <span><b>Cargo:</b> ${user.cargo}</>
       <br>

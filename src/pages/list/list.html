@@ -26,7 +26,7 @@
           {{u.entidad?.name }}
         </h3>
         <ion-note>
-          {{u.updated_at | amLocale:'es' | amTimeAgo}}
+          {{u.location?.timestamp | amLocale:'es' | amTimeAgo}}
         </ion-note>
         <p *ngIf="u.location?.speed != -1">
           <b>Velocidad:</b>
