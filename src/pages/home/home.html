@@ -58,6 +58,44 @@
           </ion-list>
         </ion-card>
       </ion-col>
+
+      <ion-col col-12 col-md>
+        <ion-card>
+          <ion-list>
+            <ion-list-header>
+              Viajes
+              <ion-icon small name="navigate" item-right></ion-icon>
+            </ion-list-header>
+            <ion-item>
+              <b>Estado:</b>
+              <span item-right>
+                <ion-icon [name]="bg.trip_data.on_trip? 'navigate':'square'" [color]="bg.trip_data.on_trip? 'primary':'dark'" item-right></ion-icon>
+                {{ bg.trip_data.on_trip? 'En Viaje' : 'Detenido'}}
+              </span> 
+            </ion-item>
+            <ion-item *ngIf="bg.trip_data.timestamp">
+              <b>Desde:</b>
+              <span item-right>
+                {{bg.trip_data.timestamp | amCalendar }}
+              </span>
+            </ion-item>
+            <ion-item>
+              <!-- <ion-icon color="primary" name="speedometer" item-left></ion-icon> -->
+              <b>Velocidad:</b>
+              <span item-right *ngIf="bg.last_location?.speed !== -1">
+                {{ (bg.last_location?.speed * 3.6 ) | number:'1.2-2' }} Kmh 
+              </span>
+            </ion-item>
+            <ion-item>
+              <b>Dirección:</b>
+              <span item-right *ngIf="bg.last_location?.heading !== -1">
+                {{ bg.last_location?.heading | number:'1.2-2' }} º 
+              </span>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+      
       <ion-col col-12 col-md>
         <ion-card>
           <ion-list>
