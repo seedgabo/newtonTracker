@@ -58,7 +58,12 @@
 
 <ion-content #app no-padding>
   <div id="mapid"></div>
-
+  
+  <ion-fab  top left>
+    <button ion-fab mini color="light" (click)="mapOptions($event)">
+      <ion-icon name="logo-buffer"></ion-icon>
+    </button>
+  </ion-fab>
   <ion-fab #fab bottom right>
     <button ion-fab color="primary">
       <ion-icon name="add"></ion-icon>

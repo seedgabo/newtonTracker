@@ -72,7 +72,7 @@ export class MyApp {
         }, (nomatch) => {
           console.log('no matched route', nomatch);
           this.handlerDeepLinksCallback(nomatch)          
-          subsription();
+          // subsription();
         });
       }
       subsription()

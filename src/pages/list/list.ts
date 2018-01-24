@@ -2,7 +2,7 @@ import { BgProvider } from './../../providers/bg/bg';
 
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
-import { NavController, NavParams, Events, AlertController } from 'ionic-angular';
+import { NavController, NavParams, Events, AlertController, ActionSheetController, PopoverController } from 'ionic-angular';
 import * as moment from 'moment';
 moment.locale('es');
 declare var L: any;
@@ -11,12 +11,46 @@ declare var L: any;
   templateUrl: 'list.html'
 })
 export class ListPage {
+  
   map
-  disabled_panic = false;
+  cluster = L.markerClusterGroup()
   markers = {}
+  layers = {
+    road: {
+      url: 'https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}',
+      preview: 'https://korona.geog.uni-heidelberg.de/tiles/roads/x=150&y=249&z=9',
+      opts: { 
+        attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }
+    },
+    mapbox: {
+      url: 'https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2VlZGdhYm8iLCJhIjoiY2pjdDNzYzV4MGQ4ZTJxanlzNWVhYzB6MiJ9.xrP9t07VMGpwFwo7E7tP1Q',
+      preview: 'https://api.mapbox.com/v4/mapbox.streets/9/150/249.png?access_token=pk.eyJ1Ijoic2VlZGdhYm8iLCJhIjoiY2pjdDNzYzV4MGQ4ZTJxanlzNWVhYzB6MiJ9.xrP9t07VMGpwFwo7E7tP1Q',
+      opts:{     
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18
+      }
+    },
+    osm: {
+      url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+      preview: 'http://a.tile.osm.org/9/150/249.png',
+      opts:{
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }
+    },
+    world: {
+      url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      preview: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/9/249/150',
+      opts:{
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+      }
+    }
+  }
+
+  disabled_panic = false;
   users = []
   query = ""
-  cluster = L.markerClusterGroup()
+
   locationCreatedHandler = (data) => {
     data.user.location = data.location.location
     this.markerUser(data.user);
@@ -24,7 +58,7 @@ export class ListPage {
   panicHandler = (data) => {
     this.markerUser(data.user, true, true);
   }
-  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public api: Api, public bg: BgProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public popover: PopoverController, public api: Api, public bg: BgProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
   }
@@ -58,30 +92,6 @@ export class ListPage {
     this.users = result;
   }
 
-  initMap() {
-    this.map = L.map('mapid', { zoomControl: false }).setView([4.669988, -74.0673856], 13);
-    L.tileLayer('https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}', {
-      attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(this.map);
-
-    // L.tileLayer('https://api.tiles.mapbox.com/v4/MapID/997/256/{z}/{x}/{y}.png?access_token={accessToken}', {
-    //   attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    //   maxZoom: 18
-    // }).addTo(this.map);
-
-    // L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    //   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-    // }).addTo(this.map);
-
-
-    //  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    //   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    // }).addTo(this.map);
-
-
-    this.map.addLayer(this.cluster);
-  }
-
 
   getUsers() {
     var entidades_ids = this.pluck(this.api.user.entidades, 'id')
@@ -100,7 +110,24 @@ export class ListPage {
   }
 
 
+  // Map Methods
+  initMap() {
+    this.map = L.map('mapid', { zoomControl: false, maxZoom:18 }).setView([4.669988, -74.0673856], 13);
+    this.api.storage.get('layer')
+    .then((layer)=>{
+      if(layer && this.layers[layer]){
+        this.setLayer(layer)
+      }else{
+        this.setLayer('road')
+      }
+    });
+    this.map.addLayer(this.cluster);
+  }
 
+  setLayer(key){
+    L.tileLayer(this.layers[key].url, this.layers[key].opts).addTo(this.map);
+    this.api.storage.set('layer',key);
+  }
 
   locate() {
     this.getDefaultLocation();
@@ -118,7 +145,6 @@ export class ListPage {
         this.disabled_panic = false;
       });
   }
-
 
   fitToAll() {
     this.map.fitBounds(this.cluster.getBounds(), { padding: [20, 20] })
@@ -180,6 +206,19 @@ export class ListPage {
       this.map.panTo(new L.LatLng(data.coords.latitude, data.coords.longitude));
     })
   }
+
+  mapOptions(ev){
+    var popover = this.popover.create("MapOptionsPage",{layers: this.layers})
+    popover.present({ev: ev});
+    popover.onWillDismiss((data)=>{
+      if(!data) {return}
+      if(data.action == 'layer'){
+        this.setLayer(data.layer)
+      }
+    })
+  }
+
+
 
 
   private pluck(array, key) {

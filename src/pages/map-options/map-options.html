@@ -1,0 +1,8 @@
+<ion-list no-lines no-margin>
+  <button ion-item *ngFor="let layer of layers" (click)="selectLayer(layer.name)">
+    <div item-left>
+      <img [src]="layer.preview" class="img-map-preview">
+    </div>
+    {{ layer.name }}
+  </button>
+</ion-list>
