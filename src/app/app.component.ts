@@ -23,7 +23,10 @@ export class MyApp {
   constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public backgroundmode: BackgroundMode, public codePush: CodePush, public deeplinks:Deeplinks ,public api: Api) {
     this.initializeApp();
     this.initializeUser();
+    this.initializePages();
+  }
 
+  initializePages(){
     this.platform.ready().then(() => {
       this.pages = [];
       if (this.platform.is('mobile')) {
@@ -32,6 +35,7 @@ export class MyApp {
       this.pages.push({ title: 'Seguimiento', component: ListPage, icon: 'locate' })
       this.pages.push({ title: 'Reportes de Emergencia', component: "PanicLogsPage", icon: 'help-buoy' })
     })
+
   }
 
   initializeApp() {
@@ -57,27 +61,17 @@ export class MyApp {
 
       var subsription = () => {
         this.deeplinks.routeWithNavController(this.nav,{
-          '/': HomePage,
           '/tracking': ListPage,
           'panic-logs': 'PanicLogsPage',
-
         }).subscribe((match) => {
           // match.$route - the route we matched, which is the matched entry from the arguments to route()
           // match.$args - the args passed in the link
           // match.$link - the full link data
           console.log('Successfully matched route', match);
+          this.handlerDeepLinksCallback(match)          
         }, (nomatch) => {
           console.log('no matched route', nomatch);
-          // nomatch.$link - the full link data
-          if (nomatch && nomatch.$link) {
-            if (nomatch.$link.url && nomatch.$link.url.indexOf("sos") > -1) {
-              this.api.ready.then(()=>{
-                setTimeout(() => {
-                  this.api.panic() .then(()=>{ }) .catch(this.api.Error)
-                }, 1200);
-              })
-            }
-          }
+          this.handlerDeepLinksCallback(nomatch)          
           subsription();
         });
       }
@@ -102,6 +96,18 @@ export class MyApp {
         }).catch(this.api.Error);
       }
     })
+  }
+
+  handlerDeepLinksCallback(match){
+    if (match && match.$link) {
+      if (match.$link.url && match.$link.url.indexOf("sos") > -1) {
+        this.api.ready.then(() => {
+          setTimeout(() => {
+            this.api.panic().then(() => { }).catch(this.api.Error)
+          }, 1200);
+        })
+      }
+    }
   }
 
   openPage(page) {

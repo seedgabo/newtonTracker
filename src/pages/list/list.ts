@@ -18,7 +18,8 @@ export class ListPage {
   query = ""
   cluster = L.markerClusterGroup()
   locationCreatedHandler = (data) => {
-    this.markerUser(data.user, data.location.location);
+    data.user.location = data.location.location
+    this.markerUser(data.user);
   }
   panicHandler = (data) => {
     if (!data.location) {
@@ -93,7 +94,7 @@ export class ListPage {
         users.forEach(u => {
           // console.log(u)
           if (u.location)
-            this.markerUser(u, u.location);
+            this.markerUser(u);
         });
         this.fitToAll()
 
@@ -137,7 +138,8 @@ export class ListPage {
       .openOn(this.map);
   }
 
-  markerUser(user, loc, pan = true, panic = false) {
+  markerUser(user, pan = true, panic = false) {
+    var loc = user.location
     if (this.markers[user.id]) {
       this.cluster.removeLayer(this.markers[user.id]);
       delete (this.markers[user.id])

@@ -68,6 +68,30 @@ export class HomePage {
     })
   }
 
+  sync(){
+    this.codepush.sync({ updateDialog: true }, )
+      .subscribe((status) => {
+        var msg = ""
+        if (status == 0) {
+          msg = "La app esta actualizada";
+        }
+        if (status == 4) {
+          msg = "Actialización en progreso";
+        }
+        if (status == 5) {
+          msg = "Buscando Actulización";
+        }
+        if (status == 7) {
+          msg = "Instalando Actualización";
+        }
+        if (status == 8) {
+          msg = "La app se reiniciará";
+          this.splashScreen.show();
+        }
+        this.toast.create({ message: msg, duration: 2000 }).present();
+      });
+  }
+
 
 
 }

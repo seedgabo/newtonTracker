@@ -118,15 +118,18 @@
           <ion-list>
               <ion-list-header>
                 App
+              <button ion-button small clear icon-only item-right (click)="sync()">
+                <ion-icon name="sync"></ion-icon>
+              </button>
               </ion-list-header>
               <ion-item *ngIf="version_data.appVersion">
                 <ion-icon color="primary" item-left name="appstore"></ion-icon>
-                <b>Version de App</b>
+                <b>Versión de App</b>
                 <span item-right> {{version_data.appVersion}}</span>
               </ion-item>
               <ion-item *ngIf="version_data.label">
                 <ion-icon color="primary" item-left name="cloud-download"></ion-icon>
-                <b>Version Live</b>
+                <b>Versión Live</b>
                 <span item-right> {{version_data.label}}</span>
               </ion-item>
               <ion-item *ngIf="version_data.description">
