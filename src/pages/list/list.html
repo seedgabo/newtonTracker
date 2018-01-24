@@ -33,7 +33,7 @@
         </ion-note>
         <p *ngIf="u.location?.speed != -1">
           <b>Velocidad:</b>
-          {{u.location?.speed | number }} Km/h
+          {{(u.location?.speed * 3.6)| number }} Km/h
         </p>
       </button>
     </ion-list>

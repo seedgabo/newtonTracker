@@ -218,14 +218,22 @@ export class ListPage {
   }
 
   htmlPopup(user) {
-    return `
+    var html =  `
       <h6> ${user.full_name}</h6>
       <span> ${moment.utc(user.location.timestamp.date).local().format('LLLL')}</span>
       <br>
       <span><b>Cargo:</b> ${user.cargo}</>
       <br>
       <span><b>Departamento:</b>  ${user.departamento}</span>
+      <br>
     `
+    if(user.location.speed > 0)
+    html += `<span>
+        <b>Velocidad:</b>
+        ${Math.floor(user.location.speed * 3.6)} Kmh
+      </span>
+    `
+    return html;
   }
 
   getDefaultLocation() {
