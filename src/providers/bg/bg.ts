@@ -18,6 +18,7 @@ export class BgProvider {
   locations = [];
   timeout_track;
   trip_data = {
+    trip_timestamp:moment.utc(),
     reference_ev:null,
     on_trip : false,
     timestamp: null,
@@ -32,14 +33,29 @@ export class BgProvider {
   constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
     window.$bg = this;
     this.configurate()
+    this.loadVariables()
   }
-
+  loadVariables(){
+    this.api.storage.get('trips')
+    .then((trips)=>{
+      if(trips){
+        this.trip_data = trips
+        if(Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_timestamp,"minutes"))) > 10){
+          this.locate().then((loc)=>{
+            this.stopTrip(loc)
+          })
+        }
+      }
+    })
+  }
+  
   configurate() {
     this.platform.ready().then(() => {
       this.bg = (<any>window).BackgroundGeolocation;
       if (!this.bg) {
         return
       }
+      
       var onlocation = (ev) => {
         console.log("on Location",ev)
         this.zone.run(()=>{
@@ -48,6 +64,7 @@ export class BgProvider {
           this.TripAlgorithm(ev)
         })
       }
+
       var onHttp = (ev)=>{
           console.log("location posted", ev)
       }
@@ -66,7 +83,6 @@ export class BgProvider {
         this.state = state.enabled;
       }, console.warn)
     });
-
   }
 
   startTrack() {
@@ -179,12 +195,14 @@ export class BgProvider {
   }
 
   startTrip(location) {
+    this.trip_data.trip_timestamp = moment.utc()
     this.trip_data.on_trip = true;
     this.trip_data.start_location = location
     this.trip_data.stop_location = null
   }
-
+  
   stopTrip(location){
+    this.trip_data.trip_timestamp = moment.utc()
     this.trip_data.on_trip = false;
     this.trip_data.stop_location  = location
   }

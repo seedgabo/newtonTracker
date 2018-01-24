@@ -76,22 +76,22 @@
             <ion-item *ngIf="bg.trip_data.timestamp">
               <b>Desde:</b>
               <span item-right>
-                {{bg.trip_data.timestamp | amCalendar }}
+                {{bg.trip_data.trip_timestamp | amCalendar }}
               </span>
             </ion-item>
             <ion-item>
               <b>Velocidad:</b>
-              <span item-right *ngIf="bg.last_location?.speed !== -1">
+              <span item-right *ngIf="bg.last_location?.coords.speed !== -1">
                   <ion-icon small name="speedometer" item-left></ion-icon>
-                  {{ (bg.last_location?.speed * 3.6 ) | number:'1.2-2' }} Kmh 
+                  {{ (bg.last_location?.coords.speed * 3.6 ) | number:'1.2-2' }} Kmh 
                 </span>
               </ion-item>
               <ion-item>
                 <b>Dirección:</b>
-                <span item-right *ngIf="bg.last_location?.heading !== -1">
+                <span item-right *ngIf="bg.last_location?.coords.heading !== -1">
                     <ion-icon small name="navigate" item-left
-                     [ngStyle]="{'transform': 'rotate(' + bg.last_location?.heading + 'deg)'}"></ion-icon>
-                  {{ (bg.last_location?.heading * 1) | number:'1.0-0' }} º 
+                     [ngStyle]="{'transform': 'rotate(' + bg.last_location?.coords.heading + 'deg)'}"></ion-icon>
+                  {{ (bg.last_location?.coords.heading * 1) | number:'1.0-0' }} º 
               </span>
             </ion-item>
           </ion-list>
