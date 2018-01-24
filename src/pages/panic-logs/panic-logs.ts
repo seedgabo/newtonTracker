@@ -13,7 +13,9 @@ export class PanicLogsPage {
   }
 
   ionViewDidLoad() {
-    this.getPanics();
+    this.api.ready.then(()=>{
+      this.getPanics();
+    })
   }
 
   getPanics() {

@@ -11,9 +11,6 @@ import { NgZone } from '@angular/core';
 
 declare var window: any;
 window.Pusher = Pusher;
-
-// import moment from 'moment';
-// moment.locale('es');
 @Injectable()
 export class Api {
   username: string;
@@ -29,6 +26,7 @@ export class Api {
   resolve;
   sound
   last_panic
+  addresses = {}
   constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController, public modal: ModalController, public toast: ToastController, public vibration: Vibration) {
     this.initVar();
     window.$api = this;
@@ -303,13 +301,20 @@ export class Api {
 
   public reverseGeo(lat,lon){
     return new Promise((resolve, reject) => {
-      this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, { })
+      if (this.addresses[lat+"+"+lon]){
+        resolve(this.addresses[lat + "+" + lon])
+      }
+      else
+      {
+        this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, { })
         .map(res => res.json())
         .subscribe(data => {
+          this.addresses[lat + "+" + lon] = data
           resolve(data);
         }, error => {
           return reject(error);
         });
+      }
     });
   }
 

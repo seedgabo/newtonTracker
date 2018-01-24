@@ -68,10 +68,13 @@ export class ListPage {
   }
 
   ionViewDidLoad() {
-    setTimeout(() => {
-      this.initMap();
-      this.getUsers();
-    }, 100)
+    this.api.ready.then(()=>{
+      this.api.startEcho();
+      setTimeout(() => {
+        this.initMap();
+        this.getUsers();
+      }, 100)
+    })
   }
 
   ionViewWillUnload() {
@@ -184,13 +187,27 @@ export class ListPage {
     if (pan)
       this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
     this.markers[user.id] = L.marker([loc.latitude, loc.longitude], { icon: icon });
+    
     this.cluster.addLayer(this.markers[user.id])
     this.cluster.refreshClusters(this.markers[user.id])
     this.markers[user.id].on('click', (ev) => {
       var latlng = this.markers[user.id].getLatLng();
-      L.popup()
+      var popup = L.popup()
         .setLatLng(latlng)
         .setContent(this.htmlPopup(user)).openOn(this.map);
+      this.addAddressPopup(popup)
+    })
+  }
+
+  addAddressPopup(popup){
+    this.api.reverseGeo(popup.getLatLng().lat, popup.getLatLng().lng)
+    .then((results:any)=>{
+      popup.setContent(
+        popup.getContent()
+        + `<br>
+          <b>Dirección</b> ${results.display_name}
+        `
+      )
     })
   }
 
