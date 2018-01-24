@@ -77,10 +77,10 @@ export class HomePage {
           msg = "La app esta actualizada";
         }
         if (status == 4) {
-          msg = "Actialización en progreso";
+          msg = "En progreso";
         }
         if (status == 5) {
-          msg = "Buscando Actulización";
+          msg = "Buscando Actualización";
         }
         if (status == 7) {
           msg = "Instalando Actualización";

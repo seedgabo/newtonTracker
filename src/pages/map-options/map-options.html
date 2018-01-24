@@ -1,5 +1,5 @@
 <ion-list no-lines no-margin>
-  <button ion-item *ngFor="let layer of layers" (click)="selectLayer(layer.name)"
+  <button ion-item *ngFor="let layer of layers" (click)="selectLayer(layer.key)"
    [disabled]="default == layer.key">
     <div item-left>
       <img [src]="layer.preview" class="img-map-preview">
