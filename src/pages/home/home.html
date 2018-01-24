@@ -69,7 +69,7 @@
             <ion-item>
               <b>Estado:</b>
               <span item-right>
-                <ion-icon [name]="bg.trip_data.on_trip? 'navigate':'square'" [color]="bg.trip_data.on_trip? 'primary':'dark'" item-right></ion-icon>
+                <ion-icon small [name]="bg.trip_data.on_trip? 'navigate':'square'" [color]="bg.trip_data.on_trip? 'primary':'dark'" item-right></ion-icon>
                 {{ bg.trip_data.on_trip? 'En Viaje' : 'Detenido'}}
               </span> 
             </ion-item>
@@ -80,16 +80,18 @@
               </span>
             </ion-item>
             <ion-item>
-              <!-- <ion-icon color="primary" name="speedometer" item-left></ion-icon> -->
               <b>Velocidad:</b>
               <span item-right *ngIf="bg.last_location?.speed !== -1">
-                {{ (bg.last_location?.speed * 3.6 ) | number:'1.2-2' }} Kmh 
-              </span>
-            </ion-item>
-            <ion-item>
-              <b>Dirección:</b>
-              <span item-right *ngIf="bg.last_location?.heading !== -1">
-                {{ bg.last_location?.heading | number:'1.2-2' }} º 
+                  <ion-icon small name="speedometer" item-left></ion-icon>
+                  {{ (bg.last_location?.speed * 3.6 ) | number:'1.2-2' }} Kmh 
+                </span>
+              </ion-item>
+              <ion-item>
+                <b>Dirección:</b>
+                <span item-right *ngIf="bg.last_location?.heading !== -1">
+                    <ion-icon small name="navigate" item-left
+                     [ngStyle]="{'transform': 'rotate(' + bg.last_location?.heading + 'deg)'}"></ion-icon>
+                  {{ (bg.last_location?.heading * 1) | number:'1.0-0' }} º 
               </span>
             </ion-item>
           </ion-list>
@@ -151,6 +153,7 @@
 
         </ion-card>
       </ion-col>
+
       <ion-col col-12 col-md *ngIf="version_data">
         <ion-card>
           <ion-list>
