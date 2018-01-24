@@ -25,6 +25,9 @@
         <h3>
           {{u.entidad?.name }}
         </h3>
+        <p [title]="api.addresses[u.location.latitude + '+' + u.location.longitude].display_name" *ngIf="u.location && api.addresses[u.location.latitude + '+' + u.location.longitude]">
+           {{ api.addresses[u.location.latitude + '+' + u.location.longitude].display_name }}
+        </p>
         <ion-note>
           {{u.location?.timestamp?.date | amFromUtc | amLocal | amLocale:'es' | amTimeAgo}}
         </ion-note>

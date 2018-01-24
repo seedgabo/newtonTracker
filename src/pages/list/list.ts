@@ -167,10 +167,11 @@ export class ListPage {
     if (loc)
       this.map.panTo([loc.latitude, loc.longitude]);
 
-    L.popup()
+    var popup =L.popup()
       .setLatLng([loc.latitude, loc.longitude])
       .setContent(this.htmlPopup(user))
       .openOn(this.map);
+    this.addAddressPopup(popup)
   }
 
   markerUser(user, pan = true, panic = false) {
