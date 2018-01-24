@@ -1,3 +1,4 @@
+import { SplashScreen } from '@ionic-native/splash-screen';
 import { CodePush } from '@ionic-native/code-push';
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
@@ -12,7 +13,7 @@ export class HomePage {
   disabled_panic = false;
   edition = false;
   version_data
-  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast:ToastController, public codepush:CodePush) {
+  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast:ToastController, public codepush:CodePush, public splashScreen:SplashScreen) {
   }
 
   ionViewDidLoad() {

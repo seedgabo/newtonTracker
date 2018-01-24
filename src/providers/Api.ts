@@ -257,11 +257,11 @@ export class Api {
         .listen('LocationCreated', (data) => {
           console.log("created location:", data);
           this.zone.run(() => {
-            if (this.objects.users_tracks) {
+            if (this.objects.users_tracks && this.objects.users_tracks.collection[data.user.id]) {
               this.objects.users_tracks.collection[data.user.id].location = data.location.location;
               this.objects.users_tracks.collection[data.user.id].updated_at = new Date();
+              this.events.publish('LocationCreated', data)
             }
-            this.events.publish('LocationCreated', data)
           })
         })
 
