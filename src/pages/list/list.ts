@@ -103,9 +103,9 @@ export class ListPage {
       .then((users: any) => {
         this.users = users;
         users.forEach(u => {
-          // console.log(u)
-          if (u.location)
+          if (u.location){
             this.markerUser(u);
+          }
         });
         this.fitToAll()
 
@@ -197,7 +197,7 @@ export class ListPage {
   htmlPopup(user) {
     return `
       <h6> ${user.full_name}</h6>
-      <span> ${moment(user.location.timestamp).format('LLLL')}</span>
+      <span> ${moment.utc(user.location.timestamp.date).local().format('LLLL')}</span>
       <br>
       <span><b>Cargo:</b> ${user.cargo}</>
       <br>
