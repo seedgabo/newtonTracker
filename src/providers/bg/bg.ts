@@ -44,24 +44,31 @@ export class BgProvider {
     _sum_altitude: 0,
     _first_event_time: moment.utc()
   }
-
   last_location
+  
   constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
     window.$bg = this;
     this.configurate()
     this.loadVariables()
   }
+
   loadVariables(){
-    this.api.storage.get('trips')
-    .then((trips)=>{
-      if(trips){
-        this.trip_data = trips
-        if(Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_timestamp,"minutes"))) > 10){
-          this.locate().then((loc)=>{
-            this.stopTrip(loc)
-          })
+    this.api.storage.get("trip_metrics")
+      .then((trip_metrics)=>{
+        if(trip_metrics){
+          this.trip_metrics = trip_metrics
         }
-      }
+      this.api.storage.get('trips')
+      .then((trips)=>{
+        if(trips){
+          this.trip_data = trips
+          if(Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_timestamp,"minutes"))) > 10){
+            this.locate().then((loc)=>{
+              this.stopTrip(loc)
+            })
+          }
+        }
+      })
     })
   }
   
@@ -281,7 +288,7 @@ export class BgProvider {
     if (this.trip_metrics._first_event_time) {
       this.trip_metrics.duration = moment.utc().diff(this.trip_metrics._first_event_time, "seconds");
     }
-    this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
+    this.api.storage.set("trip_metrics", this.trip_metrics)
 
   }
 
