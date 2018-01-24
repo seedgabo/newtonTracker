@@ -42,9 +42,11 @@ export class BgProvider {
       }
       var onlocation = (ev) => {
         console.log("on Location",ev)
-        this.last_location = ev;
-        this.locations.push(ev)
-        this.TripAlgorithm(ev)
+        this.zone.run(()=>{
+          this.last_location = ev;
+          this.locations.push(ev)
+          this.TripAlgorithm(ev)
+        })
       }
       var onHttp = (ev)=>{
           console.log("location posted", ev)
