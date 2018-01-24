@@ -29,6 +29,22 @@ export class BgProvider {
     time_track_stop: 1000 * 6 * 60,
     events_to_init_trip:7,
   }
+
+  trip_metrics = {
+    avg_speed: 0,
+    max_speed: 0,
+    _ev_max_speed: null,
+    distance: 0,
+    duration: 0,
+    event_counter: 0,
+    avg_altitude: 0,
+    max_altitude: 0,
+    _ev_max_altitude: null,
+    _sum_speed: 0,
+    _sum_altitude: 0,
+    _first_event_time: moment.utc()
+  }
+
   last_location
   constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
     window.$bg = this;
@@ -59,9 +75,9 @@ export class BgProvider {
       var onlocation = (ev) => {
         console.log("on Location",ev)
         this.zone.run(()=>{
+          this.TripAlgorithm(ev)
           this.last_location = ev;
           this.locations.push(ev)
-          this.TripAlgorithm(ev)
         })
       }
 
@@ -140,6 +156,8 @@ export class BgProvider {
     }
   }
 
+
+
   TripAlgorithm(location) {
 
 
@@ -188,7 +206,7 @@ export class BgProvider {
       this.api.storage.set("trips", this.trip_data);
     }
 
-    this.tripMetrics()
+    this.tripMetrics(location)
 
     return this.trip_data.on_trip
 
@@ -199,12 +217,16 @@ export class BgProvider {
     this.trip_data.on_trip = true;
     this.trip_data.start_location = location
     this.trip_data.stop_location = null
+    // TODO: Post start Trip
+    this.clearTripMetrics()
   }
   
   stopTrip(location){
     this.trip_data.trip_timestamp = moment.utc()
     this.trip_data.on_trip = false;
     this.trip_data.stop_location  = location
+    // TODO: Post Stop Trip
+    this.clearTripMetrics()
   }
 
   private stopTimeoutTrip() {
@@ -217,11 +239,68 @@ export class BgProvider {
     } catch (e) { console.warn(e) }
   }
 
-  private tripMetrics(){
+  private tripMetrics(location){
     console.log("trip_data:", this.trip_data)
-  }
-  
+      
+    // If the event is has a location
+    if (location.coords != undefined) {
 
+      if (location.coords.speed != -1) { // if location has speed and altitude
+
+        this.trip_metrics.event_counter++; // counting events with speed and altitude
+
+        // Calculating average speed and altitude
+        this.trip_metrics._sum_speed += location.coords.speed;
+        this.trip_metrics.avg_speed = this.trip_metrics._sum_speed / this.trip_metrics.event_counter;
+
+
+        this.trip_metrics._sum_altitude += location.coords.alttiude;
+        this.trip_metrics.avg_altitude = this.trip_metrics._sum_altitude / this.trip_metrics.event_counter;
+
+      }
+
+      //  Distance  of the trip
+      if (this.last_location != undefined && this.last_location.coords != undefined) {
+        this.trip_metrics.distance += this.getDistanceFromLatLon(
+          this.last_location.coords.latitude, this.last_location.coords.longitude,
+          location.coords.latitude, location.coords.longitude
+        );
+      }
+
+      if (location.coords.speed > this.trip_metrics.max_speed) {
+        this.trip_metrics.max_speed = location.coords.speed;
+        this.trip_metrics._ev_max_speed = location;
+      }
+
+      if (location.coords.altitude > this.trip_metrics.max_altitude) {
+        this.trip_metrics.max_altitude = location.coords.altitude;
+        this.trip_metrics._ev_max_altitude = location;
+      }
+
+    }
+    if (this.trip_metrics._first_event_time) {
+      this.trip_metrics.duration = moment.utc().diff(this.trip_metrics._first_event_time, "seconds");
+    }
+    this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
+
+  }
+
+  private clearTripMetrics() {
+    this.trip_metrics = {
+      avg_speed: 0,
+      max_speed: 0,
+      _ev_max_speed: null,
+      distance: 0,
+      duration: 0,
+      event_counter: 0,
+      avg_altitude: 0,
+      max_altitude: 0,
+      _ev_max_altitude: null,
+      _sum_speed: 0,
+      _sum_altitude: 0,
+      _first_event_time: moment.utc()
+    }
+  }
 
 
 
