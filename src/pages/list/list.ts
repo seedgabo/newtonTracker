@@ -50,6 +50,7 @@ export class ListPage {
       }
     }
   }
+  current_layer = null
 
   disabled_panic = false;
   users = []
@@ -132,7 +133,11 @@ export class ListPage {
   }
 
   setLayer(key){
-    L.tileLayer(this.layers[key].url, this.layers[key].opts).addTo(this.map);
+    if(this.current_layer){
+      this.map.removeLayer(this.current_layer)
+    }
+    this.current_layer = L.tileLayer(this.layers[key].url, this.layers[key].opts)
+    this.current_layer.addTo(this.map);
     this.api.storage.set('layer',key);
   }
 
