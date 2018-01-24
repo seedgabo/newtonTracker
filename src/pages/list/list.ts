@@ -22,10 +22,7 @@ export class ListPage {
     this.markerUser(data.user);
   }
   panicHandler = (data) => {
-    if (!data.location) {
-      data.location = data.user.location
-    }
-    this.markerUser(data.user, data.location, true, true);
+    this.markerUser(data.user, true, true);
   }
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public api: Api, public bg: BgProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
