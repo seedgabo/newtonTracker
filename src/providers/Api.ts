@@ -61,7 +61,7 @@ export class Api {
         .subscribe(data => {
           resolve(data);
         }, error => {
-          return reject(this.handleData(error));
+          return reject(error);
         });
     });
   }
@@ -113,7 +113,7 @@ export class Api {
         .subscribe(data => {
           resolve(data);
         }, error => {
-          return reject(this.handleData(error));
+          return reject(error);
         });
     });
   }
@@ -125,7 +125,7 @@ export class Api {
         .subscribe(data => {
           resolve(data);
         }, error => {
-          return reject(this.handleData(error));
+          return reject(error);
         });
     });
   }
@@ -137,7 +137,7 @@ export class Api {
         .subscribe(data => {
           resolve(data);
         }, error => {
-          return reject(this.handleData(error));
+          return reject(error);
         });
     });
   }
@@ -149,7 +149,7 @@ export class Api {
         .subscribe(data => {
           resolve(data);
         }, error => {
-          return reject(this.handleData(error));
+          return reject(error);
         });
     });
   }
@@ -300,6 +300,19 @@ export class Api {
     return this.sound;
   }
 
+
+  public reverseGeo(lat,lon){
+    return new Promise((resolve, reject) => {
+      this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, { })
+        .map(res => res.json())
+        .subscribe(data => {
+          resolve(data);
+        }, error => {
+          return reject(error);
+        });
+    });
+  }
+
   private handlePanic(data, open = true) {
     this.events.publish("panic", data);
     data.sound = this.playSoundSOS();
@@ -322,20 +335,6 @@ export class Api {
     return headers;
   }
 
-  private handleData(res) {
-    if (res.statusText == "Ok") {
-      return { status: "No Parace haber conexión con el servidor" };
-    }
-
-    // If request fails, throw an Error that will be caught
-    if (res.status < 200 || res.status >= 300) {
-      return { error: res.status }
-    }
-    // If everything went fine, return the response
-    else {
-      return res;
-    }
-  }
 
   private mapToCollection(array, key = "id") {
     var collection = {}
