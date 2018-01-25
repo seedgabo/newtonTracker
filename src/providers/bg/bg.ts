@@ -42,7 +42,7 @@ export class BgProvider {
     _ev_max_altitude: null,
     _sum_speed: 0,
     _sum_altitude: 0,
-    _first_event_time: moment.utc()
+    _first_event_time: moment.utc().toDate()
   }
   last_location
   
@@ -56,12 +56,12 @@ export class BgProvider {
     this.api.storage.get("trip_metrics")
       .then((trip_metrics)=>{
         if(trip_metrics){
-          this.trip_metrics = trip_metrics
+          this.trip_metrics = JSON.parse(trip_metrics)
         }
       this.api.storage.get('trips')
       .then((trips)=>{
         if(trips){
-          this.trip_data = trips
+          this.trip_data = JSON.parse(trips)
           if(Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_timestamp),"minutes")) > 10){
             this.locate().then((loc)=>{
               this.stopTrip(loc)
@@ -193,7 +193,7 @@ export class BgProvider {
         this.startTrip(location);
       }
 
-      this.api.storage.set("trips", this.trip_data);
+      this.api.storage.set("trips", JSON.stringify(this.trip_data));
     }
     // on trip
     else if (this.trip_data.on_trip) {
@@ -210,7 +210,7 @@ export class BgProvider {
           this.trip_data.locations = 0;
         }, this.trip_data.time_track_stop);
 
-      this.api.storage.set("trips", this.trip_data);
+      this.api.storage.set("trips", JSON.stringify(this.trip_data));
     }
 
     this.tripMetrics(location)
@@ -288,7 +288,7 @@ export class BgProvider {
     if (this.trip_metrics._first_event_time) {
       this.trip_metrics.duration = moment.utc().diff(this.trip_metrics._first_event_time, "seconds");
     }
-    this.api.storage.set("trip_metrics", this.trip_metrics)
+    this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
 
   }
 
@@ -305,7 +305,7 @@ export class BgProvider {
       _ev_max_altitude: null,
       _sum_speed: 0,
       _sum_altitude: 0,
-      _first_event_time: moment.utc()
+      _first_event_time: moment.utc().toDate()
     }
   }
 
