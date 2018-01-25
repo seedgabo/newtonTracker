@@ -1,3 +1,5 @@
+<ion-split-pane>
+
 <ion-menu [content]="app" side="right">
   <ion-header>
     <ion-toolbar color="dark">
@@ -51,15 +53,14 @@
       </span>
     </ion-title>
   </ion-navbar>
-  <ion-fab bottom right edge>
+  <ion-fab bottom right edge class="hidden-md-up" >
     <button ion-fab color="favorite" mini menuToggle="right">
       <ion-icon name="people"></ion-icon>
     </button>
   </ion-fab>
 </ion-header>
 
-
-<ion-content #app no-padding>
+<ion-content #app main no-padding>
   <div id="mapid"></div>
   
   <ion-fab  top left>
@@ -97,3 +98,5 @@
     </ion-fab-list>
   </ion-fab>
 </ion-content>
+
+</ion-split-pane>
