@@ -29,6 +29,10 @@
       <span item-right *ngIf="!location">Buscando Ubicación</span>
     </ion-item>
   </ion-list>
+  <p *ngIf="user.emergency">
+    <b>Datos de Emergencia:</b>
+    <span>{{user.emergency}}</span>
+  </p>
   <p text-right>
     {{ datetime.format('llll') }}
   </p>
