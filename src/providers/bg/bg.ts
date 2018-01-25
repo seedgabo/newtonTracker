@@ -18,7 +18,7 @@ export class BgProvider {
   locations = [];
   timeout_track;
   trip_data = {
-    trip_timestamp:moment.utc(),
+    trip_timestamp:moment.utc().toDate(),
     reference_ev:null,
     on_trip : false,
     timestamp: null,
@@ -62,7 +62,7 @@ export class BgProvider {
       .then((trips)=>{
         if(trips){
           this.trip_data = trips
-          if(Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_timestamp,"minutes"))) > 10){
+          if(Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_timestamp),"minutes")) > 10){
             this.locate().then((loc)=>{
               this.stopTrip(loc)
             })
@@ -220,7 +220,7 @@ export class BgProvider {
   }
 
   startTrip(location) {
-    this.trip_data.trip_timestamp = moment.utc()
+    this.trip_data.trip_timestamp = moment.utc().toDate()
     this.trip_data.on_trip = true;
     this.trip_data.start_location = location
     this.trip_data.stop_location = null
@@ -229,7 +229,7 @@ export class BgProvider {
   }
   
   stopTrip(location){
-    this.trip_data.trip_timestamp = moment.utc()
+    this.trip_data.trip_timestamp = moment.utc().toDate()
     this.trip_data.on_trip = false;
     this.trip_data.stop_location  = location
     // TODO: Post Stop Trip
