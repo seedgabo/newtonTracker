@@ -18,16 +18,16 @@ export class BgProvider {
   locations = [];
   timeout_track;
   trip_data = {
-    trip_timestamp:moment.utc().toDate(),
-    reference_ev:null,
-    on_trip : false,
+    trip_timestamp: moment.utc().toDate(),
+    reference_ev: null,
+    on_trip: false,
     timestamp: null,
     start_location: null,
     stop_location: null,
     locations: 0,
     time_track: 1000 * 10 * 60,
     time_track_stop: 1000 * 6 * 60,
-    events_to_init_trip:7,
+    events_to_init_trip: 7,
   }
 
   trip_metrics = {
@@ -45,51 +45,51 @@ export class BgProvider {
     _first_event_time: moment.utc().toDate()
   }
   last_location
-  
+
   constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
     window.$bg = this;
     this.configurate()
     this.loadVariables()
   }
 
-  loadVariables(){
+  loadVariables() {
     this.api.storage.get("trip_metrics")
-      .then((trip_metrics)=>{
-        if(trip_metrics){
+      .then((trip_metrics) => {
+        if (trip_metrics) {
           this.trip_metrics = JSON.parse(trip_metrics)
         }
-      this.api.storage.get('trips')
-      .then((trips)=>{
-        if(trips){
-          this.trip_data = JSON.parse(trips)
-          if(Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_timestamp),"minutes")) > 10){
-            this.locate().then((loc)=>{
-              this.stopTrip(loc)
-            })
-          }
-        }
+        this.api.storage.get('trips')
+          .then((trips) => {
+            if (trips) {
+              this.trip_data = JSON.parse(trips)
+              if (Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_timestamp), "minutes")) > 10) {
+                this.locate().then((loc) => {
+                  this.stopTrip(loc)
+                })
+              }
+            }
+          })
       })
-    })
   }
-  
+
   configurate() {
     this.platform.ready().then(() => {
       this.bg = (<any>window).BackgroundGeolocation;
       if (!this.bg) {
         return
       }
-      
+
       var onlocation = (ev) => {
-        console.log("on Location",ev)
-        this.zone.run(()=>{
+        console.log("on Location", ev)
+        this.zone.run(() => {
           this.TripAlgorithm(ev)
           this.last_location = ev;
           this.locations.push(ev)
         })
       }
 
-      var onHttp = (ev)=>{
-          console.log("location posted", ev)
+      var onHttp = (ev) => {
+        console.log("location posted", ev)
       }
 
       var onProvider = (ev) => {
@@ -115,7 +115,7 @@ export class BgProvider {
     this.bg.configure({
       desiredAccuracy: 0,
       distanceFilter: 50,
-      debug: true,
+      debug: false,
       stopOnTerminate: false,
       startOnBoot: true,
       forceReloadOnBoot: true,
@@ -127,16 +127,16 @@ export class BgProvider {
       url: this.api.url + "api/locations/tracker",
       params: { user_id: this.api.user.id },
       httpRootProperty: '.',
-      locationTemplate: `{ 
+      locationTemplate: `{
         "user_id": ${this.api.user.id},
-        "timestamp":"<%= timestamp %>", 
-        "coords":{ 
-          "latitude":<%= latitude %>, 
-          "longitude":<%= longitude %>, 
-          "accuracy":<%= accuracy %>, 
-          "speed":<%= speed %>, 
+        "timestamp":"<%= timestamp %>",
+        "coords":{
+          "latitude":<%= latitude %>,
+          "longitude":<%= longitude %>,
+          "accuracy":<%= accuracy %>,
+          "speed":<%= speed %>,
           "heading":<%= heading %>,
-          "altitude":<%= altitude %> 
+          "altitude":<%= altitude %>
         }
       }`,
       headers: { "Authorization": "Basic " + btoa(this.api.username + ":" + this.api.password) },
@@ -227,11 +227,11 @@ export class BgProvider {
     // TODO: Post start Trip
     this.clearTripMetrics()
   }
-  
-  stopTrip(location){
+
+  stopTrip(location) {
     this.trip_data.trip_timestamp = moment.utc().toDate()
     this.trip_data.on_trip = false;
-    this.trip_data.stop_location  = location
+    this.trip_data.stop_location = location
     // TODO: Post Stop Trip
     this.clearTripMetrics()
   }
@@ -246,9 +246,9 @@ export class BgProvider {
     } catch (e) { console.warn(e) }
   }
 
-  private tripMetrics(location){
+  private tripMetrics(location) {
     console.log("trip_data:", this.trip_data)
-      
+
     // If the event is has a location
     if (location.coords != undefined) {
 
@@ -324,7 +324,7 @@ export class BgProvider {
   postLocation(loc) {
     loc.user_id = this.api.user.id
     var promise = this.api.post("locations/tracker", loc)
-    promise .then((resp) => { console.log(resp) })
+    promise.then((resp) => { console.log(resp) })
       .catch((err) => { console.error(err) })
 
     return promise
@@ -354,4 +354,3 @@ export class BgProvider {
   }
 
 }
- 
