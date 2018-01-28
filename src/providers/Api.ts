@@ -37,7 +37,10 @@ export class Api {
     this.storage.get("username").then((data) => data != undefined ? this.username = data : '');
     this.storage.get("password").then((data) => data != undefined ? this.password = data : '');
     this.storage.get("user").then((data) => {
-      data != undefined ? this.user = JSON.parse(data) : null;
+      if (data != undefined) {
+        this.user = JSON.parse(data)
+        this.user.roles.collection = this.mapToCollection(this.user.roles, 'name');
+      }
       this.resolve(this.user);
     });
   }
@@ -57,6 +60,7 @@ export class Api {
       this.http.get(this.url + "api/login", { headers: this.setHeaders() })
         .map(res => res.json())
         .subscribe(data => {
+          data.roles.collection = this.mapToCollection(data.roles, 'name');
           resolve(data);
         }, error => {
           return reject(error);
@@ -300,21 +304,20 @@ export class Api {
   }
 
 
-  public reverseGeo(lat,lon){
+  public reverseGeo(lat, lon) {
     return new Promise((resolve, reject) => {
-      if (this.addresses[lat+"+"+lon]){
+      if (this.addresses[lat + "+" + lon]) {
         resolve(this.addresses[lat + "+" + lon])
       }
-      else
-      {
-        this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, { })
-        .map(res => res.json())
-        .subscribe(data => {
-          this.addresses[lat + "+" + lon] = data
-          resolve(data);
-        }, error => {
-          return reject(error);
-        });
+      else {
+        this.http.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, {})
+          .map(res => res.json())
+          .subscribe(data => {
+            this.addresses[lat + "+" + lon] = data
+            resolve(data);
+          }, error => {
+            return reject(error);
+          });
       }
     });
   }
