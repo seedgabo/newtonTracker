@@ -104,7 +104,7 @@ export class ListPage {
   getUsers() {
     var entidades_ids = this.pluck(this.api.user.entidades, 'id')
     this.api.load(`users?whereIn[entidad_id]=${entidades_ids.join()}&with[]=entidad&order[updated_at]=desc`, 'users_tracks')
-      .then((users: any) => {
+      .then((users: Array<any>) => {
         this.users = users;
         users.forEach(u => {
           if (u.location) {
@@ -224,7 +224,7 @@ export class ListPage {
       <h6> ${user.full_name}</h6>
       <span> ${moment.utc(user.location.timestamp.date).local().format('LLLL')}</span>
       <br>
-      <span><b>Cargo:</b> ${user.cargo}</>
+      <span><b>Cargo:</b> ${user.cargo}</any>
       <br>
       <span><b>Departamento:</b>  ${user.departamento}</span>
       <br>
