@@ -3,7 +3,7 @@ import { CodePush } from '@ionic-native/code-push';
 import { Api } from './../providers/Api';
 import { BackgroundMode } from '@ionic-native/background-mode';
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import { Nav, Platform, Events } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -18,22 +18,33 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   rootPage: any;
-  pages: Array<{ title: string, component: any, icon: string, if?:any }>;
+  pages: Array<{ title: string, component: any, icon: string, if?: any }>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public backgroundmode: BackgroundMode, public codePush: CodePush, public deeplinks:Deeplinks ,public api: Api) {
+  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen, public backgroundmode: BackgroundMode, public codePush: CodePush, public deeplinks: Deeplinks, public api: Api, public events: Events) {
     this.initializeApp();
     this.initializeUser();
     this.initializePages();
+
+    this.platform.ready().then(() => {
+      this.events.subscribe('login', () => {
+        this.initializeUser();
+        this.initializePages();
+      })
+    })
   }
 
-  initializePages(){
-    this.platform.ready().then(() => {
+  initializePages() {
+    this.api.ready.then(() => {
       this.pages = [];
-      if (this.platform.is('mobile')) {
+      if (this.platform.is('mobile') && this.api.user.can_use_tracking) {
         this.pages.push({ title: 'My Tracker', component: HomePage, icon: 'home' })
       }
-      this.pages.push({ title: 'Seguimiento', component: ListPage, icon: 'locate' })
-      this.pages.push({ title: 'Reportes de Emergencia', component: "PanicLogsPage", icon: 'help-buoy' })
+      if (this.api.user && (this.api.user.roles.collection['Ver Rastreo'] || this.api.user.roles.collection['SuperAdmin'])) {
+        this.pages.push({ title: 'Seguimiento', component: ListPage, icon: 'locate' })
+      }
+      if (this.api.user && (this.api.user.roles.collection['Ver Emergencias'] || this.api.user.roles.collection['SuperAdmin'])) {
+        this.pages.push({ title: 'Reportes de Emergencia', component: "PanicLogsPage", icon: 'help-buoy' })
+      }
     })
 
   }
@@ -60,7 +71,7 @@ export class MyApp {
       setInterval(sync, 1000 * 60 * 60 * 8);
 
       var subsription = () => {
-        this.deeplinks.routeWithNavController(this.nav,{
+        this.deeplinks.routeWithNavController(this.nav, {
           '/tracking': ListPage,
           'panic-logs': 'PanicLogsPage',
         }).subscribe((match) => {
@@ -68,10 +79,10 @@ export class MyApp {
           // match.$args - the args passed in the link
           // match.$link - the full link data
           console.log('Successfully matched route', match);
-          this.handlerDeepLinksCallback(match)          
+          this.handlerDeepLinksCallback(match)
         }, (nomatch) => {
           console.log('no matched route', nomatch);
-          this.handlerDeepLinksCallback(nomatch)          
+          this.handlerDeepLinksCallback(nomatch)
           // subsription();
         });
       }
@@ -79,15 +90,17 @@ export class MyApp {
     });
   }
 
-  initializeUser(){
+  initializeUser() {
     this.api.ready.then((user) => {
-      if (!user) {
+      if (!this.api.user) {
         this.nav.setRoot(LoginPage)
       } else {
-        if (this.platform.is('mobile')) {
+        if (this.platform.is('mobile') && this.api.user.can_use_tracking) {
           this.nav.setRoot(HomePage);
-        } else {
+        } else if (this.api.user && (this.api.user.roles.collection['Ver Rastreo'] || this.api.user.roles.collection['SuperAdmin'])) {
           this.nav.setRoot(ListPage);
+        } else {
+          this.nav.setRoot("NoUsePage");
         }
         this.api.doLogin().then((response: any) => {
           this.api.saveUser(response);
@@ -98,7 +111,9 @@ export class MyApp {
     })
   }
 
-  handlerDeepLinksCallback(match){
+
+
+  handlerDeepLinksCallback(match) {
     if (match && match.$link) {
       if (match.$link.url && match.$link.url.indexOf("sos") > -1) {
         this.api.ready.then(() => {

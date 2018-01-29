@@ -11,7 +11,7 @@ declare var L: any;
   templateUrl: 'list.html'
 })
 export class ListPage {
-  
+
   map
   cluster = L.markerClusterGroup()
   markers = {}
@@ -20,7 +20,7 @@ export class ListPage {
       name: 'Rutas',
       url: 'https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}',
       preview: 'https://korona.geog.uni-heidelberg.de/tiles/roads/x=150&y=249&z=9',
-      opts: { 
+      opts: {
         attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }
     },
@@ -28,7 +28,7 @@ export class ListPage {
       name: 'Mapbox Streets',
       url: 'https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2VlZGdhYm8iLCJhIjoiY2pjdDNzYzV4MGQ4ZTJxanlzNWVhYzB6MiJ9.xrP9t07VMGpwFwo7E7tP1Q',
       preview: 'https://api.mapbox.com/v4/mapbox.streets/9/150/249.png?access_token=pk.eyJ1Ijoic2VlZGdhYm8iLCJhIjoiY2pjdDNzYzV4MGQ4ZTJxanlzNWVhYzB6MiJ9.xrP9t07VMGpwFwo7E7tP1Q',
-      opts:{     
+      opts: {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
         maxZoom: 18
       }
@@ -37,15 +37,15 @@ export class ListPage {
       name: 'Open Street Maps',
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       preview: 'http://a.tile.osm.org/9/150/249.png',
-      opts:{
+      opts: {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }
     },
     world: {
       name: 'Satelital',
-      url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       preview: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/9/249/150',
-      opts:{
+      opts: {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
       }
     }
@@ -69,7 +69,7 @@ export class ListPage {
   }
 
   ionViewDidLoad() {
-    this.api.ready.then(()=>{
+    this.api.ready.then(() => {
       this.api.startEcho();
       setTimeout(() => {
         this.initMap();
@@ -104,10 +104,10 @@ export class ListPage {
   getUsers() {
     var entidades_ids = this.pluck(this.api.user.entidades, 'id')
     this.api.load(`users?whereIn[entidad_id]=${entidades_ids.join()}&with[]=entidad&order[updated_at]=desc`, 'users_tracks')
-      .then((users: any) => {
+      .then((users: Array<any>) => {
         this.users = users;
         users.forEach(u => {
-          if (u.location){
+          if (u.location) {
             this.markerUser(u);
           }
         });
@@ -120,25 +120,25 @@ export class ListPage {
 
   // Map Methods
   initMap() {
-    this.map = L.map('mapid', { zoomControl: false, maxZoom:18 }).setView([4.669988, -74.0673856], 13);
+    this.map = L.map('mapid', { zoomControl: false, maxZoom: 18 }).setView([4.669988, -74.0673856], 13);
     this.api.storage.get('layer')
-    .then((layer)=>{
-      if(layer && this.layers[layer]){
-        this.setLayer(layer)
-      }else{
-        this.setLayer('road')
-      }
-    });
+      .then((layer) => {
+        if (layer && this.layers[layer]) {
+          this.setLayer(layer)
+        } else {
+          this.setLayer('road')
+        }
+      });
     this.map.addLayer(this.cluster);
   }
 
-  setLayer(key){
-    if(this.current_layer){
+  setLayer(key) {
+    if (this.current_layer) {
       this.map.removeLayer(this.current_layer)
     }
     this.current_layer = L.tileLayer(this.layers[key].url, this.layers[key].opts)
     this.current_layer.addTo(this.map);
-    this.api.storage.set('layer',key);
+    this.api.storage.set('layer', key);
   }
 
   locate() {
@@ -159,7 +159,9 @@ export class ListPage {
   }
 
   fitToAll() {
-    this.map.fitBounds(this.cluster.getBounds(), { padding: [20, 20] })
+    var bounds = this.cluster.getBounds()
+    if (bounds.isValid())
+      this.map.fitBounds(bounds, { padding: [20, 20] })
   }
 
   centerInUser(user) {
@@ -167,7 +169,7 @@ export class ListPage {
     if (loc)
       this.map.panTo([loc.latitude, loc.longitude]);
 
-    var popup =L.popup()
+    var popup = L.popup()
       .setLatLng([loc.latitude, loc.longitude])
       .setContent(this.htmlPopup(user))
       .openOn(this.map);
@@ -193,7 +195,7 @@ export class ListPage {
     if (pan)
       this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
     this.markers[user.id] = L.marker([loc.latitude, loc.longitude], { icon: icon });
-    
+
     this.cluster.addLayer(this.markers[user.id])
     this.cluster.refreshClusters(this.markers[user.id])
     this.markers[user.id].on('click', (ev) => {
@@ -205,30 +207,30 @@ export class ListPage {
     })
   }
 
-  addAddressPopup(popup){
+  addAddressPopup(popup) {
     this.api.reverseGeo(popup.getLatLng().lat, popup.getLatLng().lng)
-    .then((results:any)=>{
-      popup.setContent(
-        popup.getContent()
-        + `<br>
+      .then((results: any) => {
+        popup.setContent(
+          popup.getContent()
+          + `<br>
           <b>Dirección</b> ${results.display_name}
         `
-      )
-    })
+        )
+      })
   }
 
   htmlPopup(user) {
-    var html =  `
+    var html = `
       <h6> ${user.full_name}</h6>
       <span> ${moment.utc(user.location.timestamp.date).local().format('LLLL')}</span>
       <br>
-      <span><b>Cargo:</b> ${user.cargo}</>
+      <span><b>Cargo:</b> ${user.cargo}</any>
       <br>
       <span><b>Departamento:</b>  ${user.departamento}</span>
       <br>
     `
-    if(user.location.speed > 0)
-    html += `<span>
+    if (user.location.speed > 0)
+      html += `<span>
         <b>Velocidad:</b>
         ${Math.floor(user.location.speed * 3.6)} Kmh
       </span>
@@ -242,12 +244,12 @@ export class ListPage {
     })
   }
 
-  mapOptions(ev){
-    var popover = this.popover.create("MapOptionsPage",{layers: this.layers})
-    popover.present({ev: ev});
-    popover.onWillDismiss((data)=>{
-      if(!data) {return}
-      if(data.action == 'layer'){
+  mapOptions(ev) {
+    var popover = this.popover.create("MapOptionsPage", { layers: this.layers })
+    popover.present({ ev: ev });
+    popover.onWillDismiss((data) => {
+      if (!data) { return }
+      if (data.action == 'layer') {
         this.setLayer(data.layer)
       }
     })
