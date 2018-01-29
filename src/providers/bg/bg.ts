@@ -167,7 +167,9 @@ export class BgProvider {
 
   TripAlgorithm(location) {
 
-
+    if (Math.abs(moment().diff(moment.utc(location.coords.timestamp),"seconds")) > 30){
+      return this.trip_data.on_trip
+    }
     // in rest, moving
     if (!this.trip_data.on_trip) {
       // If no a first point to reference the initial state of the trip
@@ -315,6 +317,7 @@ export class BgProvider {
     return new Promise((resolve, reject) => {
       this.bg.getCurrentPosition((pos) => {
         resolve(pos)
+        this.postLocation(pos)
       }, (err) => {
         reject(err)
       })
