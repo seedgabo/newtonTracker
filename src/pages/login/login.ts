@@ -1,5 +1,3 @@
-import { ListPage } from './../list/list';
-import { HomePage } from './../home/home';
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController, Platform, Events } from 'ionic-angular';
