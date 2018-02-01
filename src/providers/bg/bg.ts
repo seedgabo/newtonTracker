@@ -119,11 +119,12 @@ export class BgProvider {
       stopOnTerminate: false,
       startOnBoot: true,
       forceReloadOnBoot: true,
+      preventSuspend: true,
       foregroundService: true,
+      notificationIcon: "drawable/logo",
       notificationTitle: "Newton Tracker",
       notificationText: "Sevicio de Rastreo Activado",
       notificationColor: "#DDDDDD",
-
       url: this.api.url + "api/locations/tracker",
       params: { user_id: this.api.user.id },
       httpRootProperty: '.',
