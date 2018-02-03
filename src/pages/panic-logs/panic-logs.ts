@@ -1,3 +1,4 @@
+import { BackgroundMode } from '@ionic-native/background-mode';
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
 import { NavController, NavParams, Platform, IonicPage } from 'ionic-angular';
@@ -9,12 +10,13 @@ import { NavController, NavParams, Platform, IonicPage } from 'ionic-angular';
 export class PanicLogsPage {
   panics: any = { data: [] };
   loading = false;
-  constructor(public navCtrl: NavController, public navParams: NavParams, public api: Api, public platform: Platform) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public api: Api, public platform: Platform, public backgroundmode: BackgroundMode) {
   }
 
   ionViewDidLoad() {
-    this.api.ready.then(()=>{
+    this.api.ready.then(() => {
       this.getPanics();
+      this.backgroundmode.moveToForeground();
     })
   }
 
