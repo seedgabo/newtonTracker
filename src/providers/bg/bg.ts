@@ -124,7 +124,7 @@ export class BgProvider {
       notificationIcon: "drawable/logo",
       notificationTitle: "Newton Tracker",
       notificationText: "Sevicio de Rastreo Activado",
-      notificationColor: "#DDDDDD",
+      notificationColor: "#048ef7",
       url: this.api.url + "api/locations/tracker",
       params: { user_id: this.api.user.id },
       httpRootProperty: '.',

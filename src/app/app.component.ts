@@ -54,6 +54,8 @@ export class MyApp {
       this.statusBar.styleLightContent()
       this.splashScreen.hide();
       this.backgroundmode.enable()
+      this.backgroundmode.setDefaults({ hidden: true, silent:true, });
+      this.backgroundmode.excludeFromTaskList();
       this.backgroundmode.disableWebViewOptimizations()
       this.backgroundmode.setDefaults({ silent: true, });
       this.platform.registerBackButtonAction(() => {
