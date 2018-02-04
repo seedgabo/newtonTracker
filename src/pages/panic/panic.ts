@@ -1,3 +1,4 @@
+import { BackgroundMode } from '@ionic-native/background-mode';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, ViewController } from 'ionic-angular';
 import moment from 'moment';
@@ -26,7 +27,7 @@ export class PanicPage {
       this.datetime = moment.utc();
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events, public backgroundmode: BackgroundMode) {
     this.user = this.navParams.get('user')
 
     if (this.navParams.get('entidad'))
@@ -47,6 +48,10 @@ export class PanicPage {
 
   ionViewDidLoad() {
     this.events.subscribe("panic", this.prepareData);
+    this.backgroundmode.unlock();
+    this.backgroundmode.wakeUp();
+    this.backgroundmode.moveToForeground();
+
   }
 
   close() {
