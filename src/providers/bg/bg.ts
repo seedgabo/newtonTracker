@@ -235,7 +235,7 @@ export class BgProvider {
     this.trip_data.trip_timestamp = moment.utc().toDate()
     this.trip_data.on_trip = false;
     this.trip_data.stop_location = location
-    // TODO: Post Stop Trip
+    this.postStopTrip()
     this.clearTripMetrics()
   }
 
@@ -310,6 +310,32 @@ export class BgProvider {
       _sum_altitude: 0,
       _first_event_time: moment.utc().toDate()
     }
+  }
+
+
+
+  // API
+  postStopTrip(data = null){
+    if(!data){
+      data = {
+        user_id: this.api.user.id,
+        entidad_id: this.api.user.entidad_id,
+        cliente_id: this.api.user.cliente_id,
+        start: this.trip_metrics._first_event_time,
+        stop: moment.utc(),
+        extra: this.trip_metrics
+      }
+    }
+    this.api.post('trips',data)
+    .then((data)=>{
+        console.log("trip posted", data)
+    })
+    .catch((err)=>{
+        console.error(err)
+        setTimeout(() => {
+            this.postStopTrip(data)
+        }, 1000 * 30 );
+    })
   }
 
 

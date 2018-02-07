@@ -51,14 +51,14 @@ export class ListPage {
     }
   }
   current_layer = null
-
+  trip_path= null
   disabled_panic = false;
   users = []
   query = ""
-
+  userSelected:any = {}
   locationCreatedHandler = (data) => {
     data.user.location = data.location.location
-    this.markerUser(data.user);
+    this.markerUser(data.user, data.user.id == this.userSelected.id);
   }
   panicHandler = (data) => {
     this.markerUser(data.user, true, true);
@@ -159,12 +159,15 @@ export class ListPage {
   }
 
   fitToAll() {
+    this.userSelected = {}
     var bounds = this.cluster.getBounds()
     if (bounds.isValid())
       this.map.fitBounds(bounds, { padding: [20, 20] })
   }
 
   centerInUser(user) {
+    this.selectUser(user)
+
     var loc = user.location
     if (loc)
       this.map.panTo([loc.latitude, loc.longitude]);
@@ -174,6 +177,7 @@ export class ListPage {
       .setContent(this.htmlPopup(user))
       .openOn(this.map);
     this.addAddressPopup(popup)
+
   }
 
   markerUser(user, pan = true, panic = false) {
@@ -199,6 +203,7 @@ export class ListPage {
     this.cluster.addLayer(this.markers[user.id])
     this.cluster.refreshClusters(this.markers[user.id])
     this.markers[user.id].on('click', (ev) => {
+      this.selectUser(user)
       var latlng = this.markers[user.id].getLatLng();
       var popup = L.popup()
         .setLatLng(latlng)
@@ -213,9 +218,17 @@ export class ListPage {
         popup.setContent(
           popup.getContent()
           + `<br>
-          <b>Dirección</b> ${results.display_name}
+          <b>Dirección: </b> ${results.display_name}
         `
         )
+      })
+      .catch((err)=>{
+        popup.setContent(
+          popup.getContent()
+            + `<br>
+            <b>Dirección: </b> Error: Servicio no Disponible
+          `
+          )
       })
   }
 
@@ -240,6 +253,7 @@ export class ListPage {
 
   getDefaultLocation() {
     navigator.geolocation.getCurrentPosition((data) => {
+      this.userSelected = {}
       this.map.panTo(new L.LatLng(data.coords.latitude, data.coords.longitude));
     })
   }
@@ -253,6 +267,40 @@ export class ListPage {
         this.setLayer(data.layer)
       }
     })
+  }
+
+  selectUser(user){
+    this.userSelected = user
+    this.getCurrentTrip(user)
+  }
+
+  getCurrentTrip(user){
+    this.api.get(`trips?with[]=locations&where[user_id]=${user.id}&order[created_at]=desc&limit=1`)
+    .then((data:any)=>{
+      console.log(data)
+      if(data.length > 0)
+        this.drawTrip(data[0].locations)
+    })
+    .catch(console.error)
+  }
+
+  drawTrip(locations){
+    var events= []
+    locations.forEach(loc => {
+      events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
+    })
+    if(this.trip_path){
+      this.trip_path.remove()
+      this.trip_path = null;
+    }
+
+    this.trip_path = new L.Polyline(events, {
+      weight: 5,
+      opacity: 1.0,
+      smoothFactor: 1
+    })
+    this.trip_path.addTo(this.map)
+    this.map.fitBounds(this.trip_path.getBounds())
   }
 
 

@@ -17,7 +17,8 @@
     <ion-content>
       <ion-list>
         <ion-searchbar [(ngModel)]="query" (ionInput)="filter()"></ion-searchbar>
-        <button [disabled]="!u.location" menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
+        <button [color]="userSelected?.id == u.id ?'primary':''" [disabled]="!u.location" menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
+
           <ion-avatar item-left>
             <img [src]="u.imagen" *ngIf="u.imagen" alt="">
           </ion-avatar>
