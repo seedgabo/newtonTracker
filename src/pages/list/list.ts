@@ -279,17 +279,19 @@ export class ListPage {
     .then((data:any)=>{
       console.log(data)
       if(data.length > 0){
-        if(data[0].locations > 10)
+        if(data[0].locations.length > 10)
           this.drawTrip(data[0].locations)
         else
-          this.CallbackTrip(data[0])
+          this.CallbackTrip(user, data[0])
+      }else{
+          this.CallbackTrip(user)
       }
     })
     .catch(console.error)
   }
   
-  CallbackTrip(trip){
-    this.api.get(`locations&where[user_id]=${trip.user_id}&order[created_at]=desc&limit=150`)
+  CallbackTrip(user, trip = null){
+    this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&${trip ? ("whereDategte[created_at]=" + moment.utc(trip.start).format("YYYY-MM-DD hh:mm:ss") ): "limit=150"}`)
       .then((locations: any) => {  
       this.drawTrip(locations)
     })
