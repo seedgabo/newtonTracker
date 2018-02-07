@@ -46,7 +46,7 @@ export class BgProvider {
     _first_event_time: moment.utc().toDate()
   }
   last_location
-
+  tries = 0
   constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
     window.$bg = this;
     this.configurate()
@@ -82,6 +82,9 @@ export class BgProvider {
 
       var onlocation = (ev) => {
         console.log("on Location", ev)
+        if(!this.isValidPoint(ev)){
+          return
+        }
         this.zone.run(() => {
           this.TripAlgorithm(ev)
           this.last_location = ev;
@@ -309,6 +312,31 @@ export class BgProvider {
     this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
   }
 
+  private isValidPoint(loc){
+    var last_point = this.last_location;
+    if (!last_point) { return true }
+    if (loc.coords.accuracy > 60) { return false }
+    if (this.tries > 3) { this.tries = 0; return true; }
+
+    var distance = this.getDistanceFromLatLon(loc.coords.latitude, loc.coords.longitude, last_point.coords.latitude, last_point.coords.longitude);
+    var time = moment.utc(loc.timestamp).diff(moment.utc(last_point.timestamp), "seconds");
+    loc.distance_between_last_point = distance;
+    
+    if (last_point.coords.speed > 0 && (last_point.coords.speed / distance * time > 3)) {
+      this.tries++;
+      return false;
+    }
+    else if (distance > 1000) {
+      this.tries++;
+      return false;
+    }
+    this.tries = 0;
+    return true;
+  }
+
+  
+  // API
+  
   postStartTrip(data = null) {
     if (!data) {
       data = {
@@ -332,7 +360,6 @@ export class BgProvider {
       })
   }
 
-  // API
   postStopTrip(data = null){
     if(!data){
       data = {
