@@ -17,8 +17,9 @@ export class BgProvider {
   state = false;
   locations = [];
   timeout_track;
+
   trip_data = {
-    trip_timestamp: moment.utc().toDate(),
+    trip_timestamp: moment(),
     reference_ev: null,
     on_trip: false,
     timestamp: null,
@@ -167,10 +168,6 @@ export class BgProvider {
 
 
   TripAlgorithm(location) {
-
-    if (Math.abs(moment().diff(moment.utc(location.coords.timestamp),"seconds")) > 30){
-      return this.trip_data.on_trip
-    }
     // in rest, moving
     if (!this.trip_data.on_trip) {
       // If no a first point to reference the initial state of the trip
@@ -187,12 +184,12 @@ export class BgProvider {
           }, this.trip_data.time_track);
       }
 
-      // If the event distance from reference event is greater than 50 mts
+      // If the event distance from reference event is greater than 150 mts
       var dist = this.getDistanceFromLatLon(location.coords.latitude, location.coords.longitude, this.trip_data.reference_ev.coords.latitude, this.trip_data.reference_ev.coords.longitude);
       this.trip_data.locations++;
 
       // Init the trip
-      if (this.trip_data.locations >= this.trip_data.events_to_init_trip && dist > 100) {
+      if (this.trip_data.locations >= this.trip_data.events_to_init_trip && dist > 150) {
         this.startTrip(location);
       }
 
@@ -200,7 +197,6 @@ export class BgProvider {
     }
     // on trip
     else if (this.trip_data.on_trip) {
-      // Logger.info("trip: event on trip")
       this.trip_data.locations++;
       this.trip_data.timestamp = moment.utc();
       this.trip_data.reference_ev = location;
@@ -223,7 +219,7 @@ export class BgProvider {
   }
 
   startTrip(location) {
-    this.trip_data.trip_timestamp = moment.utc().toDate()
+    this.trip_data.trip_timestamp = moment.utc()
     this.trip_data.on_trip = true;
     this.trip_data.start_location = location
     this.trip_data.stop_location = null
@@ -232,7 +228,7 @@ export class BgProvider {
   }
 
   stopTrip(location) {
-    this.trip_data.trip_timestamp = moment.utc().toDate()
+    this.trip_data.trip_timestamp = moment.utc()
     this.trip_data.on_trip = false;
     this.trip_data.stop_location = location
     this.postStopTrip()
@@ -310,6 +306,7 @@ export class BgProvider {
       _sum_altitude: 0,
       _first_event_time: moment.utc().toDate()
     }
+    this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
   }
 
   postStartTrip(data = null) {
