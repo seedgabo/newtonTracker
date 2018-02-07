@@ -282,7 +282,7 @@ export class ListPage {
     clearTimeout(this.tripTimeout)
     this.tripTimeout = setTimeout(()=>{
       this.getCurrentTrip(user)
-    },3000)
+    },1500)
   }
 
   getCurrentTrip(user){
@@ -290,12 +290,10 @@ export class ListPage {
     .then((data:any)=>{
       console.log(data)
       if(data.length > 0){
-        if(data[0].locations.length > 10)
+        // if(data[0].locations.length > 10)
           this.drawTrip(data[0].locations)
-        else
-          this.CallbackTrip(user, data[0])
-      }else{
-          this.CallbackTrip(user)
+        // else
+          // this.CallbackTrip(user, data[0])
       }
     })
     .catch(console.error)
@@ -304,11 +302,7 @@ export class ListPage {
   CallbackTrip(user, trip = null){
     this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&${trip ? ("whereDategte[created_at]=" + moment.utc(trip.start).format("YYYY-MM-DD hh:mm:ss") ): "limit=150"}`)
       .then((locations: any) => { 
-        if(locations.length<10){
-          this.CallbackTrip(user)
-        }else{
-          this.drawTrip(locations, { color:'#ff7707', dashArray: '5, 5', weight: 5, opacity: 1.0, smoothFactor: 1 })
-        }
+        this.drawTrip(locations, { color:'#ff7707', weight: 5, opacity: 1.0, smoothFactor: 1 })
     })
     .catch(console.error)
   }
@@ -316,16 +310,14 @@ export class ListPage {
   drawTrip(locations, options:any = { weight: 5, opacity: 1.0, smoothFactor: 1 }){
     var events= []
     var previousloc = locations[0]
-    var tries = 0;
     locations.forEach(loc => {
-      if (previousloc && tries<3 && Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude)) > 300){
-        tries++;
-      }
-      else {
-        tries = 0;
-        previousloc = loc
+      var dist = 0;
+      if(previousloc)
+        dist = Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude));
+      if (dist < 400){
         events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
       }
+      previousloc = loc
     })
 
     if(this.trip_path){
@@ -334,6 +326,7 @@ export class ListPage {
     }
 
     this.trip_path = new L.Polyline(events, options)
+    this.trip_path
     this.trip_path.addTo(this.map)
     this.map.fitBounds(this.trip_path.getBounds())
   }

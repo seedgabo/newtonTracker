@@ -49,6 +49,18 @@
   width: 100vw;
 }
 
+.pos-icon{
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  border-radius: 100%;
+  border: 2px solid #fff;
+}
+
+.label-map.active{
+  opacity: 1;
+}
+
 .user-icon {
   opacity: 0;
   animation-name: fadein;
