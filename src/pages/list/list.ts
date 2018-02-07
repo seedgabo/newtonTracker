@@ -310,7 +310,7 @@ export class ListPage {
   drawTrip(locations, options:any = { weight: 5, opacity: 1.0, smoothFactor: 1 }){
     var events= []
     var previousloc = locations[0]
-    locations.forEach(loc => {
+    locations.sort(function(a,b){ return moment.utc(b).diff(moment.utc(a))}).forEach(loc => {
       var dist = 0;
       if(previousloc)
         dist = Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude));
