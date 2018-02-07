@@ -286,9 +286,17 @@ export class ListPage {
 
   drawTrip(locations){
     var events= []
+    var previousloc
     locations.forEach(loc => {
-      events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
+      if (previousloc && Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude)) > 300){
+        previousloc = null
+      }
+      else {
+        events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
+        previousloc = loc
+      }
     })
+
     if(this.trip_path){
       this.trip_path.remove()
       this.trip_path = null;
