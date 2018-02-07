@@ -63,6 +63,7 @@ export class ListPage {
   panicHandler = (data) => {
     this.markerUser(data.user, true, true);
   }
+  tripTimeout=0;
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public popover: PopoverController, public api: Api, public bg: BgProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
@@ -271,7 +272,14 @@ export class ListPage {
 
   selectUser(user){
     this.userSelected = user
-    this.getCurrentTrip(user)
+    if (this.trip_path) {
+      this.trip_path.remove()
+      this.trip_path = null;
+    }
+    clearTimeout(this.tripTimeout)
+    this.tripTimeout = setTimeout(()=>{
+      this.getCurrentTrip(user)
+    },3000)
   }
 
   getCurrentTrip(user){
