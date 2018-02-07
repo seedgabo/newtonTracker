@@ -321,8 +321,8 @@ export class BgProvider {
         user_id: this.api.user.id,
         entidad_id: this.api.user.entidad_id,
         cliente_id: this.api.user.cliente_id,
-        start: this.trip_metrics._first_event_time,
-        stop: moment.utc(),
+        start: moment.utc(this.trip_metrics._first_event_time).format('YYYY-MM-DD hh:mm:ss'),
+        stop: moment().format('YYYY-MM-DD hh:mm:ss'),
         extra: this.trip_metrics
       }
     }
