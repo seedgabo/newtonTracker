@@ -316,13 +316,16 @@ export class ListPage {
   drawTrip(locations, options:any = { weight: 5, opacity: 1.0, smoothFactor: 1 }){
     var events= []
     var previousloc
+    var tries = 0;
     locations.forEach(loc => {
-      if (previousloc && Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude)) > 300){
+      if (tries<3 && previousloc && Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude)) > 300){
         previousloc = null
+        tries++;
       }
       else {
-        events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
+        tries = 0;
         previousloc = loc
+        events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
       }
     })
 
