@@ -59,6 +59,9 @@ export class ListPage {
   locationCreatedHandler = (data) => {
     data.user.location = data.location.location
     this.markerUser(data.user, data.user.id == this.userSelected.id);
+    if(this.trip_path && data.user.id == this.userSelected){
+      this.trip_path.addLatLng(new L.LatLng(data.location.location.latitude, data.location.location.longitude))
+    }
   }
   panicHandler = (data) => {
     this.markerUser(data.user, true, true);
