@@ -278,8 +278,20 @@ export class ListPage {
     this.api.get(`trips?with[]=locations&where[user_id]=${user.id}&order[created_at]=desc&limit=1`)
     .then((data:any)=>{
       console.log(data)
-      if(data.length > 0)
-        this.drawTrip(data[0].locations)
+      if(data.length > 0){
+        if(data[0].locations > 10)
+          this.drawTrip(data[0].locations)
+        else
+          this.CallbackTrip(data[0])
+      }
+    })
+    .catch(console.error)
+  }
+  
+  CallbackTrip(trip){
+    this.api.get(`locations&where[user_id]=${trip.user_id}&order[created_at]=desc&limit=150`)
+      .then((locations: any) => {  
+      this.drawTrip(locations)
     })
     .catch(console.error)
   }
