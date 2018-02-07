@@ -303,8 +303,12 @@ export class ListPage {
   
   CallbackTrip(user, trip = null){
     this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&${trip ? ("whereDategte[created_at]=" + moment.utc(trip.start).format("YYYY-MM-DD hh:mm:ss") ): "limit=150"}`)
-      .then((locations: any) => {  
-        this.drawTrip(locations, { color:'#ff7707', dashArray: '5, 5', weight: 5, opacity: 1.0, smoothFactor: 1 })
+      .then((locations: any) => { 
+        if(locations.length<10){
+          this.CallbackTrip(user)
+        }else{
+          this.drawTrip(locations, { color:'#ff7707', dashArray: '5, 5', weight: 5, opacity: 1.0, smoothFactor: 1 })
+        }
     })
     .catch(console.error)
   }
