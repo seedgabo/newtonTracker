@@ -13,7 +13,7 @@ export class HomePage {
   disabled_panic = false;
   edition = false;
   version_data
-  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast:ToastController, public codepush:CodePush, public splashScreen:SplashScreen) {
+  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast: ToastController, public codepush: CodePush, public splashScreen: SplashScreen) {
   }
 
   ionViewDidLoad() {
@@ -50,26 +50,26 @@ export class HomePage {
     this.bg.locate()
   }
 
-  saveUser(){
-    this.api.put('users/'+this.api.user.id,{
+  saveUser() {
+    this.api.put('users/' + this.api.user.id, {
       nombre: this.api.user.nombre,
       email: this.api.user.email,
       documento: this.api.user.documento,
     })
-    .then((resp)=>{
-        this.edition =false;
+      .then((resp) => {
+        this.edition = false;
         this.api.saveUser(this.api.user)
         this.toast.create({
           message: "Usuario Actualizado",
           duration: 2000
         }).present();
-    })
-    .catch((err)=>{
-      this.api.Error(err)
-    })
+      })
+      .catch((err) => {
+        this.api.Error(err)
+      })
   }
 
-  sync(){
+  sync() {
     this.codepush.sync({ updateDialog: true }, )
       .subscribe((status) => {
         var msg = ""
@@ -90,6 +90,9 @@ export class HomePage {
           this.splashScreen.show();
         }
         this.toast.create({ message: msg, duration: 2000 }).present();
+      }, (err) => {
+        console.warn(err);
+        this.splashScreen.hide();
       });
   }
 
