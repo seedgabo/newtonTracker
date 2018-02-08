@@ -17,8 +17,9 @@ export class BgProvider {
   state = false;
   locations = [];
   timeout_track;
+
   trip_data = {
-    trip_timestamp: moment.utc().toDate(),
+    trip_timestamp: moment(),
     reference_ev: null,
     on_trip: false,
     timestamp: null,
@@ -45,7 +46,7 @@ export class BgProvider {
     _first_event_time: moment.utc().toDate()
   }
   last_location
-
+  tries = 0
   constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
     window.$bg = this;
     this.configurate()
@@ -81,6 +82,9 @@ export class BgProvider {
 
       var onlocation = (ev) => {
         console.log("on Location", ev)
+        if(!this.isValidPoint(ev)){
+          return
+        }
         this.zone.run(() => {
           this.TripAlgorithm(ev)
           this.last_location = ev;
@@ -167,10 +171,6 @@ export class BgProvider {
 
 
   TripAlgorithm(location) {
-
-    if (Math.abs(moment().diff(moment.utc(location.coords.timestamp),"seconds")) > 30){
-      return this.trip_data.on_trip
-    }
     // in rest, moving
     if (!this.trip_data.on_trip) {
       // If no a first point to reference the initial state of the trip
@@ -187,12 +187,12 @@ export class BgProvider {
           }, this.trip_data.time_track);
       }
 
-      // If the event distance from reference event is greater than 50 mts
+      // If the event distance from reference event is greater than 2000 mts
       var dist = this.getDistanceFromLatLon(location.coords.latitude, location.coords.longitude, this.trip_data.reference_ev.coords.latitude, this.trip_data.reference_ev.coords.longitude);
       this.trip_data.locations++;
 
       // Init the trip
-      if (this.trip_data.locations >= this.trip_data.events_to_init_trip && dist > 100) {
+      if (this.trip_data.locations >= this.trip_data.events_to_init_trip && dist > 200) {
         this.startTrip(location);
       }
 
@@ -200,7 +200,6 @@ export class BgProvider {
     }
     // on trip
     else if (this.trip_data.on_trip) {
-      // Logger.info("trip: event on trip")
       this.trip_data.locations++;
       this.trip_data.timestamp = moment.utc();
       this.trip_data.reference_ev = location;
@@ -223,19 +222,19 @@ export class BgProvider {
   }
 
   startTrip(location) {
-    this.trip_data.trip_timestamp = moment.utc().toDate()
+    this.trip_data.trip_timestamp = moment.utc()
     this.trip_data.on_trip = true;
     this.trip_data.start_location = location
     this.trip_data.stop_location = null
-    // TODO: Post start Trip
+    this.postStartTrip()
     this.clearTripMetrics()
   }
 
   stopTrip(location) {
-    this.trip_data.trip_timestamp = moment.utc().toDate()
+    this.trip_data.trip_timestamp = moment.utc()
     this.trip_data.on_trip = false;
     this.trip_data.stop_location = location
-    // TODO: Post Stop Trip
+    this.postStopTrip()
     this.clearTripMetrics()
   }
 
@@ -310,6 +309,78 @@ export class BgProvider {
       _sum_altitude: 0,
       _first_event_time: moment.utc().toDate()
     }
+    this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
+  }
+
+  private isValidPoint(loc){
+    var last_point = this.last_location;
+    if (!last_point) { return true }
+    if (loc.coords.accuracy > 60) { return false }
+    if (this.tries > 3) { this.tries = 0; return true; }
+
+    var distance = this.getDistanceFromLatLon(loc.coords.latitude, loc.coords.longitude, last_point.coords.latitude, last_point.coords.longitude);
+    var time = moment.utc(loc.timestamp).diff(moment.utc(last_point.timestamp), "seconds");
+    loc.distance_between_last_point = distance;
+    
+    if (last_point.coords.speed > 0 && (last_point.coords.speed / distance * time > 3)) {
+      this.tries++;
+      return false;
+    }
+    else if (distance > 1000) {
+      this.tries++;
+      return false;
+    }
+    this.tries = 0;
+    return true;
+  }
+
+  
+  // API
+  
+  postStartTrip(data = null) {
+    if (!data) {
+      data = {
+        user_id: this.api.user.id,
+        entidad_id: this.api.user.entidad_id,
+        cliente_id: this.api.user.cliente_id,
+        start: moment().format('YYYY-MM-DD hh:mm:ss'),
+        end: null,
+        extra: this.trip_metrics
+      }
+    }
+    this.api.post('trips', data)
+      .then((data) => {
+        console.log("trip posted", data)
+      })
+      .catch((err) => {
+        console.error(err)
+        setTimeout(() => {
+          this.postStartTrip(data)
+        }, 1000 * 60);
+      })
+  }
+
+  postStopTrip(data = null){
+    if(!data){
+      data = {
+        user_id: this.api.user.id,
+        entidad_id: this.api.user.entidad_id,
+        cliente_id: this.api.user.cliente_id,
+        start: moment.utc(this.trip_metrics._first_event_time).format('YYYY-MM-DD hh:mm:ss'),
+        end: moment().format('YYYY-MM-DD hh:mm:ss'),
+        extra: this.trip_metrics
+      }
+    }
+    this.api.post('trips',data)
+    .then((data)=>{
+        console.log("trip posted", data)
+    })
+    .catch((err)=>{
+        console.error(err)
+        setTimeout(() => {
+            this.postStopTrip(data)
+        }, 1000 * 30 );
+    })
   }
 
 

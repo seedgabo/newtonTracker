@@ -51,18 +51,22 @@ export class ListPage {
     }
   }
   current_layer = null
-
+  trip_path= null
   disabled_panic = false;
   users = []
   query = ""
-
+  userSelected:any = {}
   locationCreatedHandler = (data) => {
     data.user.location = data.location.location
-    this.markerUser(data.user);
+    this.markerUser(data.user, data.user.id == this.userSelected.id);
+    if(this.trip_path && data.user.id == this.userSelected){
+      this.trip_path.addLatLng(new L.LatLng(data.location.location.latitude, data.location.location.longitude))
+    }
   }
   panicHandler = (data) => {
     this.markerUser(data.user, true, true);
   }
+  tripTimeout=0;
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public popover: PopoverController, public api: Api, public bg: BgProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
@@ -159,12 +163,15 @@ export class ListPage {
   }
 
   fitToAll() {
+    this.userSelected = {}
     var bounds = this.cluster.getBounds()
     if (bounds.isValid())
       this.map.fitBounds(bounds, { padding: [20, 20] })
   }
 
   centerInUser(user) {
+    this.selectUser(user)
+
     var loc = user.location
     if (loc)
       this.map.panTo([loc.latitude, loc.longitude]);
@@ -174,6 +181,7 @@ export class ListPage {
       .setContent(this.htmlPopup(user))
       .openOn(this.map);
     this.addAddressPopup(popup)
+
   }
 
   markerUser(user, pan = true, panic = false) {
@@ -199,6 +207,7 @@ export class ListPage {
     this.cluster.addLayer(this.markers[user.id])
     this.cluster.refreshClusters(this.markers[user.id])
     this.markers[user.id].on('click', (ev) => {
+      this.selectUser(user)
       var latlng = this.markers[user.id].getLatLng();
       var popup = L.popup()
         .setLatLng(latlng)
@@ -213,9 +222,17 @@ export class ListPage {
         popup.setContent(
           popup.getContent()
           + `<br>
-          <b>Dirección</b> ${results.display_name}
+          <b>Dirección: </b> ${results.display_name}
         `
         )
+      })
+      .catch((err)=>{
+        popup.setContent(
+          popup.getContent()
+            + `<br>
+            <b>Dirección: </b> Error: Servicio no Disponible
+          `
+          )
       })
   }
 
@@ -240,6 +257,7 @@ export class ListPage {
 
   getDefaultLocation() {
     navigator.geolocation.getCurrentPosition((data) => {
+      this.userSelected = {}
       this.map.panTo(new L.LatLng(data.coords.latitude, data.coords.longitude));
     })
   }
@@ -253,6 +271,64 @@ export class ListPage {
         this.setLayer(data.layer)
       }
     })
+  }
+
+  selectUser(user){
+    this.userSelected = user
+    if (this.trip_path) {
+      this.trip_path.remove()
+      this.trip_path = null;
+    }
+    clearTimeout(this.tripTimeout)
+    this.tripTimeout = setTimeout(()=>{
+      this.getCurrentTrip(user)
+    },1500)
+  }
+
+  getCurrentTrip(user){
+    this.api.get(`trips?with[]=locations&where[user_id]=${user.id}&order[created_at]=desc&limit=1`)
+    .then((data:any)=>{
+      console.log(data)
+      if(data.length > 0){
+        // if(data[0].locations.length > 10)
+          this.drawTrip(data[0].locations)
+        // else
+          // this.CallbackTrip(user, data[0])
+      }
+    })
+    .catch(console.error)
+  }
+  
+  CallbackTrip(user, trip = null){
+    this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&${trip ? ("whereDategte[created_at]=" + moment.utc(trip.start).format("YYYY-MM-DD hh:mm:ss") ): "limit=150"}`)
+      .then((locations: any) => { 
+        this.drawTrip(locations, { color:'#ff7707', weight: 5, opacity: 1.0, smoothFactor: 1 })
+    })
+    .catch(console.error)
+  }
+
+  drawTrip(locations, options:any = { weight: 5, opacity: 1.0, smoothFactor: 1 }){
+    var events= []
+    var previousloc = locations[0]
+    locations.sort(function(a,b){ return moment.utc(b).diff(moment.utc(a))}).forEach(loc => {
+      var dist = 0;
+      if(previousloc)
+        dist = Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude));
+      if (dist < 400){
+        events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
+      }
+      previousloc = loc
+    })
+
+    if(this.trip_path){
+      this.trip_path.remove()
+      this.trip_path = null;
+    }
+
+    this.trip_path = new L.Polyline(events, options)
+    this.trip_path
+    this.trip_path.addTo(this.map)
+    this.map.fitBounds(this.trip_path.getBounds())
   }
 
 

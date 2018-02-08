@@ -316,6 +316,7 @@ export class Api {
             this.addresses[lat + "+" + lon] = data
             resolve(data);
           }, error => {
+            
             return reject(error);
           });
       }
