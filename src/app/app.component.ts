@@ -72,7 +72,6 @@ export class MyApp {
             this.splashScreen.hide();
           });
       }
-      sync();
       setInterval(sync, 1000 * 60 * 60 * 8);
 
       var subsription = () => {
