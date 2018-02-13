@@ -90,7 +90,6 @@ export class HomePage {
           }
           if (status == 8) {
             msg = "La app se reiniciará";
-            this.splashScreen.show();
           }
           this.toast.create({ message: msg, duration: 2000 }).present();
         }, (err) => {
