@@ -82,13 +82,12 @@ export class BgProvider {
 
       var onlocation = (ev) => {
         console.log("on Location", ev)
-        if(!this.isValidPoint(ev)){
-          return
-        }
         this.zone.run(() => {
           this.TripAlgorithm(ev)
-          this.last_location = ev;
-          this.locations.push(ev)
+          if(!this.isValidPoint(ev)){
+            this.last_location = ev;
+            this.locations.push(ev)
+          }
         })
       }
 
@@ -187,9 +186,10 @@ export class BgProvider {
           }, this.trip_data.time_track);
       }
 
-      // If the event distance from reference event is greater than 2000 mts
-      var dist = this.getDistanceFromLatLon(location.coords.latitude, location.coords.longitude, this.trip_data.reference_ev.coords.latitude, this.trip_data.reference_ev.coords.longitude);
-      this.trip_data.locations++;
+      if (!this.isValidPoint(location)) { 
+        var dist = this.getDistanceFromLatLon(location.coords.latitude, location.coords.longitude, this.trip_data.reference_ev.coords.latitude, this.trip_data.reference_ev.coords.longitude);
+        this.trip_data.locations++;        
+      }
 
       // Init the trip
       if (this.trip_data.locations >= this.trip_data.events_to_init_trip && dist > 200) {
