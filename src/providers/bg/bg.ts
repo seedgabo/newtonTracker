@@ -17,6 +17,7 @@ export class BgProvider {
   state = false;
   locations = [];
   timeout_track;
+  current_activity = ""
 
   trip_data = {
     trip_timestamp: moment(),
@@ -82,7 +83,7 @@ export class BgProvider {
 
       var onlocation = (ev) => {
         console.log("on Location", ev)
-        if(!this.isValidPoint(ev)){
+        if (!this.isValidPoint(ev)) {
           return
         }
         this.zone.run(() => {
@@ -100,8 +101,17 @@ export class BgProvider {
         this.provider = ev
       }
 
+      var onActivity = (activity) => {
+        console.log("on actitivty", activity)
+        if (this.current_activity != activity.activity && activity.confidence > 80) {
+          this.current_activity = activity.activity
+          this.postActivity(activity);
+        }
+      }
+
 
       this.bg.on('location', onlocation, this.onLocationFailure);
+      this.bg.on('activitychange', onActivity, this.onLocationFailure);
       this.bg.on('http', onHttp, this.onLocationFailure);
       this.bg.on('providerchange', onProvider, console.warn);
       this.bg.on('motionchange', console.info);
@@ -312,7 +322,7 @@ export class BgProvider {
     this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
   }
 
-  private isValidPoint(loc){
+  private isValidPoint(loc) {
     var last_point = this.last_location;
     if (!last_point) { return true }
     if (loc.coords.accuracy > 60) { return false }
@@ -321,7 +331,7 @@ export class BgProvider {
     var distance = this.getDistanceFromLatLon(loc.coords.latitude, loc.coords.longitude, last_point.coords.latitude, last_point.coords.longitude);
     var time = moment.utc(loc.timestamp).diff(moment.utc(last_point.timestamp), "seconds");
     loc.distance_between_last_point = distance;
-    
+
     if (last_point.coords.speed > 0 && (last_point.coords.speed / distance * time > 3)) {
       this.tries++;
       return false;
@@ -334,9 +344,9 @@ export class BgProvider {
     return true;
   }
 
-  
+
   // API
-  
+
   postStartTrip(data = null) {
     if (!data) {
       data = {
@@ -360,8 +370,8 @@ export class BgProvider {
       })
   }
 
-  postStopTrip(data = null){
-    if(!data){
+  postStopTrip(data = null) {
+    if (!data) {
       data = {
         user_id: this.api.user.id,
         entidad_id: this.api.user.entidad_id,
@@ -371,16 +381,37 @@ export class BgProvider {
         extra: this.trip_metrics
       }
     }
-    this.api.post('trips',data)
-    .then((data)=>{
+    this.api.post('trips', data)
+      .then((data) => {
         console.log("trip posted", data)
-    })
-    .catch((err)=>{
+      })
+      .catch((err) => {
         console.error(err)
         setTimeout(() => {
-            this.postStopTrip(data)
-        }, 1000 * 30 );
-    })
+          this.postStopTrip(data)
+        }, 1000 * 30);
+      })
+  }
+
+  postActivity(event) {
+    var data = {
+      user_id: this.api.user.id,
+      entidad_id: this.api.user.entidad_id,
+      cliente_id: this.api.user.cliente_id,
+      timestamp: moment().format('YYYY-MM-DD hh:mm:ss'),
+      activity: event.activity,
+      confidence: event.confidence
+    }
+    this.api.post('activities', data)
+      .then((data) => {
+        console.log("activities posted", data)
+      })
+      .catch((err) => {
+        console.error(err)
+        setTimeout(() => {
+          this.postActivity(event)
+        }, 1000 * 60);
+      })
   }
 
 
