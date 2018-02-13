@@ -73,7 +73,7 @@ export class HomePage {
 
   sync() {
     this.platform.ready().then(() => {
-      this.codepush.sync({ updateDialog: true }, )
+      this.codepush.sync()
         .subscribe((status) => {
           var msg = ""
           if (status == 0) {
