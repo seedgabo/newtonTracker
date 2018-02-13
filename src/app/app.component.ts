@@ -63,7 +63,7 @@ export class MyApp {
       });
 
       var sync = () => {
-        this.codePush.sync({ updateDialog: false })
+        this.codePush.sync()
           .subscribe((status) => {
             if (status == 8)
               this.splashScreen.show();
