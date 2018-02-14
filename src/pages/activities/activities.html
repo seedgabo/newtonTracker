@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>
+      <ion-avatar class="user-image">
+        <img [src]="user?.imagen" *ngIf="user?.imagen" >
+      </ion-avatar>
+      {{user?.nombre}}
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content no-padding>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-6 col-sm>
+        <ion-card>
+          <ion-list-header>
+            <span ion-text color="primary"> Historial </span>
+          </ion-list-header>
+          <ion-list no-padding inset no-lines>
+              <ion-item *ngFor="let activity of activities" >
+                <ion-icon item-left [color]="colors[activity.activity]" [name]="icons[activity.activity]" large></ion-icon>
+                <h2>{{acts[activity.activity]}}</h2>
+                <p>{{activity.created_at | amCalendar }}</p>
+                <div item-right class="activity-line" [ngClass]="activity.activity"></div>
+            </ion-item>
+          </ion-list>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

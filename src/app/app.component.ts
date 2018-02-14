@@ -64,13 +64,6 @@ export class MyApp {
 
       var sync = () => {
         this.codePush.sync()
-          .subscribe((status) => {
-            if (status == 8)
-              this.splashScreen.show();
-          }, (err) => {
-            console.warn(err)
-            this.splashScreen.hide();
-          });
       }
       setInterval(sync, 1000 * 60 * 60 * 8);
 
@@ -99,13 +92,14 @@ export class MyApp {
       if (!this.api.user) {
         this.nav.setRoot(LoginPage)
       } else {
-        if (this.platform.is('mobile') && this.api.user.can_use_tracking) {
-          this.nav.setRoot(HomePage);
-        } else if (this.api.user && (this.api.user.roles.collection['Ver Rastreo'] || this.api.user.roles.collection['SuperAdmin'])) {
-          this.nav.setRoot(ListPage);
-        } else {
-          this.nav.setRoot("NoUsePage");
-        }
+        if (!this.nav.getActive() || this.nav.getActive().name == 'LoginPage')
+          if (this.platform.is('mobile') && this.api.user.can_use_tracking) {
+            this.nav.setRoot(HomePage);
+          } else if (this.api.user && (this.api.user.roles.collection['Ver Rastreo'] || this.api.user.roles.collection['SuperAdmin'])) {
+            this.nav.setRoot(ListPage);
+          } else {
+            this.nav.setRoot("NoUsePage");
+          }
         this.api.doLogin().then((response: any) => {
           this.api.saveUser(response);
           this.api.saveData()

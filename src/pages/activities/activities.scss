@@ -1,0 +1,35 @@
+page-activities {
+    .scroll-content{
+        background: rgb(230,230,230);
+    }
+    .user-image{
+        display:  inline-flex;
+        margin: 0 auto;
+        float:right;
+        img{
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+    }
+    .activity-line{
+        height: 100%;
+        width: 4px;
+        background: black;
+        &.still{
+            background: color($colors,'danger');
+        }
+        &.on_foot{
+            background: color($colors,'primary');
+        }
+        &.running{
+            background: color($colors,'favorite');
+        }
+        &.in_vehicle{
+            background: color($colors,'secondary');
+        }
+        &.on_bycicle {
+            background: color($colors,'warning');
+        }
+    }
+}
