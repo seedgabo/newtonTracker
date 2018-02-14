@@ -23,13 +23,13 @@
             <img [src]="u.imagen" *ngIf="u.imagen" alt="">
           </ion-avatar>
           <h2>
-          <div class="user-state" [ngClass]="this.api.objects.users_online?.collection[u.id]? 'online' : 'offline'"></div>
+          <div class="user-state" [ngClass]="api.objects.users_online?.collection[u.id]? 'online' : 'offline'"></div>
             {{u.full_name}} 
             <small>({{u.entidad?.name }})</small>
             <ion-icon name="logo-android" style="color:#A4C639"></ion-icon>
           </h2>
           <h3>
-            Actividad: {{ u.activity ? activities[u.activity.activity] : 'Desconocida'}}
+            Actividad: {{ !api.objects.users_online?.collection[u.id] ? 'Desconectado' :u.activity ? activities[u.activity.activity] : 'Desconocida'}}
           </h3>
           <p [title]="api.addresses[u.location.latitude + '+' + u.location.longitude].display_name" *ngIf="u.location && api.addresses[u.location.latitude + '+' + u.location.longitude]">
             {{ api.addresses[u.location.latitude + '+' + u.location.longitude].display_name }}

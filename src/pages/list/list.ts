@@ -305,7 +305,7 @@ export class ListPage {
     clearTimeout(this.tripTimeout)
     this.tripTimeout = setTimeout(()=>{
       this.getCurrentTrip(user)
-    },1500)
+    },300)
   }
 
   getCurrentTrip(user){
