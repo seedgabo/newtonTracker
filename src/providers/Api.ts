@@ -267,6 +267,15 @@ export class Api {
             }
           })
         })
+        .listen('ActivityCreated', (data) => {
+          console.log("created activity:", data);
+          this.zone.run(() => {
+            if (this.objects.users_tracks && this.objects.users_tracks.collection[data.user.id]) {
+              this.objects.users_tracks.collection[data.user.id].activity = data.activity;
+              this.events.publish('ActivityCreated', data)
+            }
+          })
+        })
 
         .listen('Panic', (data) => {
           console.log("Panic ", data);
