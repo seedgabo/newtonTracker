@@ -50,6 +50,13 @@ export class ListPage {
       }
     }
   }
+  activities = {
+    'on_foot': 'A pie',
+    'still': 'Parado',
+    'in_vehicle': 'En vehiculo',
+    'on_bycicle': 'En Bicicleta',
+    'running': 'Corriendo'
+  }
   current_layer = null
   trip_path= null
   disabled_panic = false;
@@ -59,14 +66,14 @@ export class ListPage {
   locationCreatedHandler = (data) => {
     data.user.location = data.location.location
     this.markerUser(data.user, data.user.id == this.userSelected.id);
-    if(this.trip_path && data.user.id == this.userSelected){
+    if(this.trip_path && data.user.id == this.userSelected.id){
       this.trip_path.addLatLng(new L.LatLng(data.location.location.latitude, data.location.location.longitude))
     }
   }
   panicHandler = (data) => {
     this.markerUser(data.user, true, true);
   }
-  tripTimeout=0;
+  tripTimeout = 0
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public popover: PopoverController, public api: Api, public bg: BgProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
@@ -221,8 +228,8 @@ export class ListPage {
       .then((results: any) => {
         popup.setContent(
           popup.getContent()
-          + `<br>
-          <b>Dirección: </b> ${results.display_name}
+          + `<span style="font-size:10px"><br>
+          <b>Dirección: </b> ${results.display_name}</span>
         `
         )
       })
@@ -237,13 +244,29 @@ export class ListPage {
   }
 
   htmlPopup(user) {
+    var state = 'none'
+    if (this.api.objects.users_online && this.api.objects.users_online.collection[user.id]) {
+      state = 'online'
+    } else {
+      state = 'offline'
+    }
     var html = `
-      <h6> ${user.full_name}</h6>
-      <span> ${moment.utc(user.location.timestamp.date).local().format('LLLL')}</span>
+      <h6>
+        <div class="user-state ${state}"></div>
+        ${user.full_name}
+        <small style="float:right">
+          <i class="fa fa-android fa-lg" style="color:#A4C639"></i>
+          ${moment.utc(user.location.timestamp.date).local().calendar()}
+        </small>
+      </h6>
+      <span>
+        <b>Actividad:</b> <span style="color:#489dff"> ${ user.activity ? this.activities[user.activity.activity] : 'Desconocida' }</span>
+         <small style="float:right">Desde  ${ user.activity ?moment(user.activity.activity.created_at).calendar() : ''} </small>
+      </span>
       <br>
-      <span><b>Cargo:</b> ${user.cargo}</any>
       <br>
-      <span><b>Departamento:</b>  ${user.departamento}</span>
+      <span><b>Cargo:</b> ${user.cargo}</span>
+      <span style="float:right"><b>Departamento:</b>  ${user.departamento}</span>
       <br>
     `
     if (user.location.speed > 0)
@@ -314,7 +337,7 @@ export class ListPage {
       var dist = 0;
       if(previousloc)
         dist = Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude));
-      if (dist < 400){
+      if (dist < 200){
         events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
       }
       previousloc = loc
@@ -326,13 +349,9 @@ export class ListPage {
     }
 
     this.trip_path = new L.Polyline(events, options)
-    this.trip_path
     this.trip_path.addTo(this.map)
-    this.map.fitBounds(this.trip_path.getBounds())
+    // this.map.fitBounds(this.trip_path.getBounds())
   }
-
-
-
 
   private pluck(array, key) {
     var resp = []

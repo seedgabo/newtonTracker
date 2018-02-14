@@ -17,16 +17,19 @@
     <ion-content>
       <ion-list>
         <ion-searchbar [(ngModel)]="query" (ionInput)="filter()"></ion-searchbar>
-        <button [color]="userSelected?.id == u.id ?'primary':''" [disabled]="!u.location" menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
+        <button text-wrap [color]="userSelected?.id == u.id ?'primary':''" [disabled]="!u.location" menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
 
           <ion-avatar item-left>
             <img [src]="u.imagen" *ngIf="u.imagen" alt="">
           </ion-avatar>
           <h2>
-            {{u.full_name}}
+          <div class="user-state" [ngClass]="this.api.objects.users_online?.collection[u.id]? 'online' : 'offline'"></div>
+            {{u.full_name}} 
+            <small>({{u.entidad?.name }})</small>
+            <ion-icon name="logo-android" style="color:#A4C639"></ion-icon>
           </h2>
           <h3>
-            {{u.entidad?.name }}
+            Actividad: {{ u.activity ? activities[u.activity.activity] : 'Desconocida'}}
           </h3>
           <p [title]="api.addresses[u.location.latitude + '+' + u.location.longitude].display_name" *ngIf="u.location && api.addresses[u.location.latitude + '+' + u.location.longitude]">
             {{ api.addresses[u.location.latitude + '+' + u.location.longitude].display_name }}

@@ -56,6 +56,23 @@
   border-radius: 100%;
   border: 2px solid #fff;
 }
+.user-state{
+  display: inline-flex;
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  vertical-align: middle;
+  border: 1px solid #AAA;
+  &.online{
+    background: color($colors,'secondary');
+  }
+  &.offline{
+    background: color($colors,'danger');
+  }
+  &.default{
+    background: color($colors,'light');
+  }
+}
 
 .label-map.active{
   opacity: 1;

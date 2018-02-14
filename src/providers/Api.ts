@@ -279,7 +279,31 @@ export class Api {
           }
           this.handlePanic(data, false)
         })
+      
+      this.Echo.join('App.Mobile')
+        .here((data) => {
+          this.objects.users_online = data
+          this.objects.users_online.collection = this.mapToCollection(data,"id")
+          console.log("here:", data);
+        })
+        .joining((data) => {
+          this.objects.users_online.push(data)
+          this.objects.users_online.collection[data.id] = data
+          console.log("joining", data);
+        })
+        .leaving((data) => {
+          var u_index = this.objects.users_online.findIndex((u) => {
+            return u.id == data.id
+          })
+          if (u_index) {
+            this.objects.users_online.splice(u_index,1)
+            delete(this.objects.users_online.collection[data.id])
+          }
+          console.log("leaving", data);
+        })
 
+    
+    
     })
   }
 
