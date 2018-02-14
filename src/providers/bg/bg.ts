@@ -102,7 +102,7 @@ export class BgProvider {
 
       var onActivity = (activity) => {
         console.log("on actitivty", activity)
-        if (this.current_activity != activity.activity && activity.confidence > 80) {
+        if (this.current_activity != activity.activity && activity.confidence > 90) {
           this.current_activity = activity.activity
           this.postActivity(activity);
         }
@@ -134,6 +134,7 @@ export class BgProvider {
       forceReloadOnBoot: true,
       preventSuspend: true,
       foregroundService: true,
+      minimumActivityRecognitionConfidence: 90,
       notificationIcon: "drawable/logo",
       notificationTitle: "Newton Tracker",
       notificationText: "Sevicio de Rastreo Activado",
