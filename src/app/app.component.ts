@@ -103,7 +103,7 @@ export class MyApp {
           this.api.saveUser(response);
           this.api.saveData()
           this.api.user = response;
-        }).catch(this.api.Error);
+        }).catch((err) => { this.api.Error(err) });
       }
     })
   }
@@ -115,7 +115,7 @@ export class MyApp {
       if (match.$link.url && match.$link.url.indexOf("sos") > -1) {
         this.api.ready.then(() => {
           setTimeout(() => {
-            this.api.panic().then(() => { }).catch(this.api.Error)
+            this.api.panic().then(() => { }).catch((err) => { this.api.Error(err) });
           }, 1200);
         })
       }

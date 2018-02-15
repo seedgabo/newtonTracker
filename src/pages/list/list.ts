@@ -130,7 +130,7 @@ export class ListPage {
         this.fitToAll()
 
       })
-      .catch(this.api.Error);
+      .catch((err) => { this.api.Error(err) });
   }
 
 
