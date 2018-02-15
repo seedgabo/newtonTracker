@@ -27,7 +27,7 @@ export class MyApp {
 
     this.platform.ready().then(() => {
       this.events.subscribe('login', () => {
-        this.initializeUser();
+        this.initializeUser(true);
         this.initializePages();
       })
     })
@@ -87,12 +87,12 @@ export class MyApp {
     });
   }
 
-  initializeUser() {
+  initializeUser(forcePage = false) {
     this.api.ready.then((user) => {
       if (!this.api.user) {
         this.nav.setRoot(LoginPage)
       } else {
-        if (!this.nav.getActive() || this.nav.getActive().name == 'LoginPage')
+        if (forcePage || !this.nav.getActive())
           if (this.platform.is('mobile') && this.api.user.can_use_tracking) {
             this.nav.setRoot(HomePage);
           } else if (this.api.user && (this.api.user.roles.collection['Ver Rastreo'] || this.api.user.roles.collection['SuperAdmin'])) {
