@@ -25,18 +25,19 @@ export class ActivitiesPage {
   }
   acts = {
     'on_foot': 'A pie',
-    'still': 'Parado',
+    'still': 'Detenido',
     'in_vehicle': 'En vehiculo',
     'on_bycicle': 'En Bicicleta',
     'running': 'Corriendo'
   }
   colors = {
     'on_foot': 'primary',
-    'still': 'danger',
+    'still': 'neutral',
     'running': 'favorite',   
     'in_vehicle': 'secondary',
     'on_bycicle': 'warning',
   }
+  list = "Actividad"
   constructor(public navCtrl: NavController, public navParams: NavParams, public api:Api) {
     if (this.navParams.get('user')) {
       this.user = this.navParams.get('user'); 
@@ -59,30 +60,36 @@ export class ActivitiesPage {
   ionViewDidLoad() {
   }
 
-  getActivities() {
+  getActivities(refresher=null) {
     this.loading = true
     this.api.get(`activities?where[user_id]=${this.user.id}&limit=200`)
     .then((resp:any) => {
       this.activities = resp.reverse()
       this.loading  = false
-      this.getTrips()
+      this.getTrips(refresher)
     })
     .catch((err) => {
       this.api.Error(err)
       this.loading  = false
+      if (refresher)
+        refresher.complete()  
     })
   }
   
-  getTrips() {
+  getTrips(refresher=null) {
     this.loading = true
     this.api.get(`trips?where[user_id]=${this.user.id}&limit=200`)
     .then((data:any) => {
       this.trips = data.reverse()
-      this.loading  = false
-    })
-    .catch((err) => {
-      this.api.Error(err)
-      this.loading  = false
+      this.loading = false
+      if (refresher)
+        refresher.complete()  
+      })
+      .catch((err) => {
+        this.api.Error(err)
+        this.loading  = false
+        if (refresher)
+          refresher.complete()  
     })
   }
 

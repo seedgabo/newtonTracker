@@ -1,31 +1,103 @@
 <ion-header>
-  <ion-navbar color="primary">
+  <ion-navbar color="secondary">
     <ion-title>
-      <ion-avatar class="user-image">
-        <img [src]="user?.imagen" *ngIf="user?.imagen" >
-      </ion-avatar>
-      {{user?.nombre}}
+      Actividad
     </ion-title>
   </ion-navbar>
 </ion-header>
-<ion-content no-padding>
-  <ion-grid>
-    <ion-row>
-      <ion-col col-xs-12 col-sm-12  col-md-6 col-lg-6 col-xl-6>
-        <ion-card>
-          <ion-list-header>
-            <span ion-text color="primary"> Historial </span>
-          </ion-list-header>
-          <ion-list no-padding inset no-lines>
-              <ion-item *ngFor="let activity of activities" >
-                <ion-icon item-left [color]="colors[activity.activity]" [name]="icons[activity.activity]" large></ion-icon>
-                <h2>{{acts[activity.activity]}}</h2>
-                <p>{{activity.created_at | amCalendar }}</p>
-                <div item-right class="activity-line" [ngClass]="activity.activity"></div>
-            </ion-item>
-          </ion-list>
-        </ion-card>
-      </ion-col>
+<ion-content  no-padding>
+  <ion-refresher (ionRefresh)="getActivities($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-grid class="hero-user">
+    <ion-row  text-center>
+        <ion-col col-xs-12 col-sm-12 col-md-12 offset-lg-3 offset-xl-3 col-lg-6 col-xl-6 col>
+          <div class="user-image">
+            <img [src]="user?.imagen" *ngIf="user?.imagen">
+          </div>
+            <h3 ion-text color="primary">{{user.full_name}}</h3>
+            <p ion-text color="primary">{{user.departamento}} - {{user.cargo}}</p>
+        </ion-col>
     </ion-row>
   </ion-grid>
+  
+  <ion-grid class="hero-user">
+    <ion-row text-center>
+      <ion-col col-xs-12 col-sm-12 col-md-12 offset-lg-3 offset-xl-3 col-lg-6 col-xl-6 col>
+        <ion-card>
+          <ion-segment color="primary" [(ngModel)]="list">
+            <ion-segment-button value="Actividad">
+              Actividad
+            </ion-segment-button>
+            <ion-segment-button value="Viajes">
+              Viajes
+            </ion-segment-button>
+          </ion-segment>
+        </ion-card>
+        <div [ngSwitch]="list">
+            <ion-card no-padding *ngSwitchCase="'Actividad'">
+              <ion-list-header>
+                <span ion-text color="primary"> Historial  de Actividad </span>
+              </ion-list-header>
+              <ion-list>
+                  <ion-item *ngFor="let activity of activities" >
+                    <ion-grid>
+                      <ion-row>
+                        <ion-col>
+                          <h2>
+                            <ion-icon [color]="colors[activity.activity]" [name]="icons[activity.activity]"></ion-icon>
+                            {{acts[activity.activity]}}
+                          </h2>
+                          <!-- <a *ngIf="activity.location && !api.addresses[activity.location.latitude + '+' + activity.location.longitude]">
+                            Lat: {{activity.location.latitude}}
+                            lon: {{activity.location.longitude}}
+                          </a>
+                          <p *ngIf="activity.location && api.addresses[activity.location.latitude + '+' + activity.location.longitude]">
+                            {{api.addresses[activity.location.latitude + '+' + activity.location.longitude].display.name}}
+                          </p> -->
+                          <ion-note *ngIf="!activity.location">
+                            No Hay Ubicacion
+                          </ion-note>
+                        </ion-col>
+                        <ion-col text-right>
+                            <p>{{activity.created_at | amCalendar }}</p>
+                        </ion-col>
+                    </ion-row>
+                  </ion-grid>
+                  <div item-right class="activity-line" [ngClass]="activity.activity"></div>
+                </ion-item>
+              </ion-list>
+            </ion-card>
+          
+            <ion-card no-padding *ngSwitchCase="'Viajes'">
+              <ion-list-header>
+                <span ion-text color="primary"> Historial de Viajes </span>
+              </ion-list-header>
+              <ion-list>
+                <div *ngFor="let trip of trips">
+                  <ion-item>
+                    <ion-icon item-left name="square" color="danger" small></ion-icon>
+                    <h3>
+                      {{trip.end | amDateFormat:'LLL a' }}
+                    </h3>                
+                    <p item-right text-wrap>
+                      {{trip.extra?.duration/60 | number:'1.0-0'}}  Minutos
+                    </p>
+                  </ion-item>
+                  <ion-item-divider>
+                    <ion-icon item-left name="navigate" color="secondary" small></ion-icon>
+                    <h3  text-left text-wrap>
+                      {{trip.start | amDateFormat:'LLL a' }} 
+                    </h3>
+                    <p item-right text-wrap>
+                      {{trip.extra?.distance /1000 | number:'1.0-0'}}  Km
+                    </p>
+                  </ion-item-divider>
+                </div>
+              </ion-list>
+            </ion-card>
+        </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 </ion-content>

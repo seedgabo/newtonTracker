@@ -403,7 +403,7 @@ export class BgProvider {
         timestamp: moment().format('YYYY-MM-DD hh:mm:ss'),
         activity: event.activity,
         confidence: event.confidence,
-        location: this.last_location ? this.last_location.coords : null
+        location: this.last_location
       }
     
     this.api.post('activities', data)

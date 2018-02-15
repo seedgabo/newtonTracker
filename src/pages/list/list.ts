@@ -57,7 +57,7 @@ export class ListPage {
   }
   activities = {
     'on_foot': 'A pie',
-    'still': 'Parado',
+    'still': 'Detenido',
     'in_vehicle': 'En vehiculo',
     'on_bycicle': 'En Bicicleta',
     'running': 'Corriendo'
@@ -264,10 +264,10 @@ export class ListPage {
           ${moment.utc(user.location.timestamp.date).local().calendar()}
         </small>
       </h6>
-      <span>
+      <a href="/#/tracking/${user.id}/activities" style="text-decoration: none">
         <b>Actividad:</b> <span style="color:#489dff"> ${ user.activity ? this.activities[user.activity.activity] : 'Desconocida' }</span>
-         <small style="float:right">Desde  ${ user.activity ?moment(user.activity.activity.created_at).calendar() : ''} </small>
-      </span>
+        </a>
+        <small style="float:right">Desde  ${ user.activity ?moment(user.activity.activity.created_at).calendar() : ''} </small>
       <br>
       <br>
       <span><b>Cargo:</b> ${user.cargo}</span>
