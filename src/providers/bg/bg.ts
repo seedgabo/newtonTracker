@@ -394,15 +394,18 @@ export class BgProvider {
       })
   }
 
-  postActivity(event) {
-    var data = {
-      user_id: this.api.user.id,
-      entidad_id: this.api.user.entidad_id,
-      cliente_id: this.api.user.cliente_id,
-      timestamp: moment().format('YYYY-MM-DD hh:mm:ss'),
-      activity: event.activity,
-      confidence: event.confidence
-    }
+  postActivity(event, data = null) {
+    if (data == null)
+      data = {
+        user_id: this.api.user.id,
+        entidad_id: this.api.user.entidad_id,
+        cliente_id: this.api.user.cliente_id,
+        timestamp: moment().format('YYYY-MM-DD hh:mm:ss'),
+        activity: event.activity,
+        confidence: event.confidence,
+        location: this.last_location ? this.last_location.coords : null
+      }
+    
     this.api.post('activities', data)
       .then((data) => {
         console.log("activities posted", data)
@@ -410,11 +413,20 @@ export class BgProvider {
       .catch((err) => {
         console.error(err)
         setTimeout(() => {
-          this.postActivity(event)
+          this.postActivity(event, data)
         }, 1000 * 60);
       })
   }
 
+
+  postLocation(loc) {
+    loc.user_id = this.api.user.id
+    var promise = this.api.post("locations/tracker", loc)
+    promise.then((resp) => { console.log(resp) })
+      .catch((err) => { console.error(err) })
+
+    return promise
+  }
 
 
   locate() {
@@ -428,14 +440,7 @@ export class BgProvider {
     })
   }
 
-  postLocation(loc) {
-    loc.user_id = this.api.user.id
-    var promise = this.api.post("locations/tracker", loc)
-    promise.then((resp) => { console.log(resp) })
-      .catch((err) => { console.error(err) })
 
-    return promise
-  }
 
   onLocationFailure(err) {
     console.error(err)

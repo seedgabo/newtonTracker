@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Api } from '../../providers/Api';
 @IonicPage({
-  // defaultHistory: ["ListPage"],
+  defaultHistory: ["ListPage"],
   segment:"tracking/:userId/activities"
 })
 @Component({

@@ -2,10 +2,15 @@ import { BgProvider } from './../../providers/bg/bg';
 
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
-import { NavController, NavParams, Events, AlertController, ActionSheetController, PopoverController } from 'ionic-angular';
+import { NavController, NavParams, Events, AlertController, ActionSheetController, PopoverController, IonicPage } from 'ionic-angular';
 import * as moment from 'moment';
 moment.locale('es');
 declare var L: any;
+
+@IonicPage({
+  priority: "high",
+  segment: 'tracking'
+})
 @Component({
   selector: 'page-list',
   templateUrl: 'list.html'

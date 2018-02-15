@@ -8,7 +8,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
 import { LoginPage } from '../pages/login/login';
 
 @Component({
@@ -40,7 +39,7 @@ export class MyApp {
         this.pages.push({ title: 'My Tracker', component: HomePage, icon: 'home' })
       }
       if (this.api.user && (this.api.user.roles.collection['Ver Rastreo'] || this.api.user.roles.collection['SuperAdmin'])) {
-        this.pages.push({ title: 'Seguimiento', component: ListPage, icon: 'locate' })
+        this.pages.push({ title: 'Seguimiento', component: "ListPage", icon: 'locate' })
       }
       if (this.api.user && (this.api.user.roles.collection['Ver Emergencias'] || this.api.user.roles.collection['SuperAdmin'])) {
         this.pages.push({ title: 'Reportes de Emergencia', component: "PanicLogsPage", icon: 'help-buoy' })
@@ -69,7 +68,7 @@ export class MyApp {
 
       var subsription = () => {
         this.deeplinks.routeWithNavController(this.nav, {
-          '/tracking': ListPage,
+          '/tracking': "ListPage",
           'panic-logs': 'PanicLogsPage',
         }).subscribe((match) => {
           // match.$route - the route we matched, which is the matched entry from the arguments to route()
@@ -96,7 +95,7 @@ export class MyApp {
           if (this.platform.is('mobile') && this.api.user.can_use_tracking) {
             this.nav.setRoot(HomePage);
           } else if (this.api.user && (this.api.user.roles.collection['Ver Rastreo'] || this.api.user.roles.collection['SuperAdmin'])) {
-            this.nav.setRoot(ListPage);
+            this.nav.setRoot("ListPage");
           } else {
             this.nav.setRoot("NoUsePage");
           }

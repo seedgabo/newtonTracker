@@ -6,7 +6,6 @@ import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { ListPage } from '../pages/list/list';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -31,7 +30,6 @@ import { MomentModule } from 'angular2-moment';
     MyApp,
     HomePage,
     LoginPage,
-    ListPage
   ],
   imports: [
     BrowserModule,
@@ -45,7 +43,6 @@ import { MomentModule } from 'angular2-moment';
     MyApp,
     HomePage,
     LoginPage,
-    ListPage
   ],
   providers: [
     StatusBar,
