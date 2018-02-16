@@ -3,16 +3,15 @@
     <ion-title>
       Actividad
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="getActivities()">
+        <ion-icon name="sync"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content  no-padding>
-  
-  <ion-refresher (ionRefresh)="getActivities($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
-
-
   <ion-grid class="hero-user">
     <ion-row  text-center>
         <ion-col col-xs-12 col-sm-12 col-md-12 offset-lg-3 offset-xl-3 col-lg-6 col-xl-6 col>
@@ -44,32 +43,34 @@
                 <span ion-text color="primary"> Historial  de Actividad </span>
               </ion-list-header>
               <ion-list>
-                  <ion-item *ngFor="let activity of activities" >
-                    <ion-grid>
-                      <ion-row>
-                        <ion-col>
-                          <h2>
-                            <ion-icon [color]="colors[activity.activity]" [name]="icons[activity.activity]"></ion-icon>
-                            {{acts[activity.activity]}}
-                          </h2>
-                          <!-- <a *ngIf="activity.location && !api.addresses[activity.location.latitude + '+' + activity.location.longitude]">
-                            Lat: {{activity.location.latitude}}
-                            lon: {{activity.location.longitude}}
-                          </a>
-                          <p *ngIf="activity.location && api.addresses[activity.location.latitude + '+' + activity.location.longitude]">
-                            {{api.addresses[activity.location.latitude + '+' + activity.location.longitude].display.name}}
-                          </p> -->
-                          <ion-note *ngIf="!activity.location">
-                            No Hay Ubicacion
-                          </ion-note>
-                        </ion-col>
-                        <ion-col text-right>
-                            <p>{{activity.created_at | amCalendar }}</p>
-                        </ion-col>
-                    </ion-row>
-                  </ion-grid>
-                  <div item-right class="activity-line" [ngClass]="activity.activity"></div>
-                </ion-item>
+                <virtual-scroll [items]="activities" #scroll>
+                    <ion-item *ngFor="let activity of scroll.viewPortItems" >
+                      <ion-grid>
+                        <ion-row>
+                          <ion-col>
+                            <h2>
+                              <ion-icon [color]="colors[activity.activity]" [name]="icons[activity.activity]"></ion-icon>
+                              {{acts[activity.activity]}}
+                            </h2>
+                            <!-- <a *ngIf="activity.location && !api.addresses[activity.location.latitude + '+' + activity.location.longitude]">
+                              Lat: {{activity.location.latitude}}
+                              lon: {{activity.location.longitude}}
+                            </a>
+                            <p *ngIf="activity.location && api.addresses[activity.location.latitude + '+' + activity.location.longitude]">
+                              {{api.addresses[activity.location.latitude + '+' + activity.location.longitude].display.name}}
+                            </p> -->
+                            <ion-note *ngIf="!activity.location">
+                              No Hay Ubicacion
+                            </ion-note>
+                          </ion-col>
+                          <ion-col text-right>
+                              <p>{{activity.created_at | amCalendar }}</p>
+                          </ion-col>
+                        </ion-row>
+                      </ion-grid>
+                      <div item-right class="activity-line" [ngClass]="activity.activity"></div>
+                    </ion-item>
+                </virtual-scroll>
               </ion-list>
             </ion-card>
           
@@ -78,26 +79,28 @@
                 <span ion-text color="primary"> Historial de Viajes </span>
               </ion-list-header>
               <ion-list>
-                <div *ngFor="let trip of trips">
-                  <ion-item>
-                    <ion-icon item-left name="square" color="danger" small></ion-icon>
-                    <h3>
-                      {{trip.end | amDateFormat:'LLL a' }}
-                    </h3>                
-                    <p item-right text-wrap>
-                      {{trip.extra?.duration/60 | number:'1.0-0'}}  Minutos
-                    </p>
-                  </ion-item>
-                  <ion-item-divider>
-                    <ion-icon item-left name="navigate" color="secondary" small></ion-icon>
-                    <h3  text-left text-wrap>
-                      {{trip.start | amDateFormat:'LLL a' }} 
-                    </h3>
-                    <p item-right text-wrap>
-                      {{trip.extra?.distance /1000 | number:'1.0-0'}}  Km
-                    </p>
-                  </ion-item-divider>
-                </div>
+                <virtual-scroll [items]="trips" #scroll>
+                  <div *ngFor="let trip of scroll.viewPortItems">
+                    <ion-item>
+                      <ion-icon item-left name="square" color="danger" small></ion-icon>
+                      <h3>
+                        {{trip.end | amDateFormat:'LLL a' }}
+                      </h3>                
+                      <p item-right text-wrap>
+                        {{trip.extra?.duration/60 | number:'1.0-0'}}  Minutos
+                      </p>
+                    </ion-item>
+                    <ion-item-divider>
+                      <ion-icon item-left name="navigate" color="secondary" small></ion-icon>
+                      <h3  text-left text-wrap>
+                        {{trip.start | amDateFormat:'LLL a' }} 
+                      </h3>
+                      <p item-right text-wrap>
+                        {{trip.extra?.distance /1000 | number:'1.0-0'}}  Km
+                      </p>
+                    </ion-item-divider>
+                  </div>
+                </virtual-scroll>
               </ion-list>
             </ion-card>
         </div>

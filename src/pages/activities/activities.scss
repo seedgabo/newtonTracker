@@ -42,4 +42,15 @@ page-activities {
     .hero-user {
         background-image: url('../assets/map-wallpaper.jpg');
     }
+    virtual-scroll {
+      display: block;
+      width: 100%;
+      height: 47vh;
+    }
+    
+    ion-item {
+      display: block;
+      width: 100%;
+      height: 90px;
+    }
 }

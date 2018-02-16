@@ -36,6 +36,7 @@
     "@ionic-native/vibration": "^4.5.3",
     "@ionic/storage": "2.0.1",
     "angular2-moment": "^1.8.0",
+    "angular2-virtual-scroll": "^0.3.2",
     "code-push": "^2.0.5",
     "cordova-android": "6.3.0",
     "cordova-background-geolocation-lt": "^2.9.1",
