@@ -73,7 +73,7 @@ export class HomePage {
 
   sync() {
     this.platform.ready().then(() => {
-      this.codepush.sync()
+      this.codepush.sync({ignoreFailedUpdates:false})
         .subscribe((status) => {
           var msg = ""
           if (status == 0) {
