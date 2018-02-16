@@ -15,8 +15,8 @@
           <div class="user-image">
             <img [src]="user?.imagen" *ngIf="user?.imagen">
           </div>
-            <h3 ion-text color="primary">{{user.full_name}}</h3>
-            <p ion-text color="primary">{{user.departamento}} - {{user.cargo}}</p>
+            <h3 ion-text color="primary" text-capitalize>{{user.full_name}}</h3>
+            <p ion-text color="primary" text-capitalize>{{user.departamento}} - {{user.cargo}}</p>
         </ion-col>
     </ion-row>
   </ion-grid>
