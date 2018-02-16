@@ -17,8 +17,7 @@ export class BgProvider {
   state = false;
   locations = [];
   timeout_track;
-  current_activity = ""
-
+  current_activity = "still"
   trip_data = {
     trip_start_timestamp: null,
     trip_stop_timestamp: null,
@@ -32,7 +31,6 @@ export class BgProvider {
     time_track_stop: 1000 * 6 * 60,
     events_to_init_trip: 7,
   }
-
   trip_metrics = {
     avg_speed: 0,
     max_speed: 0,
@@ -49,6 +47,7 @@ export class BgProvider {
   }
   last_location
   tries = 0
+
   constructor(public http: Http, public platform: Platform, public api: Api, public zone: NgZone) {
     window.$bg = this;
     this.configurate()
@@ -211,6 +210,7 @@ export class BgProvider {
       // Init the trip
       if (this.trip_data.locations >= this.trip_data.events_to_init_trip && dist > 200) {
         this.startTrip(location);
+        this.stopTimeoutTrip()
       }
 
       this.api.storage.set("trips", JSON.stringify(this.trip_data));
@@ -257,7 +257,7 @@ export class BgProvider {
     try {
       if (this.timeout_track) {
         clearTimeout(this.timeout_track);
-        this.timeout_track = undefined
+        this.timeout_track = null
       }
 
     } catch (e) { console.warn(e) }
@@ -326,6 +326,7 @@ export class BgProvider {
     }
     this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
   }
+
   private clearReferenceTrip(){
     this.trip_data.timestamp = null;
     this.trip_data.reference_ev = null;
@@ -434,6 +435,7 @@ export class BgProvider {
 
     return promise
   }
+
 
   locate() {
     return new Promise((resolve, reject) => {
