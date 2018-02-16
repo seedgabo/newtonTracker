@@ -31,6 +31,7 @@ export class ListPage {
         attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }
     },
+
     mapbox: {
       name: 'Mapbox Streets',
       url: 'https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2VlZGdhYm8iLCJhIjoiY2pjdDNzYzV4MGQ4ZTJxanlzNWVhYzB6MiJ9.xrP9t07VMGpwFwo7E7tP1Q',
@@ -46,6 +47,14 @@ export class ListPage {
       preview: 'http://a.tile.osm.org/9/150/249.png',
       opts: {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      }
+    },
+    locationiq: {
+      name: 'Calles',
+      url: `https://b-tiles.unwiredlabs.com/o/r/{z}/{x}/{y}.png?key=${this.api.locationiq_token}&scheme=streets`,
+      preview: 'https://b-tiles.unwiredlabs.com/o/r/9/150/249.png?key=${this.api.locationiq_token}&scheme=streets',
+      opts: {
+        // attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       }
     },
     world: {

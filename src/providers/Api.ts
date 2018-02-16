@@ -17,6 +17,7 @@ export class Api {
   password: string;
   token: string;
   url: string = 'http://newton.eycproveedores.com/newton/public/';
+  locationiq_token = '92b5f8a059f8ab'
   Echo;
   user: any = null;
   objects: any = {};
