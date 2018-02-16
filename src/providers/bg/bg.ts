@@ -439,7 +439,6 @@ export class BgProvider {
     return new Promise((resolve, reject) => {
       this.bg.getCurrentPosition((pos) => {
         resolve(pos)
-        this.postLocation(pos)
       }, (err) => {
         reject(err)
       })
