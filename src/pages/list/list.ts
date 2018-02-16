@@ -71,19 +71,19 @@ export class ListPage {
     'on_foot': 'A pie',
     'still': 'Detenido',
     'in_vehicle': 'En vehiculo',
-    'on_bycicle': 'En Bicicleta',
+    'on_bicycle': 'En Bicicleta',
     'running': 'Corriendo'
   }
   current_layer = null
-  trip_path= null
+  trip_path = null
   disabled_panic = false;
   users
   query = ""
-  userSelected:any = {}
+  userSelected: any = {}
   locationCreatedHandler = (data) => {
     data.user.location = data.location.location
     this.markerUser(data.user, data.user.id == this.userSelected.id);
-    if(this.trip_path && data.user.id == this.userSelected.id){
+    if (this.trip_path && data.user.id == this.userSelected.id) {
       this.trip_path.addLatLng(new L.LatLng(data.location.location.latitude, data.location.location.longitude))
     }
   }
@@ -128,7 +128,7 @@ export class ListPage {
     }
     this.users = result;
   }
-  
+
   refreshScroll() {
     this.virtualScroll.refresh()
   }
@@ -142,7 +142,7 @@ export class ListPage {
           if (u.location) { this.markerUser(u); }
         });
         this.fitToAll()
-        
+
       })
       .catch((err) => { this.api.Error(err) });
   }
@@ -252,13 +252,13 @@ export class ListPage {
         `
         )
       })
-      .catch((err)=>{
+      .catch((err) => {
         popup.setContent(
           popup.getContent()
-            + `<br>
+          + `<br>
             <b>Dirección: </b> Error: Servicio no Disponible
           `
-          )
+        )
       })
   }
 
@@ -282,9 +282,9 @@ export class ListPage {
         </small>
       </h6>
       <a  onclick="callbackActivity()" style="text-decoration: none">
-        <b>Actividad:</b> <span style="color:#489dff"> ${ user.activity ? this.activities[user.activity.activity] : 'Desconocida' }</span>
+        <b>Actividad:</b> <span style="color:#489dff"> ${ user.activity ? this.activities[user.activity.activity] : 'Desconocida'}</span>
         </a>
-        <small style="float:right">Desde  ${ user.activity ? moment(user.activity.created_at).calendar(): ''} </small>
+        <small style="float:right">Desde  ${ user.activity ? moment(user.activity.created_at).calendar() : ''} </small>
       <br>
       <br>
       <span><b>Cargo:</b> ${user.cargo}</span>
@@ -329,43 +329,44 @@ export class ListPage {
       this.trip_path = null;
     }
     clearTimeout(this.tripTimeout)
-    this.tripTimeout = setTimeout(()=>{
+    this.tripTimeout = setTimeout(() => {
       this.getCurrentTrip(user)
-    },300)
+    }, 300)
   }
 
   getCurrentTrip(user) {
-    if(!user.activity) return
-    this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&limit=300&whereDategte[created_at]=${moment(user.activity.created_at).format('YYYY-MM-DD hh:mm:ss')}`)
-    .then((data:any)=>{
-      console.log(data)
-      this.drawTrip(data.reverse())
-    })
-    .catch(console.error)
-  }
-  
-  CallbackTrip(user, trip = null){
-    this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&${trip ? ("whereDategte[created_at]=" + moment.utc(trip.start).format("YYYY-MM-DD hh:mm:ss") ): "limit=150"}`)
-      .then((locations: any) => { 
-        this.drawTrip(locations, { color:'#ff7707', weight: 5, opacity: 1.0, smoothFactor: 1 })
-    })
-    .catch(console.error)
+    if (!user.activity) return
+    this.api.get(`trips?with[]=locations&where[user_id]=${user.id}&order[created_at]=desc&limit=1`)
+      .then((data: any) => {
+        console.log(data)
+        if (data.length > 0)
+          this.drawTrip(data[0].locations)
+      })
+      .catch(console.error)
   }
 
-  drawTrip(locations, options:any = { weight: 5, opacity: 1.0, smoothFactor: 1 }){
-    var events= []
+  CallbackTrip(user, trip = null) {
+    this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&${trip ? ("whereDategte[created_at]=" + moment.utc(trip.start).format("YYYY-MM-DD hh:mm:ss")) : "limit=150"}`)
+      .then((locations: any) => {
+        this.drawTrip(locations, { color: '#ff7707', weight: 5, opacity: 1.0, smoothFactor: 1 })
+      })
+      .catch(console.error)
+  }
+
+  drawTrip(locations, options: any = { weight: 5, opacity: 1.0, smoothFactor: 1 }) {
+    var events = []
     var previousloc = locations[0]
-    locations.sort(function(a,b){ return moment.utc(b).diff(moment.utc(a))}).forEach(loc => {
+    locations.sort(function (a, b) { return moment.utc(b).diff(moment.utc(a)) }).forEach(loc => {
       var dist = 0;
-      if(previousloc)
+      if (previousloc)
         dist = Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude));
-      if (dist < 200){
+      if (dist < 200) {
         events[events.length] = new L.LatLng(loc.location.latitude, loc.location.longitude);
       }
       previousloc = loc
     })
 
-    if(this.trip_path){
+    if (this.trip_path) {
       this.trip_path.remove()
       this.trip_path = null;
     }
