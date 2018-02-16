@@ -301,7 +301,8 @@ export class ListPage {
 
   selectUser(user) {
     if (this.userSelected == user) {
-      return this.navCtrl.push('ActivitiesPage',{user:user, userId: user.id})
+      this.userSelected = null
+      return this.navCtrl.push('ActivitiesPage', { user: user, userId: user.id })
     }
     this.userSelected = user
     if (this.trip_path) {
