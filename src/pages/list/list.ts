@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import { VirtualScrollComponent } from 'angular2-virtual-scroll';
 moment.locale('es');
 declare var L: any;
+declare var window: any;
 
 @IonicPage({
   priority: "high",
@@ -262,6 +263,9 @@ export class ListPage {
   }
 
   htmlPopup(user) {
+    window.callbackActivity = () => {
+      this.selectUser(user)
+    }
     var state = 'none'
     if (this.api.objects.users_online && this.api.objects.users_online.collection[user.id]) {
       state = 'online'
@@ -277,7 +281,7 @@ export class ListPage {
           ${moment.utc(user.location.timestamp.date).local().calendar()}
         </small>
       </h6>
-      <a href="/#/tracking/${user.id}/activities" style="text-decoration: none">
+      <a  onclick="callbackActivity()" style="text-decoration: none">
         <b>Actividad:</b> <span style="color:#489dff"> ${ user.activity ? this.activities[user.activity.activity] : 'Desconocida' }</span>
         </a>
         <small style="float:right">Desde  ${ user.activity ? moment(user.activity.created_at).calendar(): ''} </small>
