@@ -93,6 +93,14 @@ export class ActivitiesPage {
     })
   }
 
+  geocode(activity) {
+    this.api.reverseGeo(activity.location.coords.latitude, activity.location.coords.longitude)
+      .then(() => {
+      
+      })
+      .catch(console.error)
+  }
+
   private pluck(array, key) {
     var resp = []
     array.forEach(element => {

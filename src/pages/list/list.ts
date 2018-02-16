@@ -81,6 +81,7 @@ export class ListPage {
     this.markerUser(data.user, true, true);
   }
   tripTimeout = 0
+  showSplitPane = true
   constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public popover: PopoverController, public api: Api, public bg: BgProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
@@ -121,7 +122,6 @@ export class ListPage {
   refreshScroll() {
     this.virtualScroll.refresh()
   }
-
 
   getUsers() {
     var entidades_ids = this.pluck(this.api.user.entidades, 'id')
@@ -307,7 +307,7 @@ export class ListPage {
 
   selectUser(user) {
     if (this.userSelected == user) {
-      this.userSelected = null
+      this.userSelected = {}
       return this.navCtrl.push('ActivitiesPage', { user: user, userId: user.id })
     }
     this.userSelected = user

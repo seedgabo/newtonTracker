@@ -26,7 +26,7 @@
   
   <ion-grid no-padding no-margin class="hero-user">
     <ion-row text-center>
-      <ion-col col-xs-12 col-sm-12 col-md-12 offset-lg-3 offset-xl-3 col-lg-6 col-xl-6 col>
+      <ion-col col-xs-12 col-sm-12 col-md-12 offset-lg-2 offset-xl-2 col-lg-8 col-xl-8>
         <ion-card>
           <ion-segment color="primary" [(ngModel)]="list">
             <ion-segment-button value="Actividad">
@@ -52,20 +52,17 @@
                               <ion-icon [color]="colors[activity.activity]" [name]="icons[activity.activity]"></ion-icon>
                               {{acts[activity.activity]}}
                             </h2>
-                            <!-- <a *ngIf="activity.location && !api.addresses[activity.location.latitude + '+' + activity.location.longitude]">
-                              Lat: {{activity.location.latitude}}
-                              lon: {{activity.location.longitude}}
-                            </a>
-                            <p *ngIf="activity.location && api.addresses[activity.location.latitude + '+' + activity.location.longitude]">
-                              {{api.addresses[activity.location.latitude + '+' + activity.location.longitude].display.name}}
-                            </p> -->
+                            <button ion-button small clear *ngIf="activity.location && !api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude]" (click)="geocode(activity)">
+                                Localizacion
+                            </button>
+                            <p text-wrap *ngIf="activity.location && api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude]">
+                              {{api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude].display_name }}
+                            </p>
                             <ion-note *ngIf="!activity.location">
                               No Hay Ubicacion
                             </ion-note>
                           </ion-col>
-                          <ion-col text-right>
-                              <p>{{activity.created_at | amCalendar }}</p>
-                          </ion-col>
+                          <p text-right float-right>{{activity.created_at | amCalendar }}</p>
                         </ion-row>
                       </ion-grid>
                       <div item-right class="activity-line" [ngClass]="activity.activity"></div>

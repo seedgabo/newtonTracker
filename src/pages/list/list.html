@@ -1,22 +1,24 @@
 <ion-split-pane>
 
   <ion-menu [content]="app" side="right">
-    <ion-header>
-      <ion-toolbar color="dark">
+    <!-- <ion-header>
+      <ion-toolbar>
         <ion-title>
           <ion-icon name="people"></ion-icon>
           Usuarios
         </ion-title>
         <ion-buttons end>
-          <button menuClose="right" ion-button clear icon-only (click)="userSelected = null; query = ''; filter()">
-            <ion-icon name="close"></ion-icon>
+          <button *ngIf="userSelected.id" menuClose="right" ion-button clear icon-only (click)="userSelected = {}; query = ''; filter()">
+            <ion-icon name="remove"></ion-icon>
           </button>
         </ion-buttons>
       </ion-toolbar>
-    </ion-header>
+    </ion-header> -->
     <ion-content>
-      <ion-list>
+      <ion-toolbar>
         <ion-searchbar [(ngModel)]="query" (ionInput)="filter()"></ion-searchbar>
+      </ion-toolbar>
+      <ion-list>
         <virtual-scroll [items]="users" #scroll>
           <button class="item-user" [color]="userSelected?.id == u.id ? 'neutral':''" [disabled]="!u.location" menuClose="right" ion-item *ngFor="let u of scroll.viewPortItems" (click)="centerInUser(u)">
   
