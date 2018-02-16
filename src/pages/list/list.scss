@@ -30,6 +30,9 @@ page-list {
     *::-webkit-scrollbar-thumb {
          background-color: #333;
     }
+    .leaflet-popup-content{
+        min-width: 270px;
+    }
 
 }
 
