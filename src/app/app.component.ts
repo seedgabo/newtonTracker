@@ -68,7 +68,7 @@ export class MyApp {
 
       var subsription = () => {
         this.deeplinks.routeWithNavController(this.nav, {
-          '/tracking': "ListPage",
+          '/rastreo': "ListPage",
           'panic-logs': 'PanicLogsPage',
         }).subscribe((match) => {
           // match.$route - the route we matched, which is the matched entry from the arguments to route()

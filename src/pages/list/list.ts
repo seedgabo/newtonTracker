@@ -339,7 +339,7 @@ export class ListPage {
     this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&limit=300&whereDategte[created_at]=${moment(user.activity.created_at).format('YYYY-MM-DD hh:mm:ss')}`)
     .then((data:any)=>{
       console.log(data)
-      this.drawTrip(data)
+      this.drawTrip(data.reverse())
     })
     .catch(console.error)
   }
