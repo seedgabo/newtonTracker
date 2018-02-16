@@ -121,11 +121,9 @@ export class ListPage {
     var entidades_ids = this.pluck(this.api.user.entidades, 'id')
     this.api.load(`users?whereIn[entidad_id]=${entidades_ids.join()}&with[]=entidad&order[updated_at]=desc`, 'users_tracks')
       .then((users: Array<any>) => {
-        this.users = users;
+        this.users = users
         users.forEach(u => {
-          if (u.location) {
-            this.markerUser(u);
-          }
+          if (u.location) { this.markerUser(u); }
         });
         this.fitToAll()
 
@@ -267,7 +265,7 @@ export class ListPage {
       <a href="/#/tracking/${user.id}/activities" style="text-decoration: none">
         <b>Actividad:</b> <span style="color:#489dff"> ${ user.activity ? this.activities[user.activity.activity] : 'Desconocida' }</span>
         </a>
-        <small style="float:right">Desde  ${ user.activity ?moment(user.activity.activity.created_at).calendar() : ''} </small>
+        <small style="float:right">Desde  ${ user.activity ? moment(user.activity.created_at).calendar(): ''} </small>
       <br>
       <br>
       <span><b>Cargo:</b> ${user.cargo}</span>
@@ -316,16 +314,12 @@ export class ListPage {
     },300)
   }
 
-  getCurrentTrip(user){
-    this.api.get(`trips?with[]=locations&where[user_id]=${user.id}&order[created_at]=desc&limit=1`)
+  getCurrentTrip(user) {
+    if(!user.activity) return
+    this.api.get(`locations?where[user_id]=${user.id}&order[created_at]=desc&limit=300&whereDategte[created_at]=${moment(user.activity.created_at).format('YYYY-MM-DD hh:mm:ss')}`)
     .then((data:any)=>{
       console.log(data)
-      if(data.length > 0){
-        // if(data[0].locations.length > 10)
-          this.drawTrip(data[0].locations)
-        // else
-          // this.CallbackTrip(user, data[0])
-      }
+      this.drawTrip(data)
     })
     .catch(console.error)
   }
