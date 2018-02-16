@@ -1,9 +1,10 @@
 import { BgProvider } from './../../providers/bg/bg';
 
 import { Api } from './../../providers/Api';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, Events, AlertController, ActionSheetController, PopoverController, IonicPage } from 'ionic-angular';
 import * as moment from 'moment';
+import { VirtualScrollComponent } from 'angular2-virtual-scroll';
 moment.locale('es');
 declare var L: any;
 
@@ -16,7 +17,8 @@ declare var L: any;
   templateUrl: 'list.html'
 })
 export class ListPage {
-
+  @ViewChild(VirtualScrollComponent)
+  private virtualScroll: VirtualScrollComponent;
   map
   cluster = L.markerClusterGroup()
   markers = {}
@@ -65,7 +67,7 @@ export class ListPage {
   current_layer = null
   trip_path= null
   disabled_panic = false;
-  users = []
+  users
   query = ""
   userSelected:any = {}
   locationCreatedHandler = (data) => {
@@ -115,6 +117,10 @@ export class ListPage {
     }
     this.users = result;
   }
+  
+  refreshScroll() {
+    this.virtualScroll.refresh()
+  }
 
 
   getUsers() {
@@ -126,7 +132,7 @@ export class ListPage {
           if (u.location) { this.markerUser(u); }
         });
         this.fitToAll()
-
+        
       })
       .catch((err) => { this.api.Error(err) });
   }

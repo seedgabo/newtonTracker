@@ -2,7 +2,25 @@ page-list {
     ion-menu {
       min-width: 350px !important;
     }
+    virtual-scroll {
+        display: block;
+        width: 100%;
+        height: 80vh;
+    }
+    .item-user {
+        display: block;
+        width: 100%;
+        height: 90px;
+    }
 
+
+    .img-avatar-user-list{
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: inline;
+        float:right;
+    }
 }
 
 
