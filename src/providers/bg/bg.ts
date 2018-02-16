@@ -93,7 +93,7 @@ export class BgProvider {
         console.log("on Location", ev)
         this.zone.run(() => {
           this.TripAlgorithm(ev)
-          if (!this.isValidPoint(ev)) {
+          if (this.isValidPoint(ev)) {
             this.last_location = ev;
             this.locations.push(ev)
           }
@@ -203,7 +203,7 @@ export class BgProvider {
           this.trip_data.time_track);
       }
 
-      if (!this.isValidPoint(location)) {
+      if (this.isValidPoint(location)) {
         var dist = this.getDistanceFromLatLon(location.coords.latitude, location.coords.longitude, this.trip_data.reference_ev.coords.latitude, this.trip_data.reference_ev.coords.longitude);
         this.trip_data.locations++;
       }

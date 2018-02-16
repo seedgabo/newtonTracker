@@ -8,8 +8,8 @@
           Usuarios
         </ion-title>
         <ion-buttons end>
-          <button ion-button clear icon-only>
-            <ion-icon name="checkmark"></ion-icon>
+          <button menuClose="right" ion-button clear icon-only (click)="userSelected = null; query = ''; filter()">
+            <ion-icon name="close"></ion-icon>
           </button>
         </ion-buttons>
       </ion-toolbar>
@@ -17,7 +17,7 @@
     <ion-content>
       <ion-list>
         <ion-searchbar [(ngModel)]="query" (ionInput)="filter()"></ion-searchbar>
-        <button  [color]="userSelected?.id == u.id ?'primary':''" [disabled]="!u.location" menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
+        <button  [color]="userSelected?.id == u.id ? 'neutral':''" [disabled]="!u.location" menuClose="right" ion-item *ngFor="let u of users" (click)="centerInUser(u)">
 
           <ion-avatar item-left>
             <img [src]="u.imagen" *ngIf="u.imagen" alt="">
@@ -33,9 +33,9 @@
           <p text-wrap>
             Actividad: {{ !api.objects.users_online?.collection[u.id] ? 'Desconectado' :u.activity ? activities[u.activity.activity] : 'Desconocida'}}
           </p>
-          <ion-note>
+          <small>
             {{u.location?.timestamp?.date | amFromUtc | amLocal | amLocale:'es' | amTimeAgo}}
-          </ion-note>
+          </small>
           <p>{{u.entidad?.name }}</p>
           <!-- <p *ngIf="u.location?.speed != -1">
             <b>Velocidad:</b>

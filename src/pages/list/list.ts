@@ -184,7 +184,7 @@ export class ListPage {
 
     var loc = user.location
     if (loc)
-      this.map.panTo([loc.latitude, loc.longitude]);
+      this.map.flyTo([loc.latitude, loc.longitude]);
 
     var popup = L.popup()
       .setLatLng([loc.latitude, loc.longitude])
