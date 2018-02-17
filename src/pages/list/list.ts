@@ -336,7 +336,7 @@ export class ListPage {
 
   getCurrentTrip(user) {
     if (!user.activity) return
-    this.api.get(`trips?with[]=locations&where[user_id]=${user.id}&order[created_at]=desc&limit=1`)
+    this.api.get(`trips?scope[valid]=3&with[]=locations&where[user_id]=${user.id}&order[created_at]=desc&limit=1`)
       .then((data: any) => {
         console.log(data)
         if (data.length > 0)
