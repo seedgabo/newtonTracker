@@ -60,7 +60,7 @@ export class BgProvider {
         if (data) {
           this.current_activity = data
         }
-    })
+      })
     this.api.storage.get("trip_metrics")
       .then((trip_metrics) => {
         if (trip_metrics) {
@@ -69,8 +69,11 @@ export class BgProvider {
         this.api.storage.get('trips')
           .then((trips) => {
             if (trips) {
-              this.trip_data = JSON.parse(trips)
-              if (Math.abs(moment.utc().diff(moment.utc(this.trip_data.trip_start_timestamp), "minutes")) > 10) {
+              trips = JSON.parse(trips)
+              if (Math.abs(moment.utc().diff(moment.utc(trips.trip_start_timestamp), "minutes")) > 10) {
+                trips.on_trip = false
+                this.clearReferenceTrip()
+
                 this.locate().then((loc) => {
                   this.stopTrip(loc)
                   this.clearReferenceTrip()
@@ -198,7 +201,7 @@ export class BgProvider {
         this.stopTimeoutTrip()
 
         this.timeout_track = setTimeout(
-          () =>{ this.clearReferenceTrip() },
+          () => { this.clearReferenceTrip() },
           this.trip_data.time_track);
       }
 
@@ -238,7 +241,7 @@ export class BgProvider {
 
   startTrip(location) {
     this.trip_data.trip_start_timestamp = moment()
-    this.trip_data.on_trip = true;
+    this.trip_data.on_trip = true
     this.trip_data.start_location = location
     this.trip_data.stop_location = null
     this.postStartTrip()
@@ -247,7 +250,7 @@ export class BgProvider {
 
   stopTrip(location) {
     this.trip_data.trip_stop_timestamp = moment()
-    this.trip_data.on_trip = false;
+    this.trip_data.on_trip = false
     this.trip_data.stop_location = location
     this.postStopTrip()
     this.clearTripMetrics()
@@ -327,7 +330,7 @@ export class BgProvider {
     this.api.storage.set("trip_metrics", JSON.stringify(this.trip_metrics))
   }
 
-  private clearReferenceTrip(){
+  private clearReferenceTrip() {
     this.trip_data.timestamp = null;
     this.trip_data.reference_ev = null;
     this.trip_data.locations = 0;
@@ -363,7 +366,7 @@ export class BgProvider {
         user_id: this.api.user.id,
         entidad_id: this.api.user.entidad_id,
         cliente_id: this.api.user.cliente_id,
-        start: moment().format('YYYY-MM-DD hh:mm:ss'),
+        start: moment(this.trip_metrics._first_event_time).format('YYYY-MM-DD HH:mm:ss'),
         end: null,
         extra: this.trip_metrics
       }
@@ -386,8 +389,8 @@ export class BgProvider {
         user_id: this.api.user.id,
         entidad_id: this.api.user.entidad_id,
         cliente_id: this.api.user.cliente_id,
-        start: moment.utc(this.trip_metrics._first_event_time).format('YYYY-MM-DD hh:mm:ss'),
-        end: moment().format('YYYY-MM-DD hh:mm:ss'),
+        start: moment(this.trip_metrics._first_event_time).format('YYYY-MM-DD HH:mm:ss'),
+        end: moment().format('YYYY-MM-DD HH:mm:ss'),
         extra: this.trip_metrics
       }
     }
@@ -409,12 +412,12 @@ export class BgProvider {
         user_id: this.api.user.id,
         entidad_id: this.api.user.entidad_id,
         cliente_id: this.api.user.cliente_id,
-        timestamp: moment().format('YYYY-MM-DD hh:mm:ss'),
+        timestamp: moment().format('YYYY-MM-DD HH:mm:ss'),
         activity: event.activity,
         confidence: event.confidence,
         location: this.last_location
       }
-    
+
     this.api.post('activities', data)
       .then((data) => {
         console.log("activities posted", data)
