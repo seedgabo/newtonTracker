@@ -1,12 +1,11 @@
 import { MapProvider } from './../../providers/map/map';
 import { BgProvider } from './../../providers/bg/bg';
-
 import { Api } from './../../providers/Api';
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, Events, AlertController, ActionSheetController, PopoverController, IonicPage } from 'ionic-angular';
-import * as moment from 'moment';
+import { NavController, NavParams, Events, AlertController, ActionSheetController, IonicPage } from 'ionic-angular';
 import { VirtualScrollComponent } from 'angular2-virtual-scroll';
-moment.locale('es');
+import * as moment from 'moment';
+moment.locale("es-us");
 declare var L: any;
 declare var window: any;
 
@@ -23,50 +22,6 @@ export class ListPage {
   private virtualScroll: VirtualScrollComponent;
   map
   markers = {}
-  layers = {
-    road: {
-      name: 'Rutas',
-      url: 'https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}',
-      preview: 'https://korona.geog.uni-heidelberg.de/tiles/roads/x=150&y=249&z=9',
-      opts: {
-        attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }
-    },
-
-    mapbox: {
-      name: 'Mapbox Streets',
-      url: 'https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoic2VlZGdhYm8iLCJhIjoiY2pjdDNzYzV4MGQ4ZTJxanlzNWVhYzB6MiJ9.xrP9t07VMGpwFwo7E7tP1Q',
-      preview: 'https://api.mapbox.com/v4/mapbox.streets/9/150/249.png?access_token=pk.eyJ1Ijoic2VlZGdhYm8iLCJhIjoiY2pjdDNzYzV4MGQ4ZTJxanlzNWVhYzB6MiJ9.xrP9t07VMGpwFwo7E7tP1Q',
-      opts: {
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        maxZoom: 18
-      }
-    },
-    osm: {
-      name: 'Open Street Maps',
-      url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      preview: 'http://a.tile.osm.org/9/150/249.png',
-      opts: {
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      }
-    },
-    locationiq: {
-      name: 'Calles',
-      url: `https://b-tiles.unwiredlabs.com/o/r/{z}/{x}/{y}.png?key=${this.api.locationiq_token}&scheme=streets`,
-      preview: 'https://b-tiles.unwiredlabs.com/o/r/9/150/249.png?key=${this.api.locationiq_token}&scheme=streets',
-      opts: {
-        // attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }
-    },
-    world: {
-      name: 'Satelital',
-      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      preview: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/9/249/150',
-      opts: {
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-      }
-    }
-  }
   activities = {
     'on_foot': 'A pie',
     'still': 'Detenido',
@@ -74,7 +29,6 @@ export class ListPage {
     'on_bicycle': 'En Bicicleta',
     'running': 'Corriendo'
   }
-  current_layer = null
   trip_path = null
   disabled_panic = false;
   users
@@ -91,8 +45,7 @@ export class ListPage {
     this.markerUser(data.user, true, true);
   }
   tripTimeout = 0
-  showSplitPane = true
-  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public popover: PopoverController, public api: Api, public bg: BgProvider, public Map:MapProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public api: Api, public bg: BgProvider, public Map:MapProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
   }
@@ -129,7 +82,11 @@ export class ListPage {
   }
 
   refreshScroll() {
-    this.virtualScroll.refresh()
+    this.users = [];
+    setTimeout(() => {
+      this.filter()
+      this.virtualScroll.refresh()
+    }, 250);
   }
 
   getUsers() {
@@ -144,15 +101,6 @@ export class ListPage {
 
       })
       .catch((err) => { this.api.Error(err) });
-  }
-
-  setLayer(key) {
-    if (this.current_layer) {
-      this.map.removeLayer(this.current_layer)
-    }
-    this.current_layer = L.tileLayer(this.layers[key].url, this.layers[key].opts)
-    this.current_layer.addTo(this.map);
-    this.api.storage.set('layer', key);
   }
 
   locate() {
@@ -230,8 +178,8 @@ export class ListPage {
         popup.setContent(
           popup.getContent()
           + `<span style="font-size:10px"><br>
-          <b>Dirección: </b> ${results.display_name}</span>
-        `
+          ${results.display_name}</span>
+          `
         )
       })
       .catch((err) => {
@@ -247,6 +195,7 @@ export class ListPage {
   htmlPopup(user) {
     window.callbackActivity = () => {
       this.selectUser(user)
+      this.map.closePopup();
     }
     var state = 'none'
     if (this.api.objects.users_online && this.api.objects.users_online.collection[user.id]) {
@@ -260,19 +209,28 @@ export class ListPage {
         ${user.full_name}
         <small style="float:right">
           <i class="fa fa-android fa-lg" style="color:#A4C639"></i>
-          ${moment.utc(user.location.timestamp.date).local().calendar()}
+          ${moment
+            .utc(user.location.timestamp.date)
+            .local()
+            .calendar()}
         </small>
       </h6>
-      <a  onclick="callbackActivity()" style="text-decoration: none">
-        <b>Actividad:</b> <span style="color:#489dff"> ${ user.activity ? this.activities[user.activity.activity] : 'Desconocida'}</span>
-        </a>
-        <small style="float:right">Desde  ${ user.activity ? moment(user.activity.created_at).calendar() : ''} </small>
+      <p>
+        <span>Actividad:</span> <span style="color:#489dff"> ${user.activity ? this.activities[user.activity.activity] : "Desconocida"}</span>
+        <small>&nbsp;&nbsp; Desde  ${user.activity ? moment(user.activity.created_at).calendar() : ""} </small>
+      </p>
       <br>
+      <span><span>Cargo:</span> ${user.cargo}</span>
       <br>
-      <span><b>Cargo:</b> ${user.cargo}</span>
-      <span style="float:right"><b>Departamento:</b>  ${user.departamento}</span>
+      <span><span>Departamento:</span>  ${user.departamento}</span>
       <br>
-    `
+      <button onclick="callbackActivity()" block text-center class="button button-md button-default button-default-md button-block button-block-md button-small button-small-md button-md-primary">
+        <span class="button-inner">
+          Ver Usuario
+        </span>
+        <div class="button-effect"></div>
+      </button> 
+    `;
     if (user.location.speed > 0)
       html += `<span>
         <b>Velocidad:</b>
@@ -283,14 +241,7 @@ export class ListPage {
   }
 
   mapOptions(ev) {
-    var popover = this.popover.create("MapOptionsPage", { layers: this.layers })
-    popover.present({ ev: ev });
-    popover.onWillDismiss((data) => {
-      if (!data) { return }
-      if (data.action == 'layer') {
-        this.setLayer(data.layer)
-      }
-    })
+    this.map.OpenOptions(ev)
   }
 
   selectUser(user) {

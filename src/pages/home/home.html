@@ -76,7 +76,7 @@
             <ion-item *ngIf="bg.trip_data.timestamp">
               <b>Desde:</b>
               <span item-right>
-                {{ bg.trip_data.trip_timestamp | amLocale:'es' | amCalendar:true }}
+                {{ bg.trip_data.trip_start_timestamp | amLocale:'es-us' | amCalendar:true }}
               </span>
             </ion-item>
             <ion-item>

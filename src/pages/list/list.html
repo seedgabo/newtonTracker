@@ -35,7 +35,7 @@
               Actividad: {{ !api.objects.users_online?.collection[u.id] ? 'Desconectado' :u.activity ? activities[u.activity.activity] : 'Desconocida'}}
             </p>
             <small>
-              {{u.location?.timestamp?.date | amFromUtc | amLocal | amLocale:'es' | amTimeAgo}}
+              {{u.location?.timestamp?.date | amFromUtc | amLocal | amLocale:'es-us' | amTimeAgo}}
             </small>
             <p>{{u.entidad?.name }}</p>
             <!-- <p *ngIf="u.location?.speed != -1">

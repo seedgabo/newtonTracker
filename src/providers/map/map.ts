@@ -1,8 +1,8 @@
+import { PopoverController } from 'ionic-angular';
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Api } from '../Api';
-
 declare var L: any;
 
 @Injectable()
@@ -66,24 +66,39 @@ export class MapProvider {
       }
     }
   };
-  constructor(public http: Http, public api: Api) {}
+  current_layer = null;
+  constructor(public http: Http, public api: Api, public popover:PopoverController) {}
 
   addMap(mapId) {
-    var map = (this.maps[mapId] = L.map(mapId, {
+    var map = L.map(mapId, {
       zoomControl: false,
       maxZoom: 18
-    }).setView([4.669988, -74.0673856], 13));
+    }).setView([4.669988, -74.0673856], 13);
     map.cluster = L.markerClusterGroup();
 
     this.api.storage.get("layer").then(layer => {
       if (layer && this.layers[layer]) {
-        map.setLayer(layer);
+        this.setLayer(map,layer);
       } else {
-        map.setLayer("road");
+        this.setLayer(map, "road");
       }
     });
     map.addLayer(map.cluster);
+    this.defaultFunctions(map);
+    this.maps[mapId] = map;
     return map;
+  }
+
+  setLayer(map,key) {
+    if (this.current_layer) {
+      map.removeLayer(this.current_layer);
+    }
+    this.current_layer = L.tileLayer(
+      this.layers[key].url,
+      this.layers[key].opts
+    );
+    this.current_layer.addTo(map);
+    this.api.storage.set("layer", key);
   }
 
   destroyMap(mapId) {
@@ -96,5 +111,29 @@ export class MapProvider {
   remove(mapId) {
     this.destroyMap(mapId);
   }
+  
+  OpenMapOptions(map, ev) {
+    var popover = this.popover.create("MapOptionsPage", {
+      layers: this.layers
+    });
+    popover.present({ ev: ev });
+    popover.onWillDismiss(data => {
+      if (!data) {
+        return;
+      }
+      if (data.action == "layer") {
+        map.setLayer(data.layer);
+      }
+    });
+  }
 
+  
+  private defaultFunctions(map) {
+    map.setLayer = (layer) => {
+        this.setLayer(map,layer)
+    }
+    map.OpenOptions = (ev) => {
+      this.OpenMapOptions(map,ev)
+    }
+  }
 }
