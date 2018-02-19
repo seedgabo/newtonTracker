@@ -78,7 +78,7 @@ export class MapProvider {
 
     this.api.storage.get("layer").then(layer => {
       if (layer && this.layers[layer]) {
-        this.setLayer(map,layer);
+        this.setLayer(map, layer);
       } else {
         this.setLayer(map, "road");
       }

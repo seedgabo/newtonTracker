@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-navbar color="secondary">
+    <button ion-button menuToggle icon-only>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Viajes</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div id="trip-map"></div>
+  <ion-card-header>
+    <h4>Viaje de {{ trip.user?.nombre}} </h4>
+  </ion-card-header>
+  <ion-list>
+     <ion-item-divider>
+        Duración
+     </ion-item-divider>
+  </ion-list>
+</ion-content>
