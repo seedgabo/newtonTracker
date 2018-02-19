@@ -1,3 +1,4 @@
+import { MapProvider } from './../../providers/map/map';
 import { BgProvider } from './../../providers/bg/bg';
 
 import { Api } from './../../providers/Api';
@@ -21,7 +22,6 @@ export class ListPage {
   @ViewChild(VirtualScrollComponent)
   private virtualScroll: VirtualScrollComponent;
   map
-  cluster = L.markerClusterGroup()
   markers = {}
   layers = {
     road: {
@@ -92,7 +92,7 @@ export class ListPage {
   }
   tripTimeout = 0
   showSplitPane = true
-  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public popover: PopoverController, public api: Api, public bg: BgProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public popover: PopoverController, public api: Api, public bg: BgProvider, public Map:MapProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
   }
@@ -101,15 +101,14 @@ export class ListPage {
     this.api.ready.then(() => {
       this.api.startEcho();
       setTimeout(() => {
-        this.initMap();
+        this.map = this.Map.addMap('mapid')
         this.getUsers();
       }, 100)
     })
   }
 
   ionViewWillUnload() {
-    this.map.remove()
-    this.cluster.remove()
+    this.Map.destroyMap('mapid')
     this.events.unsubscribe('LocationCreated', this.locationCreatedHandler)
     this.events.unsubscribe('panic', this.panicHandler)
   }
@@ -147,21 +146,6 @@ export class ListPage {
       .catch((err) => { this.api.Error(err) });
   }
 
-
-  // Map Methods
-  initMap() {
-    this.map = L.map('mapid', { zoomControl: false, maxZoom: 18 }).setView([4.669988, -74.0673856], 13);
-    this.api.storage.get('layer')
-      .then((layer) => {
-        if (layer && this.layers[layer]) {
-          this.setLayer(layer)
-        } else {
-          this.setLayer('road')
-        }
-      });
-    this.map.addLayer(this.cluster);
-  }
-
   setLayer(key) {
     if (this.current_layer) {
       this.map.removeLayer(this.current_layer)
@@ -172,9 +156,7 @@ export class ListPage {
   }
 
   locate() {
-    this.getDefaultLocation();
-    if (this.bg.bg)
-      this.bg.locate().then((pos) => { })
+    if (this.bg.bg) this.bg.locate().then((pos) => { })
   }
 
   sos() {
@@ -190,7 +172,7 @@ export class ListPage {
 
   fitToAll() {
     this.userSelected = {}
-    var bounds = this.cluster.getBounds()
+    var bounds = this.map.cluster.getBounds()
     if (bounds.isValid())
       this.map.fitBounds(bounds, { padding: [20, 20] })
   }
@@ -213,7 +195,7 @@ export class ListPage {
   markerUser(user, pan = true, panic = false) {
     var loc = user.location
     if (this.markers[user.id]) {
-      this.cluster.removeLayer(this.markers[user.id]);
+      this.map.cluster.removeLayer(this.markers[user.id]);
       delete (this.markers[user.id])
     }
     var icon = L.divIcon({
@@ -230,8 +212,8 @@ export class ListPage {
       this.map.panTo(new L.LatLng(loc.latitude, loc.longitude));
     this.markers[user.id] = L.marker([loc.latitude, loc.longitude], { icon: icon });
 
-    this.cluster.addLayer(this.markers[user.id])
-    this.cluster.refreshClusters(this.markers[user.id])
+    this.map.cluster.addLayer(this.markers[user.id])
+    this.map.cluster.refreshClusters(this.markers[user.id])
     this.markers[user.id].on('click', (ev) => {
       this.selectUser(user)
       var latlng = this.markers[user.id].getLatLng();
@@ -298,13 +280,6 @@ export class ListPage {
       </span>
     `
     return html;
-  }
-
-  getDefaultLocation() {
-    navigator.geolocation.getCurrentPosition((data) => {
-      this.userSelected = {}
-      this.map.panTo(new L.LatLng(data.coords.latitude, data.coords.longitude));
-    })
   }
 
   mapOptions(ev) {

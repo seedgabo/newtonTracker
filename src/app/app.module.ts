@@ -24,6 +24,7 @@ import { LoginPage } from '../pages/login/login';
 
 
 import { MomentModule } from 'angular2-moment';
+import { MapProvider } from '../providers/map/map';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { MomentModule } from 'angular2-moment';
     BackgroundMode, BackgroundGeolocation, BatteryStatus, Camera, CodePush, Deeplinks, Device, Vibration,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     Api,
-    BgProvider
+    BgProvider,
+    MapProvider
   ]
 })
 export class AppModule { }
