@@ -8,7 +8,11 @@
 </ion-header>
 
 <ion-content>
-  <div id="trip-map"></div>
+  <div id="trip-map">
+    <div text-center style="height:100%;vertical-align: middle">
+      <ion-spinner color="primary"></ion-spinner>
+    </div>
+  </div>
   <ion-card-header>
     <h4>Viaje de {{ trip.user?.nombre}} </h4>
   </ion-card-header>

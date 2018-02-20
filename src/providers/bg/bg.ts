@@ -390,7 +390,7 @@ export class BgProvider {
         entidad_id: this.api.user.entidad_id,
         cliente_id: this.api.user.cliente_id,
         start: moment(this.trip_metrics._first_event_time).format('YYYY-MM-DD HH:mm:ss'),
-        end: moment().format('YYYY-MM-DD HH:mm:ss'),
+        end: moment(this.trip_data.trip_stop_timestamp).format('YYYY-MM-DD HH:mm:ss'),
         extra: this.trip_metrics
       }
     }
