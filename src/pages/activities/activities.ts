@@ -101,6 +101,10 @@ export class ActivitiesPage {
       .catch(console.error)
   }
 
+  gotoTrip(trip) {
+    this.navCtrl.push('TripPage',{trip:trip})
+  }
+
   private pluck(array, key) {
     var resp = []
     array.forEach(element => {

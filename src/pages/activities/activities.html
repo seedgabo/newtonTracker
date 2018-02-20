@@ -77,7 +77,7 @@
               </ion-list-header>
               <ion-list>
                 <virtual-scroll [items]="trips" #scroll>
-                  <div *ngFor="let trip of scroll.viewPortItems">
+                  <div *ngFor="let trip of scroll.viewPortItems" clickable (click)="gotoTrip(trip)">
                     <ion-item>
                       <ion-icon item-left name="square" color="danger" small></ion-icon>
                       <h3>
