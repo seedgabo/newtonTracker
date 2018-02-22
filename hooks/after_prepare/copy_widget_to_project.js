@@ -49,6 +49,9 @@ var provider_info_file = `
     android:widgetCategory="home_screen">
 </appwidget-provider>
 `
+if (!fs.existsSync(projectdir + "res/xml")) {
+  fs.mkdirSync(projectdir + "res/xml");
+}
 fs.writeFileSync(projectdir + "res/xml/appwidgetproviderinfo.xml", provider_info_file);
 console.log("AppWidgetProviderInfo Created");
 
@@ -112,6 +115,10 @@ var layout_file = `
 
 </RelativeLayout>
 `
+if (!fs.existsSync(projectdir + "res/layout")) {
+  fs.mkdirSync(projectdir + "res/layout");
+}
+
 fs.writeFileSync(projectdir + "res/layout/sos_appwidget_info.xml", layout_file);
 console.log("App Widget Xml Created")
 
