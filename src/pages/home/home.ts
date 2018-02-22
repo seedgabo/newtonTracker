@@ -22,6 +22,7 @@ export class HomePage {
       this.codepush.getCurrentPackage()
         .then((data) => {
           this.version_data = data
+          this.codepush.sync()
         })
         .catch((err) => {
           console.warn(err)
