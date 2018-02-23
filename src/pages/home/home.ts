@@ -19,14 +19,14 @@ export class HomePage {
   ionViewDidLoad() {
     this.api.startEcho();
     this.platform.ready().then(() => {
-      this.codepush.getCurrentPackage()
-        .then((data) => {
-          this.version_data = data
-        })
-        .catch((err) => {
-          console.warn(err)
-        });
       setTimeout(() => {
+        this.codepush.getCurrentPackage()
+          .then((data) => {
+            this.version_data = data
+          })
+          .catch((err) => {
+            console.warn(err)
+          });
         this.codepush.sync()
       }, 5000);
     })
