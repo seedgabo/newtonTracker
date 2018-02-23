@@ -1,3 +1,4 @@
+import { BackgroundMode } from '@ionic-native/background-mode';
 import { Vibration } from '@ionic-native/vibration';
 import { Events, AlertController, ToastController, ModalController } from 'ionic-angular';
 import { Injectable } from '@angular/core';
@@ -28,7 +29,7 @@ export class Api {
   sound
   last_panic
   addresses = {}
-  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController, public modal: ModalController, public toast: ToastController, public vibration: Vibration) {
+  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController, public modal: ModalController, public toast: ToastController, public vibration: Vibration, public backgroundmode: BackgroundMode) {
     this.initVar();
     window.$api = this;
   }
@@ -289,11 +290,11 @@ export class Api {
           }
           this.handlePanic(data, false)
         })
-      
+
       this.Echo.join('App.Mobile')
         .here((data) => {
           this.objects.users_online = data
-          this.objects.users_online.collection = this.mapToCollection(data,"id")
+          this.objects.users_online.collection = this.mapToCollection(data, "id")
           console.log("here:", data);
         })
         .joining((data) => {
@@ -306,14 +307,14 @@ export class Api {
             return u.id == data.id
           })
           if (u_index) {
-            this.objects.users_online.splice(u_index,1)
-            delete(this.objects.users_online.collection[data.id])
+            this.objects.users_online.splice(u_index, 1)
+            delete (this.objects.users_online.collection[data.id])
           }
           console.log("leaving", data);
         })
 
-    
-    
+
+
     })
   }
 
@@ -350,7 +351,7 @@ export class Api {
             this.addresses[lat + "+" + lon] = data
             resolve(data);
           }, error => {
-            
+
             return reject(error);
           });
       }
@@ -361,6 +362,8 @@ export class Api {
     this.events.publish("panic", data);
     data.sound = this.playSoundSOS();
     if (open == true) {
+      this.backgroundmode.moveToForeground()
+      this.backgroundmode.wakeUp()
       var modal = this.modal.create("PanicPage", data);
       modal.present();
     }

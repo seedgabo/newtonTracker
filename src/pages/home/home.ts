@@ -32,7 +32,7 @@ export class HomePage {
           }, console.warn)
         }
 
-      }, null, null, (err) => { console.error(err); clearTimeout(timeout) });
+      }, { ignoreFailedUpdates: false }, null, (err) => { console.error(err); clearTimeout(timeout) });
 
     })
   }
