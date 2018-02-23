@@ -13,7 +13,7 @@ export class HomePage {
   disabled_panic = false;
   edition = false;
   version_data
-  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast: ToastController, public codepush: CodePush, public splashScreen: SplashScreen, public platform:Platform) {
+  constructor(public navCtrl: NavController, public api: Api, public bg: BgProvider, public events: Events, public toast: ToastController, public codepush: CodePush, public splashScreen: SplashScreen, public platform: Platform) {
   }
 
   ionViewDidLoad() {
@@ -22,11 +22,13 @@ export class HomePage {
       this.codepush.getCurrentPackage()
         .then((data) => {
           this.version_data = data
-          this.codepush.sync()
         })
         .catch((err) => {
           console.warn(err)
         });
+      setTimeout(() => {
+        this.codepush.sync()
+      }, 5000);
     })
   }
 
@@ -74,7 +76,7 @@ export class HomePage {
 
   sync() {
     this.platform.ready().then(() => {
-      this.codepush.sync({ignoreFailedUpdates:false})
+      this.codepush.sync({ ignoreFailedUpdates: false })
         .subscribe((status) => {
           var msg = ""
           if (status == 0) {
