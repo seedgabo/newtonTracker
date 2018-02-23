@@ -1,10 +1,12 @@
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { CodePush } from '@ionic-native/code-push';
+import { CodePush, SyncStatus } from '@ionic-native/code-push';
 import { Api } from './../../providers/Api';
 import { Component } from '@angular/core';
 import { NavController, ToastController, Platform } from 'ionic-angular';
 import { BgProvider } from '../../providers/bg/bg';
 import { Events } from 'ionic-angular';
+
+declare var window: any;
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -19,16 +21,19 @@ export class HomePage {
   ionViewDidLoad() {
     this.api.startEcho();
     this.platform.ready().then(() => {
-      setTimeout(() => {
-        this.codepush.getCurrentPackage()
-          .then((data) => {
+      var timeout = setTimeout(() => {
+        this.codepush.restartApplication()
+      }, 1000 * 60);
+      window.codePush.sync((status) => {
+        clearTimeout(timeout)
+        if (status == SyncStatus.UP_TO_DATE) {
+          window.codePush.getCurrentPackage((data) => {
             this.version_data = data
-            this.codepush.sync({ ignoreFailedUpdates: false })
-          })
-          .catch((err) => {
-            console.warn(err)
-          });
-      }, 1000);
+          }, console.warn)
+        }
+
+      }, null, null, () => { clearTimeout(timeout) });
+
     })
   }
 
