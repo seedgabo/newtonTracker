@@ -1,56 +1,54 @@
 page-activities {
-    .user-image{
-        img{
-            margin:  0 auto;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
+  .user-image {
+    img {
+      margin: 0 auto;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
     }
-    .activity-line{
-        height: 100%;
-        width: 5px;
-        background: black;
-        &.still{
-            background: color($colors,'neutral');
-        }
-        &.on_foot{
-            background: color($colors,'primary');
-        }
-        &.running{
-            background: color($colors,'favorite');
-        }
-        &.in_vehicle{
-            background: color($colors,'secondary');
-        }
-        &.on_bycicle {
-            background: color($colors,'warning');
-        }
-        &:after {
-                content: '';
-                width: 10px;
-                height: 10px;
-                background: white;
-                border: 2px solid rgb(125, 125, 123);
-                border-radius: 50%;
-                position: absolute;
-                right: 12px;
-                top: 0px;
-        }
+  }
+  .activity-line {
+    height: 100%;
+    width: 5px;
+    background: black;
+    &.still {
+      background: color($colors, 'neutral');
     }
-
-    .hero-user {
-        background-image: url('../assets/map-wallpaper.jpg');
+    &.on_foot {
+      background: color($colors, 'primary');
     }
-    virtual-scroll {
-      display: block;
-      width: 100%;
-      height: 400px;
+    &.running {
+      background: color($colors, 'favorite');
     }
-    
-    ion-item {
-      display: block;
-      width: 100%;
-      height: 90px;
+    &.in_vehicle {
+      background: color($colors, 'secondary');
     }
+    &.on_bycicle {
+      background: color($colors, 'warning');
+    }
+    &:after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: white;
+      border: 2px solid rgb(125, 125, 123);
+      border-radius: 50%;
+      position: absolute;
+      right: 12px;
+      top: 0px;
+    }
+  }
+  .hero-user {
+    background-image: url('../assets/map-wallpaper.jpg');
+  }
+  virtual-scroll {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 260px);
+  }
+  ion-item {
+    display: block;
+    width: 100%;
+    height: 90px;
+  }
 }
