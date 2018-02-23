@@ -110,7 +110,6 @@ export class TripPage {
   drawTrip(locations, options: any = { weight: 5, opacity: 1.0, smoothFactor: 1, className: 'trip-path' }) {
     var events = [], toDraw = [], ev
     var previousloc = locations[0]
-
     locations.forEach(loc => {
       var dist = 0;
       if (previousloc)
@@ -125,16 +124,17 @@ export class TripPage {
       this.trip_path.remove()
       this.trip_path = null;
     }
-
     this.trip_path = new L.Polyline(events, options)
     this.trip_path.addTo(this.map)
-    this.drawPoints(this.cleanPoints(toDraw));
-
-
+    this.drawPoints(this.reducePoints(toDraw))
     this.fitPath()
   }
 
   drawPoints(toDraw) {
+    this.markers.forEach((marker) => {
+      this.map.removeLayer(marker)
+    })
+    this.markers = []
     toDraw.forEach((point, index) => {
       setTimeout(() => {
         this.addMarker(point.loc, point.ev)
@@ -142,14 +142,14 @@ export class TripPage {
     })
   }
 
-  cleanPoints(points) {
+  reducePoints(points) {
     if (points.length > 100) {
       var filtered = [];
       for (let index = 1; index < points.length; index += 2) {
         filtered[filtered.length] = points[index];
 
       }
-      return this.cleanPoints(filtered)
+      return this.reducePoints(filtered)
     }
     return points;
   }

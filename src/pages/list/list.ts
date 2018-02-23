@@ -45,7 +45,7 @@ export class ListPage {
     this.markerUser(data.user, true, true);
   }
   tripTimeout = 0
-  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public api: Api, public bg: BgProvider, public Map:MapProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public events: Events, public alert: AlertController, public actionSheetCtrl: ActionSheetController, public api: Api, public bg: BgProvider, public Map: MapProvider) {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
   }
@@ -83,6 +83,7 @@ export class ListPage {
 
   refreshScroll() {
     this.users = [];
+    this.map.closePopup()
     setTimeout(() => {
       this.filter()
       this.virtualScroll.refresh()
@@ -177,7 +178,7 @@ export class ListPage {
       .then((results: any) => {
         popup.setContent(
           popup.getContent()
-          + `<span style="font-size:10px"><br>
+          + `<span style="font-size:11px">
           ${results.display_name}</span>
           `
         )
@@ -185,7 +186,7 @@ export class ListPage {
       .catch((err) => {
         popup.setContent(
           popup.getContent()
-          + `<br>
+          + `
             <b>Dirección: </b> Error: Servicio no Disponible
           `
         )
@@ -195,7 +196,6 @@ export class ListPage {
   htmlPopup(user) {
     window.callbackActivity = () => {
       this.selectUser(user)
-      this.map.closePopup();
     }
     var state = 'none'
     if (this.api.objects.users_online && this.api.objects.users_online.collection[user.id]) {
@@ -209,17 +209,13 @@ export class ListPage {
         ${user.full_name}
         <small style="float:right">
           <i class="fa fa-android fa-lg" style="color:#A4C639"></i>
-          ${moment
-            .utc(user.location.timestamp.date)
-            .local()
-            .calendar()}
+          ${moment.utc(user.location.timestamp.date).local().calendar()}
         </small>
       </h6>
       <p>
         <span>Actividad:</span> <span style="color:#489dff"> ${user.activity ? this.activities[user.activity.activity] : "Desconocida"}</span>
         <small>&nbsp;&nbsp; Desde  ${user.activity ? moment(user.activity.created_at).calendar() : ""} </small>
       </p>
-      <br>
       <span><span>Cargo:</span> ${user.cargo}</span>
       <br>
       <span><span>Departamento:</span>  ${user.departamento}</span>
@@ -247,6 +243,7 @@ export class ListPage {
   selectUser(user) {
     if (this.userSelected == user) {
       this.userSelected = {}
+      this.map.closePopup()
       return this.navCtrl.push('ActivitiesPage', { user: user, userId: user.id })
     }
     this.userSelected = user

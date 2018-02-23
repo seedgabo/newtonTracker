@@ -1,5 +1,5 @@
 <ion-content>
-  <button ion-button icon-only navPop class="navbar-over-map">
+  <button ion-button icon-only navPop color="light" class="navbar-over-map">
     <ion-icon name="arrow-back"></ion-icon>
   </button>
   <!-- <ion-navbar >
@@ -14,7 +14,7 @@
   <div id="trip-info" (swipe)="toggle(true)" [ngClass]="{'scrolling': scrolling}">
     <ion-toolbar no-border (click)="toggle(true)" color="primary">
       <ion-buttons left>
-        <button ion-button icon-only clear>
+        <button ion-button icon-only clear (click)="$event.stopPropagation();collapseToInfo();drawTrip(trip.locations);">
           <ion-icon name="navigate"></ion-icon>
         </button>
       </ion-buttons>
