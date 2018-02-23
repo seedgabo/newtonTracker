@@ -25,14 +25,14 @@ export class HomePage {
         this.codepush.restartApplication()
       }, 1000 * 60);
       window.codePush.sync((status) => {
-        clearTimeout(timeout)
         if (status == SyncStatus.UP_TO_DATE) {
+          clearTimeout(timeout)
           window.codePush.getCurrentPackage((data) => {
             this.version_data = data
           }, console.warn)
         }
 
-      }, null, null, () => { clearTimeout(timeout) });
+      }, null, null, (err) => { console.error(err); clearTimeout(timeout) });
 
     })
   }
