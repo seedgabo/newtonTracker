@@ -27,7 +27,7 @@ export class HomePage {
           .catch((err) => {
             console.warn(err)
           });
-        this.codepush.sync()
+        this.codepush.sync({ ignoreFailedUpdates: false })
       }, 5000);
     })
   }

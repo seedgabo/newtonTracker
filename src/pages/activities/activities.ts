@@ -23,6 +23,7 @@ export class ActivitiesPage {
     'on_bicycle': 'bicycle',
     'on_trip': 'navigate'
   }
+
   acts = {
     'on_foot': 'A pie',
     'still': 'Detenido',
@@ -78,7 +79,7 @@ export class ActivitiesPage {
 
   getTrips(refresher = null) {
     this.loading = true
-    this.api.get(`trips?where[user_id]=${this.user.id}&limit=200`)
+    this.api.get(`trips?scope[valid]=3&where[user_id]=${this.user.id}&limit=200`)
       .then((data: any) => {
         this.trips = data.reverse()
         this.loading = false
