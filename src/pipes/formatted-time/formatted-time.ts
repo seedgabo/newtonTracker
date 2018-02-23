@@ -9,7 +9,11 @@ export class FormattedTimePipe implements PipeTransform {
    * Takes a seconds and makes it format date
    */
   transform(seconds: string, ...args) {
-    if (seconds)
-      return moment().startOf('day').seconds(parseInt(seconds)).format('h[h] m[m] ss[s]');  
+    if (seconds) {
+      var date = moment().locale('en').startOf('day').seconds(Number(seconds))
+      if (Number(seconds) > 3600)
+        return date.format('H[h] m[m] s[s]');
+      return date.format('m[m] s[s]');
+    }
   }
 }

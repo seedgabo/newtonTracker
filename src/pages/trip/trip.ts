@@ -5,6 +5,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import * as moment from 'moment';
 import Split from 'split.js'
+import Chart from 'chart.js';
 
 moment.locale('es-us')
 declare var L: any;
@@ -59,6 +60,9 @@ export class TripPage {
     this.map.remove()
   }
 
+
+
+
   toggle(scrolling) {
     if (scrolling) {
       this.scrolling = true
@@ -90,6 +94,50 @@ export class TripPage {
   }
 
 
+  chartSpeed(locations) {
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: locations.map((loc) => { return moment.utc(loc.timestamp).local().format("hh:mm:ss a") }),
+        datasets: [{
+          label: 'Velocidad',
+          data: locations.map((loc) => { if (loc.location.speed != -1) return loc.location.speed }),
+          backgroundColor: [
+            'rgba(33, 99, 255, 1)',
+          ],
+          // borderColor: [
+          //   'rgba(3,99,255,1)',
+          // ],
+          // borderWidth: 1
+        }]
+      },
+    });
+
+    var ctx2 = document.getElementById("myChart2");
+    var myChart2 = new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: locations.map((loc) => { return moment.utc(loc.timestamp).local().format("hh:mm:ss a") }),
+        datasets: [{
+          label: 'Altitud',
+          data: locations.map((loc) => { if (loc.location.altitude != -1) return loc.location.altitude }),
+          backgroundColor: [
+            'rgba(33, 255, 255, 1)',
+          ],
+          // borderColor: [
+          //   'rgba(3,255,255,1)',
+          // ],
+          // borderWidth: 1
+        }]
+      },
+      options: {}
+    });
+  }
+
+
+
+
 
 
 
@@ -99,6 +147,7 @@ export class TripPage {
         .then((data: any) => {
           this.trip = data
           this.drawTrip(data.locations)
+          this.chartSpeed(this.reducePoints(data.locations))
         })
         .catch((err) => {
           this.api.Error(err)
