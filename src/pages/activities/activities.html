@@ -11,19 +11,19 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content  no-padding>
+<ion-content no-padding>
   <ion-grid class="hero-user">
-    <ion-row  text-center>
-        <ion-col col-xs-12 col-sm-12 col-md-12 offset-lg-3 offset-xl-3 col-lg-6 col-xl-6 col>
-          <div class="user-image">
-            <img [src]="user?.imagen" *ngIf="user?.imagen">
-          </div>
-            <h3 ion-text color="primary" text-capitalize>{{user.full_name}}</h3>
-            <p ion-text color="primary" text-capitalize>{{user.departamento}} - {{user.cargo}}</p>
-        </ion-col>
+    <ion-row text-center>
+      <ion-col col-xs-12 col-sm-12 col-md-12 offset-lg-3 offset-xl-3 col-lg-6 col-xl-6 col>
+        <div class="user-image">
+          <img [src]="user?.imagen" *ngIf="user?.imagen">
+        </div>
+        <h3 ion-text color="primary" text-capitalize>{{user.full_name}}</h3>
+        <p ion-text color="primary" text-capitalize>{{user.departamento}} - {{user.cargo}}</p>
+      </ion-col>
     </ion-row>
   </ion-grid>
-  
+
   <ion-grid no-padding no-margin class="hero-user">
     <ion-row text-center>
       <ion-col col-xs-12 col-sm-12 col-md-12 offset-lg-2 offset-xl-2 col-lg-8 col-xl-8>
@@ -37,72 +37,62 @@
             </ion-segment-button>
           </ion-segment>
         </ion-card>
-        <div [ngSwitch]="list">
-            <ion-card no-padding *ngSwitchCase="'Actividad'">
-              <ion-list-header>
-                <span ion-text color="primary"> Historial  de Actividad </span>
-              </ion-list-header>
-              <ion-list>
-                <virtual-scroll [items]="activities" #scroll>
-                    <ion-item *ngFor="let activity of scroll.viewPortItems" >
-                      <ion-grid>
-                        <ion-row>
-                          <ion-col>
-                            <h2>
-                              <ion-icon [color]="colors[activity.activity]" [name]="icons[activity.activity]"></ion-icon>
-                              {{acts[activity.activity]}}
-                            </h2>
-                            <button ion-button small clear *ngIf="activity.location && !api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude]" (click)="geocode(activity)">
-                                Localizacion
-                            </button>
-                            <p text-wrap *ngIf="activity.location && api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude]">
-                              {{api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude].display_name }}
-                            </p>
-                            <ion-note *ngIf="!activity.location">
-                              No Hay Ubicacion
-                            </ion-note>
-                          </ion-col>
-                          <p text-right float-right>{{activity.created_at | amCalendar }}</p>
-                        </ion-row>
-                      </ion-grid>
-                      <div item-right class="activity-line" [ngClass]="activity.activity"></div>
-                    </ion-item>
-                </virtual-scroll>
-              </ion-list>
-            </ion-card>
-          
-            <ion-card no-padding *ngSwitchCase="'Viajes'">
-              <ion-list-header>
-                <span ion-text color="primary"> Historial de Viajes </span>
-              </ion-list-header>
-              <ion-list>
-                <virtual-scroll [items]="trips" #scroll>
-                  <div *ngFor="let trip of scroll.viewPortItems" clickable (click)="gotoTrip(trip)">
-                    <ion-item>
-                      <ion-icon item-left name="square" color="danger" small></ion-icon>
-                      <h3>
-                        {{trip.end | amDateFormat:'LLL a' }}
-                      </h3>                
-                      <p item-right text-wrap>
-                        {{trip.extra?.duration/60 | number:'1.0-0'}}  Minutos
-                      </p>
-                    </ion-item>
-                    <ion-item-divider>
-                      <ion-icon item-left name="navigate" color="secondary" small></ion-icon>
-                      <h3  text-left text-wrap>
-                        {{trip.start | amDateFormat:'LLL a' }} 
-                      </h3>
-                      <p item-right text-wrap>
-                        {{trip.extra?.distance /1000 | number:'1.0-0'}}  Km
-                      </p>
-                    </ion-item-divider>
-                  </div>
-                </virtual-scroll>
-              </ion-list>
-            </ion-card>
+        <div [ngSwitch]="list" style="height:calc(100vh - 260px)">
+          <ion-card no-padding *ngSwitchCase="'Actividad'">
+            <ion-list-header>
+              <span ion-text color="primary"> Historial de Actividad </span>
+            </ion-list-header>
+            <ion-list>
+              <virtual-scroll [items]="activities" #scroll>
+                <ion-item *ngFor="let activity of scroll.viewPortItems">
+                  <ion-icon item-left [name]="icons[activity.activity]"></ion-icon>
+                  <div item-right class="activity-line" [ngClass]="activity.activity"></div>
+                  <h2>
+                    {{acts[activity.activity]}}
+                  </h2>
+                  <ion-note *ngIf="!activity.location">
+                    No Hay Ubicacion
+                  </ion-note>
+                  <button ion-button small clear *ngIf="activity.location && !api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude]"
+                    (click)="geocode(activity)">
+                    Localizacion
+                  </button>
+                  <p text-wrap *ngIf="activity.location && api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude]">
+                    {{api.addresses[activity.location.coords.latitude + '+' + activity.location.coords.longitude].display_name }}
+                  </p>
+
+                  <h4 float-right>{{activity.created_at | amCalendar }}</h4>
+                </ion-item>
+              </virtual-scroll>
+            </ion-list>
+          </ion-card>
+
+          <ion-card no-padding *ngSwitchCase="'Viajes'">
+            <ion-list-header>
+              <span ion-text color="primary"> Historial de Viajes </span>
+            </ion-list-header>
+            <ion-list>
+              <virtual-scroll [items]="trips" #scroll>
+                <div *ngFor="let trip of scroll.viewPortItems" clickable (click)="gotoTrip(trip)">
+                  <ion-item>
+                    <ion-icon *ngIf="trip.extra" item-left [name]="icons[trip.extra?._ev_max_speed.activity?.type]"></ion-icon>
+                    <h2 text-justify text-wrap>
+                      {{trip.start | amCalendar }}
+                    </h2>
+                    <h5>
+                      {{trip.extra?.duration | formattedTime }}
+                    </h5>
+                    <p item-right text-wrap>
+                      {{trip.extra?.distance /1000 | number:'1.0-2'}} Km
+                    </p>
+                  </ion-item>
+                </div>
+              </virtual-scroll>
+            </ion-list>
+          </ion-card>
         </div>
       </ion-col>
     </ion-row>
   </ion-grid>
-  
+
 </ion-content>

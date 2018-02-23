@@ -1,3 +1,4 @@
+import { PipesModule } from './../../pipes/pipes.module';
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { ActivitiesPage } from './activities';
@@ -11,7 +12,8 @@ import { VirtualScrollModule } from 'angular2-virtual-scroll';
   imports: [
     IonicPageModule.forChild(ActivitiesPage),
     MomentModule,
+    PipesModule,
     VirtualScrollModule
   ],
 })
-export class ActivitiesPageModule {}
+export class ActivitiesPageModule { }

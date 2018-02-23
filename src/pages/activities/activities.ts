@@ -102,7 +102,7 @@ export class ActivitiesPage {
   }
 
   gotoTrip(trip) {
-    this.navCtrl.push('TripPage',{trip:trip})
+    this.navCtrl.push('TripPage', { trip: trip, tripId: trip.id})
   }
 
   private pluck(array, key) {

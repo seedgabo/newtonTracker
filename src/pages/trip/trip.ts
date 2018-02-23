@@ -4,8 +4,10 @@ import { Api } from '../../providers/Api';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import * as moment from 'moment';
+import Split from 'split.js'
+
 moment.locale('es-us')
-declare var L:any;
+declare var L: any;
 @IonicPage({
   defaultHistory: ["ListPage"],
   segment: "tracking/trip/:tripId"
@@ -20,7 +22,10 @@ export class TripPage {
   trip: any = {};
   trip_path
   map
-  constructor(public navCtrl: NavController, public navParams: NavParams, public api: Api, public Map: MapProvider, public bg:BgProvider) {
+  split
+  collapseTo = 'map'
+  scrolling = false
+  constructor(public navCtrl: NavController, public navParams: NavParams, public api: Api, public Map: MapProvider, public bg: BgProvider) {
     var tripId
     if (this.navParams.get("trips")) {
       this.trips = this.navParams.get("trips");
@@ -34,51 +39,92 @@ export class TripPage {
     }
     this.getTrip(tripId);
   }
-  
+
   ionViewDidLoad() {
     try {
       this.map = this.Map.addMap('trip-map');
-      
+      this.split = Split(['#trip-map', '#trip-info'], {
+        direction: 'vertical',
+        sizes: [30, 70],
+        minSize: 50,
+        gutterSize: 0,
+        onDragEnd: () => { this.map.invalidateSize() }
+      });
     } catch (error) {
-      setTimeout(() => {
-        this.map = this.Map.addMap('trip-map');
-      }, 100);
+      setTimeout(() => { this.ionViewDidLoad() }, 100);
     }
   }
-  
+
   ionViewWillUnload() {
     this.map.remove()
   }
+
+  toggle(scrolling) {
+    if (scrolling) {
+      this.scrolling = true
+      setTimeout(() => {
+        this.scrolling = false
+      }, 300);
+    }
+    if (this.collapseTo == 'map') {
+      this.collapseToInfo()
+      this.collapseTo = 'info'
+    } else {
+      this.collapseToMap()
+      this.collapseTo = 'map'
+    }
+  }
+
+  collapseToMap() {
+    this.split.setSizes([30, 70])
+    setTimeout(() => {
+      this.map.invalidateSize()
+    }, 305);
+  }
+
+  collapseToInfo() {
+    this.split.setSizes([91, 9])
+    setTimeout(() => {
+      this.map.invalidateSize()
+    }, 305);
+  }
+
+
+
+
+
+
+
 
 
   getTrip(tripId) {
     this.api.ready.then(() => {
       this.api.get(`trips/${tripId}?with[]=user.entidad&with[]=cliente&with[]=locations`)
-        .then((data:any) => {
-          this.trip = data  
+        .then((data: any) => {
+          this.trip = data
           this.drawTrip(data.locations)
         })
         .catch((err) => {
           this.api.Error(err)
-      })
+        })
     });
-  
+
   }
 
-  drawTrip(locations, options: any = { weight: 5, opacity: 1.0, smoothFactor: 1, className:'trip-path' }) {
-    var events = [], ev
+  drawTrip(locations, options: any = { weight: 5, opacity: 1.0, smoothFactor: 1, className: 'trip-path' }) {
+    var events = [], toDraw = [], ev
     var previousloc = locations[0]
-    locations.sort(function (a, b) { return moment.utc(b).diff(moment.utc(a)) }).forEach(loc => {
+
+    locations.forEach(loc => {
       var dist = 0;
       if (previousloc)
         dist = Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude));
       if (dist < 200) {
-        events[events.length]= ev = new L.LatLng(loc.location.latitude, loc.location.longitude);
-        this.addMarker(loc,ev)
+        events[events.length] = ev = new L.LatLng(loc.location.latitude, loc.location.longitude);
+        toDraw[toDraw.length] = { loc: loc, ev: ev }
       }
       previousloc = loc
     })
-
     if (this.trip_path) {
       this.trip_path.remove()
       this.trip_path = null;
@@ -86,10 +132,27 @@ export class TripPage {
 
     this.trip_path = new L.Polyline(events, options)
     this.trip_path.addTo(this.map)
-    this.map.fitBounds(this.trip_path.getBounds(),{ padding: [50,50]})
+    toDraw = this.cleanPoints(toDraw);
+    toDraw.forEach((point) => {
+      this.addMarker(point.loc, point.ev)
+    })
+
+    this.fitPath()
   }
 
-  addMarker(loc,latLng) {
+  cleanPoints(points) {
+    if (points.length > 100) {
+      var filtered = [];
+      for (let index = 1; index < points.length; index += 2) {
+        filtered[filtered.length] = points[index];
+
+      }
+      return this.cleanPoints(filtered)
+    }
+    return points;
+  }
+
+  addMarker(loc, latLng) {
     var icon = L.divIcon({ className: 'position-icon-container', html: `<div class="position-icon" > </div>` })
 
     var marker = new L.marker(latLng, { icon: icon })
@@ -101,13 +164,17 @@ export class TripPage {
     })
   }
 
-  htmlPopup(loc, address=null) {
+  fitPath() {
+    this.map.fitBounds(this.trip_path.getBounds(), { animate: true, padding: [50, 50] })
+  }
+
+  htmlPopup(loc, address = null) {
     console.log(loc)
     return `
      Velocidad: ${Math.floor(loc.location.speed * 3.6)} Kmh  
      <i class="fa fa-arrow-up" style="transform:rotate(${loc.location.heading}deg)"></i>
      <br>
-      ${address? "Direccion: " + address + "<br>" : ''}
+      ${address ? "Direccion: " + address + "<br>" : ''}
     <small style="float:right;text-transform:capitalize">
       ${moment.utc(loc.timestamp).local().calendar()}
     </small>
@@ -120,14 +187,14 @@ export class TripPage {
     `
   }
 
-  addAddressPopup(loc,popup) {
+  addAddressPopup(loc, popup) {
     this.api.reverseGeo(loc.location.latitude, loc.location.longitude)
-      .then((results:any) => {
+      .then((results: any) => {
         popup.setContent(this.htmlPopup(loc, results.display_name))
       })
       .catch((err) => {
         console.error(err)
-    })
+      })
   }
 
 }

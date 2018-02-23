@@ -1,24 +1,62 @@
-<ion-header>
-  <ion-navbar color="secondary">
-    <button ion-button menuToggle icon-only>
-      <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>Viajes</ion-title>
-  </ion-navbar>
-</ion-header>
-
 <ion-content>
-  <div id="trip-map">
+  <button ion-button icon-only navPop class="navbar-over-map">
+    <ion-icon name="arrow-back"></ion-icon>
+  </button>
+  <!-- <ion-navbar >
+  </ion-navbar> -->
+
+  <div id="trip-map" [ngClass]="{'scrolling': scrolling}">
     <div text-center style="height:100%;vertical-align: middle">
       <ion-spinner color="primary"></ion-spinner>
     </div>
   </div>
-  <ion-card-header>
-    <h4>Viaje de {{ trip.user?.nombre}} </h4>
-  </ion-card-header>
-  <ion-list>
-     <ion-item-divider>
+
+  <div id="trip-info" (swipe)="toggle(true)" [ngClass]="{'scrolling': scrolling}">
+    <ion-toolbar no-border (click)="toggle(true)" color="primary">
+      <ion-buttons left>
+        <button ion-button icon-only clear>
+          <ion-icon name="navigate"></ion-icon>
+        </button>
+      </ion-buttons>
+      <ion-title> Viaje de {{ trip.user?.nombre}} </ion-title>
+      <span color="light" ion-text padding-horizontal>
+        {{ trip.start | amCalendar }}
+        <span *ngIf="trip.extra">
+          - {{trip.extra?.duration | amDuration:'seconds' }}
+        </span>
+      </span>
+      <ion-buttons right>
+        <button ion-button icon-only clear (click)="fitPath();$event.stopPropagation()">
+          <ion-icon name="expand"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-list>
+      <ion-item>
+        <ion-icon name="timer" item-left color="neutral"></ion-icon>
         Duración
-     </ion-item-divider>
-  </ion-list>
+        <b item-right> {{ trip.extra?.duration | formattedTime }}</b>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="map" item-left color="neutral"></ion-icon>
+        Distancia
+        <b item-right> {{ trip.extra?.distance / 1000 | number:'1.0-2' }} Km</b>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="speedometer" item-left color="neutral"></ion-icon>
+        Vel Media
+        <b item-right> {{ trip.extra?.avg_speed | number:'1.0-2' }} Km/h</b>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="speedometer" item-left color="neutral"></ion-icon>
+        Vel Max
+        <b item-right> {{ trip.extra?.max_speed | number:'1.0-2' }} Km/h</b>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="podium" item-left color="neutral"></ion-icon>
+        Altitud Max
+        <b item-right> {{ trip.extra?.max_altitude | number:'1.0-2' }} mts</b>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>
