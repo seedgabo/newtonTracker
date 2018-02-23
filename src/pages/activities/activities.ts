@@ -37,7 +37,7 @@ export class ActivitiesPage {
     'in_vehicle': 'secondary',
     'on_bicycle': 'warning',
   }
-  list = "Actividad"
+  list = "Viajes"
   constructor(public navCtrl: NavController, public navParams: NavParams, public api: Api) {
     if (this.navParams.get('user')) {
       this.user = this.navParams.get('user');
@@ -102,7 +102,7 @@ export class ActivitiesPage {
   }
 
   gotoTrip(trip) {
-    this.navCtrl.push('TripPage', { trip: trip, tripId: trip.id})
+    this.navCtrl.push('TripPage', { trip: trip, tripId: trip.id })
   }
 
   private pluck(array, key) {
