@@ -75,7 +75,7 @@
               <virtual-scroll [items]="trips" #scroll>
                 <div *ngFor="let trip of scroll.viewPortItems" clickable (click)="gotoTrip(trip)">
                   <ion-item>
-                    <ion-icon *ngIf="trip.extra" item-left [name]="icons[trip.extra?._ev_max_speed.activity?.type]"></ion-icon>
+                    <ion-icon *ngIf="trip.extra" item-left [name]="icons[trip.extra?._ev_max_speed?.activity?.type]"></ion-icon>
                     <h2 text-justify text-wrap>
                       {{trip.start | amCalendar }}
                     </h2>
