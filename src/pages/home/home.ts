@@ -23,12 +23,12 @@ export class HomePage {
         this.codepush.getCurrentPackage()
           .then((data) => {
             this.version_data = data
+            this.codepush.sync({ ignoreFailedUpdates: false })
           })
           .catch((err) => {
             console.warn(err)
           });
-        this.codepush.sync({ ignoreFailedUpdates: false })
-      }, 5000);
+      }, 1000);
     })
   }
 
