@@ -45,7 +45,7 @@ export class TripPage {
       this.map = this.Map.addMap('trip-map');
       this.split = Split(['#trip-map', '#trip-info'], {
         direction: 'vertical',
-        sizes: [30, 70],
+        sizes: [40, 60],
         minSize: 50,
         gutterSize: 0,
         onDragEnd: () => { this.map.invalidateSize() }
@@ -93,10 +93,6 @@ export class TripPage {
 
 
 
-
-
-
-
   getTrip(tripId) {
     this.api.ready.then(() => {
       this.api.get(`trips/${tripId}?with[]=user.entidad&with[]=cliente&with[]=locations`)
@@ -132,12 +128,18 @@ export class TripPage {
 
     this.trip_path = new L.Polyline(events, options)
     this.trip_path.addTo(this.map)
-    toDraw = this.cleanPoints(toDraw);
-    toDraw.forEach((point) => {
-      this.addMarker(point.loc, point.ev)
-    })
+    this.drawPoints(this.cleanPoints(toDraw));
+
 
     this.fitPath()
+  }
+
+  drawPoints(toDraw) {
+    toDraw.forEach((point, index) => {
+      setTimeout(() => {
+        this.addMarker(point.loc, point.ev)
+      }, 50 * index);
+    })
   }
 
   cleanPoints(points) {
@@ -165,7 +167,7 @@ export class TripPage {
   }
 
   fitPath() {
-    this.map.fitBounds(this.trip_path.getBounds(), { animate: true, padding: [50, 50] })
+    this.map.fitBounds(this.trip_path.getBounds(), { animate: true, padding: [10, 10] })
   }
 
   htmlPopup(loc, address = null) {
