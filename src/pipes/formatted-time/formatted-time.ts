@@ -1,8 +1,8 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import * as moment from 'moment';
+import { Pipe, PipeTransform } from "@angular/core";
+import * as moment from "moment";
 
 @Pipe({
-  name: 'formattedTime',
+  name: "formattedTime"
 })
 export class FormattedTimePipe implements PipeTransform {
   /**

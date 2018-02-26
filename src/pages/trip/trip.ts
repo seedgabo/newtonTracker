@@ -19,23 +19,23 @@ declare var L: any;
 })
 export class TripPage {
   trips = [];
-  markers = []
+  markers = [];
   trip: any = {};
-  trip_path
-  map
-  split
-  collapseTo = 'map'
-  scrolling = false
-  constructor(public navCtrl: NavController, public navParams: NavParams, public api: Api, public Map: MapProvider, public bg: BgProvider) {
-    var tripId
+  trip_path;
+  map;
+  split;
+  collapseTo = "map";
+  scrolling = false;
+  constructor(public navCtrl: NavController, public navParams: NavParams, public api: Api, public Map: MapProvider, public bg: BgProvider
+  ) {
+    var tripId;
     if (this.navParams.get("trips")) {
       this.trips = this.navParams.get("trips");
     }
     if (this.navParams.get("trip")) {
       this.trip = this.navParams.get("trip");
-      tripId = this.trip.id
-    }
-    else if (this.navParams.get("tripId")) {
+      tripId = this.trip.id;
+    } else if (this.navParams.get("tripId")) {
       tripId = this.navParams.get("tripId");
     }
     this.getTrip(tripId);
@@ -43,21 +43,26 @@ export class TripPage {
 
   ionViewDidLoad() {
     try {
-      this.map = this.Map.addMap('trip-map');
-      this.split = Split(['#trip-map', '#trip-info'], {
-        direction: 'vertical',
+      this.map = this.Map.addMap("trip-map");
+      this.split = Split(["#trip-map", "#trip-info"], {
+        direction: "vertical",
         sizes: [40, 60],
         minSize: 50,
         gutterSize: 0,
-        onDragEnd: () => { this.map.invalidateSize() }
+        onDragEnd: () => {
+          this.map.invalidateSize();
+        }
       });
     } catch (error) {
-      setTimeout(() => { this.ionViewDidLoad() }, 100);
+      setTimeout(() => {
+        this.ionViewDidLoad();
+      }, 100);
     }
   }
 
   ionViewWillUnload() {
-    this.map.remove()
+    this.map.remove();
+    this.map = null;
   }
 
 
@@ -65,31 +70,31 @@ export class TripPage {
 
   toggle(scrolling) {
     if (scrolling) {
-      this.scrolling = true
+      this.scrolling = true;
       setTimeout(() => {
-        this.scrolling = false
+        this.scrolling = false;
       }, 300);
     }
-    if (this.collapseTo == 'map') {
-      this.collapseToInfo()
-      this.collapseTo = 'info'
+    if (this.collapseTo == "map") {
+      this.collapseToInfo();
+      this.collapseTo = "info";
     } else {
-      this.collapseToMap()
-      this.collapseTo = 'map'
+      this.collapseToMap();
+      this.collapseTo = "map";
     }
   }
 
   collapseToMap() {
-    this.split.setSizes([30, 70])
+    this.split.setSizes([30, 70]);
     setTimeout(() => {
-      this.map.invalidateSize()
+      this.map.invalidateSize();
     }, 305);
   }
 
   collapseToInfo() {
-    this.split.setSizes([91, 9])
+    this.split.setSizes([91, 9]);
     setTimeout(() => {
-      this.map.invalidateSize()
+      this.map.invalidateSize();
     }, 305);
   }
 
@@ -143,7 +148,10 @@ export class TripPage {
 
   getTrip(tripId) {
     this.api.ready.then(() => {
-      this.api.get(`trips/${tripId}?with[]=user.entidad&with[]=cliente&with[]=locations`)
+      this.api
+        .get(
+          `trips/${tripId}?with[]=user.entidad&with[]=cliente&with[]=locations`
+        )
         .then((data: any) => {
           this.trip = data
           this.drawTrip(data.locations)
@@ -152,43 +160,57 @@ export class TripPage {
         .catch((err) => {
           this.api.Error(err)
         })
+        .catch(err => {
+          this.api.Error(err);
+        });
     });
-
   }
 
-  drawTrip(locations, options: any = { weight: 5, opacity: 1.0, smoothFactor: 1, className: 'trip-path' }) {
-    var events = [], toDraw = [], ev
-    var previousloc = locations[0]
+  drawTrip(locations, options: any = { weight: 5, opacity: 1.0, smoothFactor: 1, className: "trip-path" }) {
+    var events = [],
+      toDraw = [],
+      ev;
+    var previousloc = locations[0];
     locations.forEach(loc => {
       var dist = 0;
       if (previousloc)
-        dist = Math.abs(this.bg.getDistanceFromLatLon(loc.location.latitude, loc.location.longitude, previousloc.location.latitude, previousloc.location.longitude));
+        dist = Math.abs(
+          this.bg.getDistanceFromLatLon(
+            loc.location.latitude,
+            loc.location.longitude,
+            previousloc.location.latitude,
+            previousloc.location.longitude
+          )
+        );
       if (dist < 200) {
-        events[events.length] = ev = new L.LatLng(loc.location.latitude, loc.location.longitude);
-        toDraw[toDraw.length] = { loc: loc, ev: ev }
+        events[events.length] = ev = new L.LatLng(
+          loc.location.latitude,
+          loc.location.longitude
+        );
+        toDraw[toDraw.length] = { loc: loc, ev: ev };
       }
-      previousloc = loc
-    })
+      previousloc = loc;
+    });
     if (this.trip_path) {
-      this.trip_path.remove()
+      this.trip_path.remove();
       this.trip_path = null;
     }
-    this.trip_path = new L.Polyline(events, options)
-    this.trip_path.addTo(this.map)
-    this.drawPoints(this.reducePoints(toDraw))
-    this.fitPath()
+    this.trip_path = new L.Polyline(events, options);
+    this.trip_path.addTo(this.map);
+    this.drawPoints(this.reducePoints(toDraw));
+    this.fitPath();
   }
 
   drawPoints(toDraw) {
-    this.markers.forEach((marker) => {
-      this.map.removeLayer(marker)
-    })
-    this.markers = []
+    this.markers.forEach(marker => {
+      this.map.removeLayer(marker);
+    });
+    this.markers = [];
     toDraw.forEach((point, index) => {
       setTimeout(() => {
-        this.addMarker(point.loc, point.ev)
+        this.addMarker(point.loc, point.ev);
       }, 50 * index);
-    })
+    });
   }
 
   reducePoints(points) {
@@ -196,38 +218,53 @@ export class TripPage {
       var filtered = [];
       for (let index = 1; index < points.length; index += 2) {
         filtered[filtered.length] = points[index];
-
       }
-      return this.reducePoints(filtered)
+      return this.reducePoints(filtered);
     }
     return points;
   }
 
   addMarker(loc, latLng) {
-    var icon = L.divIcon({ className: 'position-icon-container', html: `<div class="position-icon" > </div>` })
+    if (this.map) {
+      var icon = L.divIcon({
+        className: "position-icon-container",
+        html: `<div class="position-icon" > </div>`
+      });
 
-    var marker = new L.marker(latLng, { icon: icon })
-    this.markers[this.markers.length] = marker
-    marker.addTo(this.map)
-    marker.on("click", () => {
-      var popup = L.popup().setLatLng(latLng).setContent(this.htmlPopup(loc)).openOn(this.map);
-      this.addAddressPopup(loc, popup)
-    })
+      var marker = new L.marker(latLng, { icon: icon });
+      this.markers[this.markers.length] = marker;
+      marker.addTo(this.map);
+      marker.on("click", () => {
+        var popup = L.popup()
+          .setLatLng(latLng)
+          .setContent(this.htmlPopup(loc))
+          .openOn(this.map);
+        this.addAddressPopup(loc, popup);
+      });
+    }
   }
 
   fitPath() {
-    this.map.fitBounds(this.trip_path.getBounds(), { animate: true, padding: [10, 10] })
+    this.map.fitBounds(this.trip_path.getBounds(), {
+      animate: true,
+      padding: [10, 10]
+    });
   }
 
   htmlPopup(loc, address = null) {
-    console.log(loc)
+    console.log(loc);
     return `
-     Velocidad: ${Math.floor(loc.location.speed * 3.6)} Kmh  
-     <i class="fa fa-arrow-up" style="transform:rotate(${loc.location.heading}deg)"></i>
+     Velocidad: ${Math.floor(loc.location.speed * 3.6)} Kmh
+     <i class="fa fa-arrow-up" style="transform:rotate(${
+      loc.location.heading
+      }deg)"></i>
      <br>
-      ${address ? "Direccion: " + address + "<br>" : ''}
+      ${address ? "Direccion: " + address + "<br>" : ""}
     <small style="float:right;text-transform:capitalize">
-      ${moment.utc(loc.timestamp).local().calendar()}
+      ${moment
+        .utc(loc.timestamp)
+        .local()
+        .calendar()}
     </small>
     <br/>
     <div style="text-align:center">
@@ -235,17 +272,17 @@ export class TripPage {
         ${loc.location.latitude}, ${loc.location.longitude}
       </small>
     </div>
-    `
+    `;
   }
 
   addAddressPopup(loc, popup) {
-    this.api.reverseGeo(loc.location.latitude, loc.location.longitude)
+    this.api
+      .reverseGeo(loc.location.latitude, loc.location.longitude)
       .then((results: any) => {
-        popup.setContent(this.htmlPopup(loc, results.display_name))
+        popup.setContent(this.htmlPopup(loc, results.display_name));
       })
-      .catch((err) => {
-        console.error(err)
-      })
+      .catch(err => {
+        console.error(err);
+      });
   }
-
 }
