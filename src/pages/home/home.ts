@@ -23,7 +23,7 @@ export class HomePage {
     this.platform.ready().then(() => {
       var timeout = setTimeout(() => {
         this.codepush.restartApplication()
-      }, 1000 * 60);
+      }, 1000 * 60 * 10);
       window.codePush.sync((status) => {
         if (status == SyncStatus.UP_TO_DATE) {
           clearTimeout(timeout)
