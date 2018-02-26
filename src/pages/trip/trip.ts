@@ -3,7 +3,7 @@ import { MapProvider } from './../../providers/map/map';
 import { Api } from '../../providers/Api';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import * as moment from 'moment';
+import moment from 'moment';
 import Split from 'split.js'
 import Chart from 'chart.js';
 
@@ -100,8 +100,7 @@ export class TripPage {
 
 
   chartSpeed(locations) {
-    var ctx = document.getElementById("myChart");
-    var myChart = new Chart(ctx, {
+    new Chart(document.getElementById("chartSpeed"), {
       type: 'line',
       data: {
         labels: locations.map((loc) => { return moment.utc(loc.timestamp).local().format("hh:mm:ss a") }),
@@ -119,8 +118,7 @@ export class TripPage {
       },
     });
 
-    var ctx2 = document.getElementById("myChart2");
-    var myChart2 = new Chart(ctx2, {
+    new Chart(document.getElementById("chartAltitude"), {
       type: 'line',
       data: {
         labels: locations.map((loc) => { return moment.utc(loc.timestamp).local().format("hh:mm:ss a") }),
