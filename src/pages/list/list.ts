@@ -49,8 +49,7 @@ export class ListPage {
     events.subscribe('LocationCreated', this.locationCreatedHandler)
     events.subscribe('panic', this.panicHandler)
   }
-
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     this.api.ready.then(() => {
       this.api.startEcho();
       setTimeout(() => {

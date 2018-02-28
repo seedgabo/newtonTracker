@@ -6,6 +6,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import moment from 'moment';
 import Split from 'split.js'
 import Chart from 'chart.js';
+import 'chartjs-plugin-deferred';
 
 moment.locale('es-us')
 declare var L: any;
@@ -116,6 +117,15 @@ export class TripPage {
           // borderWidth: 1
         }]
       },
+      options: {
+        plugins: {
+          deferred: {
+            xOffset: 150,   // defer until 150px of the canvas width are inside the viewport
+            yOffset: '50%', // defer until 50% of the canvas height are inside the viewport
+            delay: 500      // delay of 500 ms after the canvas is considered inside the viewport
+          }
+        }
+      }
     });
 
     new Chart(document.getElementById("chartAltitude"), {
@@ -134,7 +144,15 @@ export class TripPage {
           // borderWidth: 1
         }]
       },
-      options: {}
+      options: {
+        plugins: {
+          deferred: {
+            xOffset: 150,   // defer until 150px of the canvas width are inside the viewport
+            yOffset: '50%', // defer until 50% of the canvas height are inside the viewport
+            delay: 500      // delay of 500 ms after the canvas is considered inside the viewport
+          }
+        }
+      }
     });
   }
 
