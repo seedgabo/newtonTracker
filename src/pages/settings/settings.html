@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle icon-only>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Configuración</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="save()">
+        <ion-icon class="fa fa-save"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content no-padding>
+  <ion-list>
+    <ion-item-divider color="light">
+      Opciones de Emergencias
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-label>Mostrar alertas de panico</ion-label>
+      <ion-toggle (ionChange)="save()" [(ngModel)]="setting.panics"></ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>
+        <i>Text To Speech</i> Alertas</ion-label>
+      <ion-toggle (ionChange)="save()" [(ngModel)]="setting.tts" [disabled]="!setting.panics"></ion-toggle>
+    </ion-item>
+  </ion-list>
+</ion-content>

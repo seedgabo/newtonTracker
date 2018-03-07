@@ -9,6 +9,7 @@ import { Storage } from '@ionic/storage';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 import { NgZone } from '@angular/core';
+import { SettingProvider } from './setting/setting';
 
 declare var window: any;
 window.Pusher = Pusher;
@@ -29,7 +30,7 @@ export class Api {
   sound
   last_panic
   addresses = {}
-  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController, public modal: ModalController, public toast: ToastController, public vibration: Vibration, public backgroundmode: BackgroundMode) {
+  constructor(public http: Http, public storage: Storage, public events: Events, public zone: NgZone, public alert: AlertController, public modal: ModalController, public toast: ToastController, public vibration: Vibration, public backgroundmode: BackgroundMode, public setting: SettingProvider) {
     this.initVar();
     window.$api = this;
   }
@@ -359,13 +360,15 @@ export class Api {
   }
 
   private handlePanic(data, open = true) {
-    this.events.publish("panic", data);
-    data.sound = this.playSoundSOS();
-    if (open == true) {
-      this.backgroundmode.moveToForeground()
-      this.backgroundmode.wakeUp()
-      var modal = this.modal.create("PanicPage", data);
-      modal.present();
+    if (this.setting.panics) {
+      this.events.publish("panic", data);
+      data.sound = this.playSoundSOS();
+      if (open == true) {
+        this.backgroundmode.moveToForeground()
+        this.backgroundmode.wakeUp()
+        var modal = this.modal.create("PanicPage", data);
+        modal.present();
+      }
     }
     try {
       this.vibration.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);

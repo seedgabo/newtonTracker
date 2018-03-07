@@ -1,10 +1,10 @@
 <ion-menu [content]="content" [enabled]="api?.user">
-    <ion-header>
-      <div class="user-info" padding>
-        <img *ngIf="api.user" [src]="api.user.imagen" class="avatar-user"  menuClose>
-        <h5 text-center *ngIf="api.user">{{api.user.full_name}}</h5>
-      </div>
-    </ion-header>
+  <ion-header>
+    <div class="user-info" padding>
+      <img *ngIf="api.user" [src]="api.user.imagen" class="avatar-user" menuClose>
+      <h5 text-center *ngIf="api.user">{{api.user.full_name}}</h5>
+    </div>
+  </ion-header>
 
   <ion-content>
     <ion-list>
@@ -16,6 +16,10 @@
         <ion-icon item-left name="settings" small></ion-icon>
         Configuración
       </ion-item-divider>
+      <button ion-item menuClose (click)="openPage({component:'SettingsPage'})">
+        <ion-icon name="settings" color="primary" item-left></ion-icon>
+        Configuración
+      </button>
       <button ion-item menuClose (click)="logout()">
         <ion-icon name="log-out" color="primary" item-left></ion-icon>
         Cerrar Sesión

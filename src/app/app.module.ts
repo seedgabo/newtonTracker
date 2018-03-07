@@ -1,5 +1,4 @@
 import { IonicStorageModule } from '@ionic/storage';
-import { Api } from './../providers/Api';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
@@ -25,7 +24,9 @@ import { TextToSpeech } from '@ionic-native/text-to-speech';
 import { LocalNotifications } from "@ionic-native/local-notifications";
 
 import { MomentModule } from 'angular2-moment';
+import { Api } from './../providers/Api';
 import { MapProvider } from '../providers/map/map';
+import { SettingProvider } from '../providers/setting/setting';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { MapProvider } from '../providers/map/map';
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     Api,
     BgProvider,
-    MapProvider
+    MapProvider,
+    SettingProvider
   ]
 })
 export class AppModule { }

@@ -3,6 +3,7 @@ import { IonicPage, NavController, NavParams, Events, ViewController } from 'ion
 import { LocalNotifications } from "@ionic-native/local-notifications";
 import { TextToSpeech } from "@ionic-native/text-to-speech";
 import moment from 'moment';
+import { SettingProvider } from '../../providers/setting/setting';
 moment.locale("es");
 
 @IonicPage()
@@ -28,7 +29,7 @@ export class PanicPage {
       this.datetime = moment.utc();
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events, public texttospeech: TextToSpeech, public localnotifications: LocalNotifications) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events, public texttospeech: TextToSpeech, public localnotifications: LocalNotifications, public setting: SettingProvider) {
     this.user = this.navParams.get('user')
 
     if (this.navParams.get('entidad'))
@@ -48,17 +49,19 @@ export class PanicPage {
 
 
   ionViewDidLoad() {
-    this.texttospeech.speak({
-      locale: 'es-VE',
-      text: "Alerta de Emergencia de: " + this.user.full_name,
-    }).then(console.log).catch(console.error);
-    this.localnotifications.schedule({
-      id: 1,
-      title: "Alerta de Emergencia",
-      text: this.user.full_name,
-      sound: null,
-      led: 'FF0000',
-    })
+    if (this.setting.tts) {
+      this.texttospeech.speak({
+        locale: 'es-CO',
+        text: "Alerta de Emergencia de: " + this.user.full_name,
+      }).then(console.log).catch(console.error);
+      this.localnotifications.schedule({
+        id: 1,
+        title: "Alerta de Emergencia",
+        text: this.user.full_name,
+        sound: null,
+        led: 'FF0000',
+      })
+    }
     this.events.subscribe("panic", this.prepareData);
   }
 
