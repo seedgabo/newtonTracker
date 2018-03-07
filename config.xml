@@ -3,7 +3,7 @@
     <name>Newton Tracker</name>
     <description>Track Application With Newton.</description>
     <author email="hi@ionicframework" href="http://ionicframework.com/">Gabriel Bejarano</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://192.168.0.17:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -83,6 +83,7 @@
     <platform name="ios">
         <preference name="CodePushDeploymentKey" value="Zq8olwNCElAUrkbv8kKo87ovOtq5c0e4a0a6-2be5-4604-bcc1-c0b2c1387dd2" />
     </platform>
+    <allow-navigation href="http://192.168.0.17:8100" />
     <engine name="android" spec="6.3.0" />
     <engine name="browser" spec="5.0.3" />
     <plugin name="cordova-plugin-background-mode" spec="^0.7.2" />
@@ -114,4 +115,6 @@
     <plugin name="cordova-plugin-statusbar" spec="^2.4.1" />
     <plugin name="cordova-plugin-file-transfer" spec="^1.7.1" />
     <plugin name="cordova-plugin-zip" spec="^3.1.0" />
+    <plugin name="cordova-plugin-local-notification" spec="^0.9.0-beta.2" />
+    <plugin name="cordova-plugin-tts" spec="^0.2.3" />
 </widget>

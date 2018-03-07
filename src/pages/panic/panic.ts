@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, Events, ViewController } from 'ionic-angular';
+import { LocalNotifications } from "@ionic-native/local-notifications";
+import { TextToSpeech } from "@ionic-native/text-to-speech";
 import moment from 'moment';
 moment.locale("es");
 
@@ -26,7 +28,7 @@ export class PanicPage {
       this.datetime = moment.utc();
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events, public texttospeech: TextToSpeech, public localnotifications: LocalNotifications) {
     this.user = this.navParams.get('user')
 
     if (this.navParams.get('entidad'))
@@ -46,12 +48,24 @@ export class PanicPage {
 
 
   ionViewDidLoad() {
+    this.texttospeech.speak({
+      locale: 'es-VE',
+      text: "Alerta de Emergencia de: " + this.user.full_name,
+    }).then(console.log).catch(console.error);
+    this.localnotifications.schedule({
+      id: 1,
+      title: "Alerta de Emergencia",
+      text: this.user.full_name,
+      sound: null,
+      led: 'FF0000',
+    })
     this.events.subscribe("panic", this.prepareData);
   }
 
   close() {
     if (this.navParams.get('sound'))
       this.navParams.get('sound').pause()
+    this.texttospeech.stop()
     this.viewctrl.dismiss();
     this.events.unsubscribe("panic", this.prepareData);
   }

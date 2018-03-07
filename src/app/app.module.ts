@@ -21,7 +21,8 @@ import { Vibration } from "@ionic-native/vibration";
 import { HttpModule } from '@angular/http';
 import { BgProvider } from '../providers/bg/bg';
 import { LoginPage } from '../pages/login/login';
-
+import { TextToSpeech } from '@ionic-native/text-to-speech';
+import { LocalNotifications } from "@ionic-native/local-notifications";
 
 import { MomentModule } from 'angular2-moment';
 import { MapProvider } from '../providers/map/map';
@@ -50,6 +51,7 @@ import { MapProvider } from '../providers/map/map';
     SplashScreen,
     Autostart,
     BackgroundMode, BackgroundGeolocation, BatteryStatus, Camera, CodePush, Deeplinks, Device, Vibration,
+    LocalNotifications, TextToSpeech,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     Api,
     BgProvider,
