@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Events, ViewController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Events, ViewController, Platform } from 'ionic-angular';
 import { LocalNotifications } from "@ionic-native/local-notifications";
 import { TextToSpeech } from "@ionic-native/text-to-speech";
 import moment from 'moment';
@@ -29,7 +29,7 @@ export class PanicPage {
       this.datetime = moment.utc();
   }
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events, public texttospeech: TextToSpeech, public localnotifications: LocalNotifications, public setting: SettingProvider) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public viewctrl: ViewController, public events: Events, public texttospeech: TextToSpeech, public localnotifications: LocalNotifications, public setting: SettingProvider, public platform: Platform) {
     this.user = this.navParams.get('user')
 
     if (this.navParams.get('entidad'))
@@ -50,10 +50,16 @@ export class PanicPage {
 
   ionViewDidLoad() {
     if (this.setting.tts) {
-      this.texttospeech.speak({
-        locale: 'es-CO',
-        text: "Alerta de Emergencia de: " + this.user.full_name,
-      }).then(console.log).catch(console.error);
+      if (this.platform.is('mobile')) {
+        this.texttospeech.speak({
+          locale: 'es-US',
+          text: "Alerta de Emergencia de: " + this.user.full_name,
+        }).then(console.log).catch(console.error);
+      } else {
+        var msg = new SpeechSynthesisUtterance("Alerta de Emergencia de: " + this.user.full_name);
+        msg.lang = "es-US"
+        window.speechSynthesis.speak(msg);
+      }
       this.localnotifications.schedule({
         id: 1,
         title: "Alerta de Emergencia",
