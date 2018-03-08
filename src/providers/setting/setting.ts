@@ -11,9 +11,9 @@ export class SettingProvider {
       if (data) {
         this.language = data.language
         if (this.tts !== undefined)
-          this.tts = data.tts || true
+          this.tts = data.tts
         if (this.panics !== undefined)
-          this.panics = data.panics || true
+          this.panics = data.panics
       }
     })
   }
