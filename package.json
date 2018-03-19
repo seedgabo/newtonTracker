@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.1.6",
-    "ionic": "3.19.1",
+    "ionic": "3.20.0",
     "typescript": "2.4.2"
   },
   "description": "An Ionic project",
@@ -87,12 +87,6 @@
       "cordova-plugin-background-mode": {},
       "cordova-plugin-camera": {},
       "cordova-plugin-code-push": {},
-      "ionic-plugin-deeplinks": {
-        "URL_SCHEME": "newtonTracker",
-        "DEEPLINK_SCHEME": "http",
-        "DEEPLINK_HOST": "newton.eycproveedores.com",
-        "ANDROID_PATH_PREFIX": "/"
-      },
       "cordova-plugin-device": {},
       "cordova-plugin-vibration": {},
       "cordova-plugin-battery-status": {},
@@ -114,7 +108,25 @@
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-zip": {},
       "cordova-plugin-local-notification": {},
-      "cordova-plugin-tts": {}
+      "cordova-plugin-tts": {},
+      "ionic-plugin-deeplinks": {
+        "URL_SCHEME": "newtonTracker",
+        "DEEPLINK_SCHEME": "https",
+        "DEEPLINK_HOST": "newton.eycproveedores.com",
+        "ANDROID_PATH_PREFIX": "/",
+        "ANDROID_2_PATH_PREFIX": "/",
+        "ANDROID_3_PATH_PREFIX": "/",
+        "ANDROID_4_PATH_PREFIX": "/",
+        "ANDROID_5_PATH_PREFIX": "/",
+        "DEEPLINK_2_SCHEME": " ",
+        "DEEPLINK_2_HOST": " ",
+        "DEEPLINK_3_SCHEME": " ",
+        "DEEPLINK_3_HOST": " ",
+        "DEEPLINK_4_SCHEME": " ",
+        "DEEPLINK_4_HOST": " ",
+        "DEEPLINK_5_SCHEME": " ",
+        "DEEPLINK_5_HOST": " "
+      }
     },
     "platforms": [
       "android",
