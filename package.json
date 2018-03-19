@@ -11,7 +11,9 @@
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve",
     "release-android": "ionic cordova build android --prod && code-push release-cordova newtonTracker android -d Android --mandatory",
-    "release-web": "ionic cordova build browser --prod"
+    "release-web": "ionic cordova build browser --prod",
+    "release-ios": "ionic cordova build ios --prod && code-push release-cordova residencias ios -d Ios --mandatory",
+    "build-android": "cordova build android --release -- --password=gab23gab --keystore='./newtonTrack.jks' --storePassword=gab23gab --alias=newtonTrack"
   },
   "dependencies": {
     "@angular/common": "5.0.3",
