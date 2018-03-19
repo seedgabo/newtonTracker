@@ -1,13 +1,11 @@
 #!/usr/bin/env node
-var fs = require('fs');
-var path = require('path');
-
+var fs = require("fs");
+var path = require("path");
 
 var rootdir = process.argv[2];
 // var projectdir = path.join("../../platforms/android/")
-var projectdir = path.join(rootdir, "platforms/android/")
-var widget_name = "SOSWidgetProvider"
-
+var projectdir = path.join(rootdir, "platforms/android/");
+var widget_name = "SOSWidgetProvider";
 
 // Declaring the plugin on Andrid Manifest
 var declaration_file = `
@@ -18,23 +16,27 @@ var declaration_file = `
         <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/appwidgetproviderinfo" />
     </receiver>
-</application>`
-var manifest = fs.readFileSync(projectdir + "AndroidManifest.xml", 'utf8');
+</application>`;
+var manifest = fs.readFileSync(projectdir + "AndroidManifest.xml", "utf8");
 if (manifest.lastIndexOf(widget_name) == -1) {
-    manifest = manifest.replace("</application>", declaration_file);
-    fs.writeFileSync(projectdir + "AndroidManifest.xml", manifest);
-    console.log("Manifest Updated");
+  manifest = manifest.replace("</application>", declaration_file);
+  fs.writeFileSync(projectdir + "AndroidManifest.xml", manifest);
+  console.log("Manifest Updated");
 }
 
-
-var has_img = true
-var image_name = "soswidget"
+var has_img = true;
+var image_name = "soswidget";
 if (has_img) {
-    if (!fs.existsSync(projectdir + "res/drawable-nodpi")) {
-        fs.mkdirSync(projectdir + "res/drawable-nodpi");
-    }
-    fs.createReadStream(rootdir + '/resources/' + image_name + '.png').pipe(fs.createWriteStream(projectdir + 'res/drawable-nodpi/' + image_name + '.png'));
-
+  if (!fs.existsSync(projectdir + "res/drawable-nodpi")) {
+    fs.mkdirSync(projectdir + "res/drawable-nodpi");
+  }
+  fs
+    .createReadStream(rootdir + "/resources/" + image_name + ".png")
+    .pipe(
+      fs.createWriteStream(
+        projectdir + "res/drawable-nodpi/" + image_name + ".png"
+      )
+    );
 }
 
 // Adding the AppWidgetProviderInfo Metadata
@@ -43,19 +45,20 @@ var provider_info_file = `
     android:minWidth="250dp"
     android:minHeight="110dp"
     android:updatePeriodMillis="86400000"
-    ${has_img ? 'android:previewImage="@drawable/' + image_name + '"' : ''}
+    ${has_img ? 'android:previewImage="@drawable/' + image_name + '"' : ""}
     android:initialLayout="@layout/sos_appwidget_info"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen">
 </appwidget-provider>
-`
+`;
 if (!fs.existsSync(projectdir + "res/xml")) {
   fs.mkdirSync(projectdir + "res/xml");
 }
-fs.writeFileSync(projectdir + "res/xml/appwidgetproviderinfo.xml", provider_info_file);
+fs.writeFileSync(
+  projectdir + "res/xml/appwidgetproviderinfo.xml",
+  provider_info_file
+);
 console.log("AppWidgetProviderInfo Created");
-
-
 
 // Creating the App Widget Layout
 var layout_file = `
@@ -114,16 +117,13 @@ var layout_file = `
     </LinearLayout>
 
 </RelativeLayout>
-`
+`;
 if (!fs.existsSync(projectdir + "res/layout")) {
   fs.mkdirSync(projectdir + "res/layout");
 }
 
 fs.writeFileSync(projectdir + "res/layout/sos_appwidget_info.xml", layout_file);
-console.log("App Widget Xml Created")
-
-
-
+console.log("App Widget Xml Created");
 
 // Creating the Class
 var class_file = `
@@ -144,7 +144,7 @@ public class SOSWidgetProvider extends AppWidgetProvider {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
     }
-    
+
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
         if ("action".equals(intent.getAction())){
@@ -154,7 +154,7 @@ public class SOSWidgetProvider extends AppWidgetProvider {
     void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.sos_appwidget_info);
-        
+
         String url = "newtonTracker://sos";
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(url));
@@ -171,6 +171,9 @@ public class SOSWidgetProvider extends AppWidgetProvider {
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
-}`
-fs.writeFileSync(projectdir + "src/com/seedgabo/newtonTracker/SOSWidgetProvider.java", class_file);
-console.log("Class File Created")
+}`;
+fs.writeFileSync(
+  projectdir + "src/com/seedgabo/newtonTracker/SOSWidgetProvider.java",
+  class_file
+);
+console.log("Class File Created");
