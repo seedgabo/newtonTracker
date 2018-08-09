@@ -57,8 +57,8 @@ export class Api {
 
   initVar() {
     this.storage.get("url").then((url_data) => {
-      if (url_data) this.url = url_data;
-      else if (window.url) this.url = window.url;
+      if (window.url) this.url = window.url;
+      else if (url_data) this.url = url_data;
     });
     this.storage.get("username").then((data) => (data != undefined ? (this.username = data) : ""));
     this.storage.get("password").then((data) => (data != undefined ? (this.password = data) : ""));
