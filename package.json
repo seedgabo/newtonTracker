@@ -44,7 +44,7 @@
     "chart.js": "^2.7.3",
     "chartjs-plugin-deferred": "^1.0.1",
     "code-push": "^2.0.6",
-    "cordova-android": "6.3.0",
+    "cordova-android": "^7.1.1",
     "cordova-background-geolocation-lt": "^2.13.2",
     "cordova-browser": "5.0.3",
     "cordova-plugin-autostart": "^2.3.0",
@@ -132,7 +132,6 @@
       "cordova-plugin-file": {}
     },
     "platforms": [
-      "android",
       "browser"
     ]
   }
