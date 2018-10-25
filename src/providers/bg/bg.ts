@@ -134,6 +134,7 @@ export class BgProvider {
 
   startTrack() {
     if (!this.bg) {
+      console.warn("Emulating...")
       return this.state = true
     }
     this.bg.configure({
