@@ -1,6 +1,11 @@
 import { BackgroundMode } from "@ionic-native/background-mode";
 import { Vibration } from "@ionic-native/vibration";
-import { Events, AlertController, ToastController, ModalController } from "ionic-angular";
+import {
+  Events,
+  AlertController,
+  ToastController,
+  ModalController
+} from "ionic-angular";
 import { Injectable } from "@angular/core";
 import { Http, Headers } from "@angular/http";
 // import { Observable } from "rxjs/Observable";
@@ -18,7 +23,7 @@ export class Api {
   username: string;
   password: string;
   token: string;
-  url: string = "http://newton.eycproveedores.com/newton/public/";
+  url: string = "https://newton.eycproveedores.com/newton/public/";
   locationiq_token = "92b5f8a059f8ab";
   Echo;
   user: any = null;
@@ -48,7 +53,7 @@ export class Api {
     this.ready.then(() => {
       if (this.user)
         this.get("lang")
-          .then((langs) => {
+          .then(langs => {
             this.langs = langs;
           })
           .catch(console.error);
@@ -56,16 +61,23 @@ export class Api {
   }
 
   initVar() {
-    this.storage.get("url").then((url_data) => {
+    this.storage.get("url").then(url_data => {
       if (window.url) this.url = window.url;
       else if (url_data) this.url = url_data;
     });
-    this.storage.get("username").then((data) => (data != undefined ? (this.username = data) : ""));
-    this.storage.get("password").then((data) => (data != undefined ? (this.password = data) : ""));
-    this.storage.get("user").then((data) => {
+    this.storage
+      .get("username")
+      .then(data => (data != undefined ? (this.username = data) : ""));
+    this.storage
+      .get("password")
+      .then(data => (data != undefined ? (this.password = data) : ""));
+    this.storage.get("user").then(data => {
       if (data != undefined) {
         this.user = JSON.parse(data);
-        this.user.roles.collection = this.mapToCollection(this.user.roles, "name");
+        this.user.roles.collection = this.mapToCollection(
+          this.user.roles,
+          "name"
+        );
       }
       this.resolve(this.user);
     });
@@ -85,13 +97,13 @@ export class Api {
     return new Promise((resolve, reject) => {
       this.http
         .get(this.url + "api/login", { headers: this.setHeaders() })
-        .map((res) => res.json())
+        .map(res => res.json())
         .subscribe(
-          (data) => {
+          data => {
             data.roles.collection = this.mapToCollection(data.roles, "name");
             resolve(data);
           },
-          (error) => {
+          error => {
             return reject(error);
           }
         );
@@ -106,14 +118,14 @@ export class Api {
     return new Promise((resolve, reject) => {
       if (this.objects[saveAs]) {
         this.objects[saveAs].promise
-          .then((resp) => {
+          .then(resp => {
             resolve(resp);
             console.timeEnd("load " + saveAs);
           })
           .catch(reject);
         return;
       }
-      this.storage.get(saveAs + "_resource").then((data) => {
+      this.storage.get(saveAs + "_resource").then(data => {
         this.objects[saveAs] = [];
         if (data) {
           this.objects[saveAs] = data;
@@ -121,7 +133,7 @@ export class Api {
         var promise;
         this.objects[saveAs].promise = promise = this.get(resource);
         this.objects[saveAs].promise
-          .then((resp) => {
+          .then(resp => {
             this.objects[saveAs] = resp;
             this.objects[saveAs].promise = promise;
             this.objects[saveAs].collection = this.mapToCollection(resp);
@@ -129,7 +141,7 @@ export class Api {
             console.timeEnd("load " + saveAs);
             return resolve(this.objects[saveAs]);
           })
-          .catch((err) => {
+          .catch(err => {
             reject(err);
             this.Error(err);
           });
@@ -141,12 +153,12 @@ export class Api {
     return new Promise((resolve, reject) => {
       this.http
         .get(this.url + "api/" + uri, { headers: this.setHeaders() })
-        .map((res) => res.json())
+        .map(res => res.json())
         .subscribe(
-          (data) => {
+          data => {
             resolve(data);
           },
-          (error) => {
+          error => {
             return reject(error);
           }
         );
@@ -157,12 +169,12 @@ export class Api {
     return new Promise((resolve, reject) => {
       this.http
         .post(this.url + "api/" + uri, data, { headers: this.setHeaders() })
-        .map((res) => res.json())
+        .map(res => res.json())
         .subscribe(
-          (data) => {
+          data => {
             resolve(data);
           },
-          (error) => {
+          error => {
             return reject(error);
           }
         );
@@ -173,12 +185,12 @@ export class Api {
     return new Promise((resolve, reject) => {
       this.http
         .put(this.url + "api/" + uri, data, { headers: this.setHeaders() })
-        .map((res) => res.json())
+        .map(res => res.json())
         .subscribe(
-          (data) => {
+          data => {
             resolve(data);
           },
-          (error) => {
+          error => {
             return reject(error);
           }
         );
@@ -189,12 +201,12 @@ export class Api {
     return new Promise((resolve, reject) => {
       this.http
         .delete(this.url + "api/" + uri, { headers: this.setHeaders() })
-        .map((res) => res.json())
+        .map(res => res.json())
         .subscribe(
-          (data) => {
+          data => {
             resolve(data);
           },
-          (error) => {
+          error => {
             return reject(error);
           }
         );
@@ -208,7 +220,7 @@ export class Api {
     };
     var promise = this.post("panic", data);
     promise
-      .then((data) => {
+      .then(data => {
         console.log("panic sent:", data);
         this.toast
           .create({
@@ -220,7 +232,7 @@ export class Api {
 
         this.getLocationForPanic(data);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error(err);
         this.toast
           .create({
@@ -235,7 +247,7 @@ export class Api {
 
   getLocationForPanic(data) {
     navigator.geolocation.getCurrentPosition(
-      (resp) => {
+      resp => {
         var locs = {
           accuracy: resp.coords.accuracy,
           altitude: resp.coords.altitude,
@@ -247,10 +259,10 @@ export class Api {
           timestamp: resp.timestamp
         };
         this.put("panics/" + data.id, { location: locs })
-          .then((dataL) => {
+          .then(dataL => {
             console.log("panic with locs", dataL);
           })
-          .catch((err) => {
+          .catch(err => {
             console.error("error sending panic with location", err);
           });
       },
@@ -305,32 +317,44 @@ export class Api {
         }
       });
       this.Echo.private("Application")
-        .listen("LocationCreated", (data) => {
+        .listen("LocationCreated", data => {
           console.log("created location:", data);
           this.zone.run(() => {
-            if (this.objects.users_tracks && this.objects.users_tracks.collection[data.user.id]) {
-              this.objects.users_tracks.collection[data.user.id].location = data.location.location;
-              this.objects.users_tracks.collection[data.user.id].location.timestamp = data.timestamp;
-              this.objects.users_tracks.collection[data.user.id].updated_at = new Date();
+            if (
+              this.objects.users_tracks &&
+              this.objects.users_tracks.collection[data.user.id]
+            ) {
+              this.objects.users_tracks.collection[data.user.id].location =
+                data.location.location;
+              this.objects.users_tracks.collection[
+                data.user.id
+              ].location.timestamp = data.timestamp;
+              this.objects.users_tracks.collection[
+                data.user.id
+              ].updated_at = new Date();
               this.events.publish("LocationCreated", data);
             }
           });
         })
-        .listen("ActivityCreated", (data) => {
+        .listen("ActivityCreated", data => {
           console.log("created activity:", data);
           this.zone.run(() => {
-            if (this.objects.users_tracks && this.objects.users_tracks.collection[data.user.id]) {
-              this.objects.users_tracks.collection[data.user.id].activity = data.activity;
+            if (
+              this.objects.users_tracks &&
+              this.objects.users_tracks.collection[data.user.id]
+            ) {
+              this.objects.users_tracks.collection[data.user.id].activity =
+                data.activity;
               this.events.publish("ActivityCreated", data);
             }
           });
         })
 
-        .listen("Panic", (data) => {
+        .listen("Panic", data => {
           console.log("Panic ", data);
           this.handlePanic(data);
         })
-        .listen("PanicUpdate", (data) => {
+        .listen("PanicUpdate", data => {
           console.log("PanicUpdate", data);
           if (this.sound) {
             this.sound.pause();
@@ -339,18 +363,21 @@ export class Api {
         });
 
       this.Echo.join("App.Mobile")
-        .here((data) => {
+        .here(data => {
           this.objects.users_online = data;
-          this.objects.users_online.collection = this.mapToCollection(data, "id");
+          this.objects.users_online.collection = this.mapToCollection(
+            data,
+            "id"
+          );
           console.log("here:", data);
         })
-        .joining((data) => {
+        .joining(data => {
           this.objects.users_online.push(data);
           this.objects.users_online.collection[data.id] = data;
           console.log("joining", data);
         })
-        .leaving((data) => {
-          var u_index = this.objects.users_online.findIndex((u) => {
+        .leaving(data => {
+          var u_index = this.objects.users_online.findIndex(u => {
             return u.id == data.id;
           });
           if (u_index) {
@@ -374,9 +401,41 @@ export class Api {
     this.sound = new Audio("assets/sounds/sos.mp3");
     this.sound.play();
     try {
-      this.vibration.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
+      this.vibration.vibrate([
+        300,
+        200,
+        300,
+        200,
+        300,
+        200,
+        300,
+        300,
+        200,
+        300,
+        200,
+        300,
+        200,
+        300,
+        200
+      ]);
     } catch (error) {
-      navigator.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
+      navigator.vibrate([
+        300,
+        200,
+        300,
+        200,
+        300,
+        200,
+        300,
+        300,
+        200,
+        300,
+        200,
+        300,
+        200,
+        300,
+        200
+      ]);
     }
     return this.sound;
   }
@@ -387,14 +446,17 @@ export class Api {
         resolve(this.addresses[lat + "+" + lon]);
       } else {
         this.http
-          .get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`, {})
-          .map((res) => res.json())
+          .get(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`,
+            {}
+          )
+          .map(res => res.json())
           .subscribe(
-            (data) => {
+            data => {
               this.addresses[lat + "+" + lon] = data;
               resolve(data);
             },
-            (error) => {
+            error => {
               return reject(error);
             }
           );
@@ -414,22 +476,57 @@ export class Api {
       }
     }
     try {
-      this.vibration.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
+      this.vibration.vibrate([
+        300,
+        200,
+        300,
+        200,
+        300,
+        200,
+        300,
+        300,
+        200,
+        300,
+        200,
+        300,
+        200,
+        300,
+        200
+      ]);
     } catch (error) {
-      navigator.vibrate([300, 200, 300, 200, 300, 200, 300, 300, 200, 300, 200, 300, 200, 300, 200]);
+      navigator.vibrate([
+        300,
+        200,
+        300,
+        200,
+        300,
+        200,
+        300,
+        300,
+        200,
+        300,
+        200,
+        300,
+        200,
+        300,
+        200
+      ]);
     }
   }
 
   private setHeaders() {
     let headers = new Headers();
     // console.log(this.username, this.password);
-    headers.append("Authorization", "Basic " + btoa(this.username + ":" + this.password));
+    headers.append(
+      "Authorization",
+      "Basic " + btoa(this.username + ":" + this.password)
+    );
     return headers;
   }
 
   private mapToCollection(array, key = "id") {
     var collection = {};
-    array.forEach((element) => {
+    array.forEach(element => {
       collection[element[key]] = element;
     });
     return collection;

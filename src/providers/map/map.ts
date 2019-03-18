@@ -73,7 +73,7 @@ export class MapProvider {
       if (layer && this.layers[layer]) {
         this.setLayer(map, layer);
       } else {
-        this.setLayer(map, "road");
+        this.setLayer(map, "osm");
       }
     });
     map.addLayer(map.cluster);
