@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+ //  TODO: Need FIX
+return;
 var fs = require("fs");
 var path = require("path");
 
@@ -17,10 +19,10 @@ var declaration_file = `
                 android:resource="@xml/appwidgetproviderinfo" />
     </receiver>
 </application>`;
-var manifest = fs.readFileSync(projectdir + "AndroidManifest.xml", "utf8");
+var manifest = fs.readFileSync(projectdir + "app/src/main/AndroidManifest.xml", "utf8");
 if (manifest.lastIndexOf(widget_name) == -1) {
   manifest = manifest.replace("</application>", declaration_file);
-  fs.writeFileSync(projectdir + "AndroidManifest.xml", manifest);
+  fs.writeFileSync(projectdir + "app/src/main/AndroidManifest.xml", manifest);
   console.log("Manifest Updated");
 }
 

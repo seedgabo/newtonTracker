@@ -32,15 +32,6 @@ export class MapProvider {
         maxZoom: 18
       }
     },
-    osm: {
-      name: "Open Street Maps",
-      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
-      preview: "http://a.tile.osm.org/9/150/249.png",
-      opts: {
-        attribution:
-          '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-      }
-    },
     locationiq: {
       name: "Calles",
       url: `https://b-tiles.unwiredlabs.com/o/r/{z}/{x}/{y}.png?key=${
