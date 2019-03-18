@@ -1,8 +1,8 @@
-import { PopoverController } from 'ionic-angular';
-import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import 'rxjs/add/operator/map';
-import { Api } from '../Api';
+import { PopoverController } from "ionic-angular";
+import { Injectable } from "@angular/core";
+import { Http } from "@angular/http";
+import "rxjs/add/operator/map";
+import { Api } from "../Api";
 declare var L: any;
 
 @Injectable()
@@ -10,15 +10,13 @@ export class MapProvider {
   maps = {};
   markers = {};
   layers = {
-    road: {
-      name: "Rutas",
-      url:
-        "https://korona.geog.uni-heidelberg.de/tiles/roads/x={x}&y={y}&z={z}",
-      preview:
-        "https://korona.geog.uni-heidelberg.de/tiles/roads/x=150&y=249&z=9",
+    osm: {
+      name: "Open Street Maps",
+      url: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+      preview: "http://a.tile.osm.org/9/150/249.png",
       opts: {
         attribution:
-          'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       }
     },
 
@@ -67,7 +65,11 @@ export class MapProvider {
     }
   };
   current_layer = null;
-  constructor(public http: Http, public api: Api, public popover:PopoverController) {}
+  constructor(
+    public http: Http,
+    public api: Api,
+    public popover: PopoverController
+  ) {}
 
   addMap(mapId) {
     var map = L.map(mapId, {
@@ -89,7 +91,7 @@ export class MapProvider {
     return map;
   }
 
-  setLayer(map,key) {
+  setLayer(map, key) {
     if (this.current_layer) {
       map.removeLayer(this.current_layer);
     }
@@ -111,7 +113,7 @@ export class MapProvider {
   remove(mapId) {
     this.destroyMap(mapId);
   }
-  
+
   OpenMapOptions(map, ev) {
     var popover = this.popover.create("MapOptionsPage", {
       layers: this.layers
@@ -127,13 +129,12 @@ export class MapProvider {
     });
   }
 
-  
   private defaultFunctions(map) {
-    map.setLayer = (layer) => {
-        this.setLayer(map,layer)
-    }
-    map.OpenOptions = (ev) => {
-      this.OpenMapOptions(map,ev)
-    }
+    map.setLayer = layer => {
+      this.setLayer(map, layer);
+    };
+    map.OpenOptions = ev => {
+      this.OpenMapOptions(map, ev);
+    };
   }
 }
